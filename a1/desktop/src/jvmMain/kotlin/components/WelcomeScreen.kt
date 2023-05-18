@@ -32,6 +32,9 @@ fun WelcomeScreen(messages: List<String>) {
     ) {
         items(messages) {
             Text(
+                text = "Test"
+            )
+            Text(
                 text = it,
                 style = MaterialTheme.typography.body1,
             )

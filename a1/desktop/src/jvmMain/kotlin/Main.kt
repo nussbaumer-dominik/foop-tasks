@@ -2,15 +2,13 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import at.ac.tuwien.foop.common.Message
 import components.WelcomeScreen
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.*
-import io.ktor.websocket.*
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import at.ac.tuwien.foop.common.Message
 
 @Composable
 fun App(messages: List<String>) {

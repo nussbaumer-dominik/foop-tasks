@@ -1,4 +1,5 @@
-import de.fayard.refreshVersions.core.FeatureFlag
+@file:Suppress("UnstableApiUsage")
+
 import de.fayard.refreshVersions.core.StabilityLevel
 
 pluginManagement {
@@ -10,6 +11,15 @@ pluginManagement {
     }
 }
 
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenCentral()
+        google()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    }
+}
+
 plugins {
     id("de.fayard.refreshVersions") version "0.51.0"
 }
@@ -17,10 +27,6 @@ plugins {
 refreshVersions {
     rejectVersionIf {
         candidate.stabilityLevel != StabilityLevel.Stable
-    }
-
-    featureFlags {
-        enable(FeatureFlag.LIBS)
     }
 }
 

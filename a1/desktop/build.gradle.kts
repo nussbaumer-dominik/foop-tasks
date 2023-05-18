@@ -8,11 +8,6 @@ plugins {
 group = "at.ac.tuwien.foop"
 version = "1.0.0"
 
-repositories {
-    google()
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-}
-
 kotlin {
     jvm {
         jvmToolchain(11)
