@@ -3,6 +3,9 @@ package at.ac.tuwien.foop.common.domain
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Enum describing the current state if the game
+ * */
 @Serializable
 enum class GameState {
     @SerialName("WAITING")
