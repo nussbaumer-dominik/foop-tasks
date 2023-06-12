@@ -2,12 +2,12 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import at.ac.tuwien.foop.common.Message
 import components.WelcomeScreen
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.*
+import io.ktor.websocket.*
 import kotlinx.serialization.json.Json
 
 @Composable
@@ -37,8 +37,8 @@ fun main() = application {
             path = "/ws"
         ) {
             while (true) {
-                val message = receiveDeserialized<Message>()
-                messages = messages + message.text
+                val message = incoming.receive() as? Frame.Text ?: continue
+                messages = messages + message.readText()
             }
         }
         client.close()
