@@ -3,6 +3,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import at.ac.tuwien.foop.common.Message
+import components.Board
 import components.WelcomeScreen
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
@@ -13,7 +14,8 @@ import kotlinx.serialization.json.Json
 @Composable
 fun App(messages: List<String>) {
     MaterialTheme {
-        WelcomeScreen(messages)
+        //WelcomeScreen(messages)
+        Board()
     }
 }
 
