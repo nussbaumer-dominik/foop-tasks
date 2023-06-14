@@ -1,7 +1,7 @@
 package at.ac.tuwien.foop.common
 
 import at.ac.tuwien.foop.common.domain.*
-import at.ac.tuwien.foop.common.domain.Map
+import at.ac.tuwien.foop.common.domain.GameBoard
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -15,13 +15,13 @@ sealed interface AoopMessage
 @SerialName("global")
 sealed interface GlobalMessage : AoopMessage {
     /**
-     * Update information the clients about the structure of the map of the current game
+     * Update the clients about the structure of the map of the current game
      * */
     @Serializable
     @SerialName("global_map_update")
     data class MapUpdate(
-        @SerialName("map")
-        val map: Map,
+            @SerialName("map")
+        val map: GameBoard,
     ) : GlobalMessage
 
     /**

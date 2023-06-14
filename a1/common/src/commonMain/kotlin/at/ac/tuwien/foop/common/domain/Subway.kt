@@ -12,5 +12,18 @@ data class Subway(
      * The exits that exist on this subway
      * */
     @SerialName("exits")
-    val exits: Set<Exit>,
-)
+    val exits: MutableSet<Exit> = mutableSetOf(),
+) {
+    fun addExit(exit: Exit): Boolean {
+        if (containsExit(exit)) {
+            return false
+        }
+        exits.add(exit)
+        return true
+    }
+
+    fun containsExit(exit: Exit): Boolean {
+        return exits.stream().anyMatch { e -> e.position == exit.position }
+    }
+
+}
