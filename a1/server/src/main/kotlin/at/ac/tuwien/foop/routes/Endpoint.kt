@@ -18,27 +18,14 @@ fun Application.socketEndpoint() {
                         map = Map(
                             subways = setOf(
                                 Subway(
-                                    position = Position(0, 0),
-                                    size = Size(100, 100),
                                     exits = setOf(
-                                        Exit(
-                                            position = Position(100, 10),
-                                            width = 20,
-                                        ),
-                                        Exit(
-                                            position = Position(100, 90),
-                                            width = 20,
-                                        ),
+                                        Exit(position = Position(100, 10)),
+                                        Exit(position = Position(100, 90)),
                                     ),
                                 ),
                                 Subway(
-                                    position = Position(200, 200),
-                                    size = Size(200, 50),
                                     exits = setOf(
-                                        Exit(
-                                            position = Position(400, 210),
-                                            width = 20,
-                                        ),
+                                        Exit(position = Position(400, 210)),
                                     ),
                                 ),
                             ),

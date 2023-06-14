@@ -13,9 +13,4 @@ data class Exit(
      * */
     @SerialName("position")
     val position: Position,
-    /**
-     * The width of the exit
-     * */
-    @SerialName("width")
-    val width: Int,
 )

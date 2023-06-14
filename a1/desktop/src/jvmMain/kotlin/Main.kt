@@ -1,34 +1,35 @@
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import at.ac.tuwien.foop.common.Message
-import components.Board
-import components.WelcomeScreen
-import io.ktor.client.*
-import io.ktor.client.plugins.websocket.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.*
-import io.ktor.websocket.*
-import kotlinx.serialization.json.Json
+import androidx.compose.ui.window.rememberWindowState
+import components.BoardView
 
 @Composable
-fun App(messages: List<String>) {
+fun App(messages: List<String>, tileSize: Int = 32, rows: Int, columns: Int) {
     MaterialTheme {
         //WelcomeScreen(messages)
-        Board()
+        BoardView(tileSize = tileSize, rows = rows, columns = columns)
     }
 }
 
 fun main() = application {
     var messages by remember { mutableStateOf(emptyList<String>()) }
-
-    Window(onCloseRequest = ::exitApplication) {
-        App(messages)
+    val tileSize = 32
+    val windowState = rememberWindowState(size = DpSize((32 * tileSize - 18).dp, (32 * tileSize + 5).dp))
+    Window(
+        onCloseRequest = ::exitApplication,
+        resizable = true,
+        state = windowState,
+    ) {
+        App(messages, tileSize, 30, 30)
     }
 
     LaunchedEffect(true) {
-        val client = HttpClient {
+        windowState.size = DpSize((32 * tileSize).dp, (32 * tileSize + 29).dp)
+        /*val client = HttpClient {
             install(WebSockets) {
                 contentConverter = KotlinxWebsocketSerializationConverter(Json)
             }
@@ -44,6 +45,6 @@ fun main() = application {
                 messages = messages + message.readText()
             }
         }
-        client.close()
+        client.close()*/
     }
 }
