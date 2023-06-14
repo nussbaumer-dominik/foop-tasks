@@ -18,7 +18,7 @@ fun App(messages: List<String>, tileSize: Int = 32, rows: Int, columns: Int) {
 fun main() = application {
     var messages by remember { mutableStateOf(emptyList<String>()) }
     val tileSize = 32
-    val windowState = rememberWindowState(size = DpSize((32 * tileSize - 18).dp, (32 * tileSize + 5).dp))
+    val windowState = rememberWindowState(size = DpSize((32 * tileSize - 16).dp, (32 * tileSize + 7).dp))
     Window(
         onCloseRequest = ::exitApplication,
         resizable = true,

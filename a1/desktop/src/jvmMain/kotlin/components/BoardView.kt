@@ -86,10 +86,9 @@ fun DrawScope.drawBoard(rows: Int, columns: Int, tileSize: Int = 32) {
 }
 
 fun DrawScope.drawTile(x: Int, y: Int, size: Int, color: Color) {
-    val strokeWidth = 1.dp.toPx()
     drawRect(
-        topLeft = Offset(x.dp.toPx() - strokeWidth, y.dp.toPx() - strokeWidth),
-        size = Size(size.dp.toPx() - strokeWidth, size.dp.toPx() - strokeWidth),
+        topLeft = Offset(x.dp.toPx(), y.dp.toPx()),
+        size = Size(size.dp.toPx(), size.dp.toPx()),
         color = color,
     )
 }
@@ -115,7 +114,7 @@ fun DrawScope.drawExit(exit: Exit) {
     val strokeWidth = 2.dp.toPx()
     drawCircle(
         color = Color.Black,
-        radius = radius,
+        radius = radius - strokeWidth / 2,
         center = Offset((exit.position.x * 32) + radius, (exit.position.y * 32) + radius),
         style = Stroke(width = strokeWidth)
     )
