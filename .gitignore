@@ -23,3 +23,17 @@
 hs_err_pid*
 
 .DS_Store
+/.idea/.gitignore
+/.idea/checkstyle-idea.xml
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/artifacts/common_jvm_1_0_0.xml
+/.idea/compiler.xml
+/.idea/artifacts/desktop_jvm_1_0_0.xml
+/.idea/foop-tasks.iml
+/.idea/gradle.xml
+/.idea/jpa-buddy.xml
+/.idea/kotlinc.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/codeStyles/Project.xml
+/.idea/vcs.xml
