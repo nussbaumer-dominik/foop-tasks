@@ -3,9 +3,15 @@ package at.ac.tuwien.foop.common.util
 import at.ac.tuwien.foop.common.domain.*
 
 class GameBoardGenerator {
-    fun generateGameBoard(rows: Int, columns: Int, numberOfSubways: Int, maxNumberOfExits: Int = 5, numberOfMice: Int): GameBoard {
+    fun generateGameBoard(
+        rows: Int,
+        columns: Int,
+        numberOfSubways: Int,
+        maxNumberOfExits: Int = 5,
+        numberOfMice: Int
+    ): GameBoard {
         val gameBoard = GameBoard(rows = rows, columns = columns)
-        for (i in 0 until  numberOfSubways) {
+        for (i in 0 until numberOfSubways) {
             val numberOfExits = (2..maxNumberOfExits).random()
             val subway = Subway()
             for (j in 0 until numberOfExits) {
@@ -28,6 +34,7 @@ class GameBoardGenerator {
         }
         gameBoard.selectWinningSubway()
         placeMiceOnGameBoard(gameBoard, numberOfMice)
+        placeCatsRandomlyOnGameBoard(gameBoard, 4)
         gameBoard.generateGrid()
         return gameBoard
     }
@@ -35,9 +42,31 @@ class GameBoardGenerator {
     private fun placeMiceOnGameBoard(gameBoard: GameBoard, numberOfMice: Int) {
         val exitPositions = gameBoard.getExitPositions()
         for (i in 0 until numberOfMice) {
-            val mouse = Mouse(position = exitPositions.random(), inTube = true)
+            val mouse = Mouse(
+                position = exitPositions.random().copy(),
+                inTube = true,
+                moveAlgorithm = MouseAlgorithms::moveDirectlyTowardsClosestWinningExit
+            )
             gameBoard.mice.add(mouse)
         }
         gameBoard.generateGrid()
+    }
+
+    private fun placeCatsRandomlyOnGameBoard(gameBoard: GameBoard, numberOfCats: Int) {
+        for (i in 0 until numberOfCats) {
+            while (true) {
+                val cat = Player(
+                    position = Position(
+                        x = (0 until gameBoard.rows).random(),
+                        y = (0 until gameBoard.columns).random(),
+                    ),
+                    color = "#"
+                )
+                if (gameBoard.isFieldEmpty(cat.position)) {
+                    gameBoard.cats.add(cat)
+                    break
+                }
+            }
+        }
     }
 }

@@ -2,7 +2,6 @@ package at.ac.tuwien.foop.routes
 
 import at.ac.tuwien.foop.common.GlobalMessage
 import at.ac.tuwien.foop.common.util.GameBoardGenerator
-import at.ac.tuwien.foop.common.util.MouseAlgorithms
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
@@ -18,7 +17,7 @@ fun Application.socketEndpoint() {
             while (true) {
                 delay(500)
                 for (mouse in gameBoard.mice) {
-                    mouse.move(moveAlgorithm = MouseAlgorithms::moveRandom, gameBoard)
+                    mouse.move(gameBoard)
                 }
                 gameBoard.generateGrid()
 

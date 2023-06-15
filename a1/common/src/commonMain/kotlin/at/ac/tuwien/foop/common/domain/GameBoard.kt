@@ -13,9 +13,10 @@ data class GameBoard(
      * The subway which are positioned on the map
      * */
     @SerialName("subways")
-    private val subways: MutableSet<Subway> = mutableSetOf(),
+    val subways: MutableSet<Subway> = mutableSetOf(),
     @SerialName("mice")
     val mice: MutableSet<Mouse> = mutableSetOf(),
+    val cats: MutableSet<Player> = mutableSetOf(),
     val rows: Int,
     val columns: Int,
     var winningSubway: Subway? = null,
@@ -47,6 +48,11 @@ data class GameBoard(
                 return false
             }
         }
+        for (c in cats) {
+            if (c.position == position) {
+                return false
+            }
+        }
         return true
     }
 
@@ -59,6 +65,15 @@ data class GameBoard(
             for (e in s.exits) {
                 grid!![e.position.x][e.position.y] = e
             }
+        }
+        for (c in cats) {
+            grid!![c.position.x][c.position.y] = c
+        }
+    }
+
+    fun moveMice() {
+        for (mouse in mice) {
+            mouse.move(this)
         }
     }
 
@@ -75,15 +90,58 @@ data class GameBoard(
             for (y in 0 until columns) {
                 val exit = exits.firstOrNull { pair -> pair.first == Position(x, y) }
                 val mouse = mice.filter { pair -> pair.first == Position(x, y) }
-                if (exit != null) {
-                    if (mouse.isNotEmpty())
-                        print(mouse.size.toString() + "|")
-                    else
-                        print(exit.second + "|")
-                } else
-                    print(" |")
+                val cat = cats.firstOrNull { c -> c.position == Position(x, y) }
+                if (cat != null)
+                    print("#|")
+                else {
+                    if (exit != null) {
+                        if (mouse.isNotEmpty())
+                            print(mouse.size.toString() + "|")
+                        else
+                            print(exit.second + "|")
+                    } else if (mouse.isNotEmpty()) {
+                        print("M|")
+                    } else
+                        print(" |")
+                }
             }
             print("\n")
+        }
+    }
+
+    fun printGrid() {
+        generateGrid()
+        val printGrid = grid!!.clone().map { row -> row.map { it.toChar() }.toMutableList() }.toMutableList()
+        val catHitbox = mutableSetOf<Pair<Int, Int>>()
+        printGrid.forEachIndexed { x, row ->
+            row.forEachIndexed { y, field ->
+                if (field == '#') {
+                    catHitbox.add(Pair(x - 1, y))
+                    catHitbox.add(Pair(x - 1, y + 1))
+                    catHitbox.add(Pair(x - 1, y - 1))
+                    catHitbox.add(Pair(x, y + 1))
+                    catHitbox.add(Pair(x, y - 1))
+                    catHitbox.add(Pair(x + 1, y))
+                    catHitbox.add(Pair(x + 1, y + 1))
+                    catHitbox.add(Pair(x + 1, y - 1))
+                }
+            }
+        }
+        catHitbox.forEach { (x, y) ->
+            if (x >= 0 && x < rows && y >= 0 && y < columns) {
+                if (printGrid[x][y] == ' ')
+                    printGrid[x][y] = '-'
+            }
+        }
+        var myArray = Array(rows) { ' ' }
+        myArray[2] = 'a'
+        //print grid
+        printGrid.forEach { row ->
+            print("|")
+            row.forEach { field ->
+                print("${field}|")
+            }
+            println()
         }
     }
 
@@ -107,5 +165,9 @@ data class GameBoard(
             }
         }
         return exits
+    }
+
+    fun isWinningState(): Boolean {
+        return mice.all { m -> winningSubway!!.exits.any { e -> e.position == m.position } }
     }
 }
