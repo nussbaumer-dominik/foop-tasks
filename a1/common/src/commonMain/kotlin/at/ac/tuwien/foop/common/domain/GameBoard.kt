@@ -94,28 +94,6 @@ data class GameBoard(
         return grid!![position.x][position.y]
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as GameBoard
-
-        if (subways != other.subways) return false
-        if (rows != other.rows) return false
-        if (columns != other.columns) return false
-        if (winningSubway != other.winningSubway) return false
-        return grid.contentDeepEquals(other.grid)
-    }
-
-    override fun hashCode(): Int {
-        var result = subways.hashCode()
-        result = 31 * result + rows
-        result = 31 * result + columns
-        result = 31 * result + winningSubway.hashCode()
-        result = 31 * result + grid.contentDeepHashCode()
-        return result
-    }
-
     fun selectWinningSubway() {
         val random = (0 until subways.size).random()
         winningSubway = subways.elementAt(random)
