@@ -13,4 +13,6 @@ data class Exit(
      * */
     @SerialName("position")
     val position: Position,
-)
+): Field {
+
+}

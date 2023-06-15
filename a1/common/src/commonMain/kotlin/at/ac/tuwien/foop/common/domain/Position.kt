@@ -9,7 +9,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Position(
     @SerialName("x")
-    val x: Int,
+    var x: Int,
     @SerialName("y")
-    val y: Int,
-)
+    var y: Int,
+) {
+    fun getNewPosition(direction: Direction): Position {
+        return when (direction) {
+            Direction.UP -> Position(x, y - 1)
+            Direction.DOWN -> Position(x, y + 1)
+            Direction.LEFT -> Position(x - 1, y)
+            Direction.RIGHT -> Position(x + 1, y)
+        }
+    }
+}
