@@ -13,6 +13,7 @@ import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.useResource
 import androidx.compose.ui.unit.dp
 import at.ac.tuwien.foop.common.domain.*
+import at.ac.tuwien.foop.common.domain.Direction
 import components.primitives.CatView
 import components.primitives.MouseView
 import components.primitives.SubwayView
