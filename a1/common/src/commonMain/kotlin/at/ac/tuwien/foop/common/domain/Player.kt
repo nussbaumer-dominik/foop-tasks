@@ -23,4 +23,4 @@ data class Player(
      * */
     @SerialName("position")
     val position: Position,
-)
+): Field

@@ -1,12 +1,9 @@
 package at.ac.tuwien.foop.common.util
 
-import at.ac.tuwien.foop.common.domain.Exit
-import at.ac.tuwien.foop.common.domain.GameBoard
-import at.ac.tuwien.foop.common.domain.Position
-import at.ac.tuwien.foop.common.domain.Subway
+import at.ac.tuwien.foop.common.domain.*
 
 class GameBoardGenerator {
-    fun generateGameBoard(rows: Int, columns: Int, numberOfSubways: Int, maxNumberOfExits: Int = 5): GameBoard {
+    fun generateGameBoard(rows: Int, columns: Int, numberOfSubways: Int, maxNumberOfExits: Int = 5, numberOfMice: Int): GameBoard {
         val gameBoard = GameBoard(rows = rows, columns = columns)
         for (i in 0 until  numberOfSubways) {
             val numberOfExits = (2..maxNumberOfExits).random()
@@ -20,7 +17,7 @@ class GameBoardGenerator {
                             y = (0 until columns).random(),
                         ),
                     )
-                    if (gameBoard.isTileEmpty(exit.position)) {
+                    if (gameBoard.isFieldEmpty(exit.position)) {
                         if (subway.addExit(exit)) {
                             break
                         }
@@ -29,7 +26,18 @@ class GameBoardGenerator {
             }
             gameBoard.addSubway(subway)
         }
-
+        gameBoard.selectWinningSubway()
+        placeMiceOnGameBoard(gameBoard, numberOfMice)
+        gameBoard.generateGrid()
         return gameBoard
+    }
+
+    private fun placeMiceOnGameBoard(gameBoard: GameBoard, numberOfMice: Int) {
+        val exitPositions = gameBoard.getExitPositions()
+        for (i in 0 until numberOfMice) {
+            val mouse = Mouse(position = exitPositions.random(), inTube = true)
+            gameBoard.mice.add(mouse)
+        }
+        gameBoard.generateGrid()
     }
 }

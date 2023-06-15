@@ -9,10 +9,9 @@ import at.ac.tuwien.foop.routes.socketEndpoint
 
 fun main() {
     //generates a game board and prints it
-    val gameBoard = GameBoardGenerator().generateGameBoard(20, 20, 10, 4)
+    val gameBoard = GameBoardGenerator().generateGameBoard(10, 20, 10, 4, 10)
     gameBoard.print()
     println(gameBoard)
-
     embeddedServer(
         factory = Netty,
         port = 8080,
