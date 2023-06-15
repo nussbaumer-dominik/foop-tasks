@@ -12,8 +12,12 @@ import androidx.compose.ui.input.key.*
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.useResource
 import androidx.compose.ui.unit.dp
-import at.ac.tuwien.foop.common.domain.*
-import at.ac.tuwien.foop.common.domain.Direction
+import at.ac.tuwien.foop.common.domain.Player
+import at.ac.tuwien.foop.common.domain.Mouse
+import at.ac.tuwien.foop.common.domain.Position
+import at.ac.tuwien.foop.common.domain.Subway
+import at.ac.tuwien.foop.common.domain.Exit
+import at.ac.tuwien.foop.common.domain.Direction as Direction
 import components.primitives.CatView
 import components.primitives.MouseView
 import components.primitives.SubwayView
@@ -35,8 +39,8 @@ fun BoardView(tileSize: Int = 32, rows: Int, columns: Int, onKeyEvent: (KeyEvent
         var selectedImageOffset by remember {
             mutableStateOf(
                 Position(
-                    (rows * tileSize) / 2,
-                    (columns * tileSize) / 2
+                    rows / 2,
+                    columns / 2
                 )
             )
         }
