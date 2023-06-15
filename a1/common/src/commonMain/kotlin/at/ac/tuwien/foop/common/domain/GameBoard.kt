@@ -55,7 +55,7 @@ data class GameBoard(
         for (x in 0 until rows) {
             print("|")
             for (y in 0 until columns) {
-                val res = exits.filter { pair -> pair.first.position == Position(x, y) }.firstOrNull()
+                val res = exits.firstOrNull { pair -> pair.first.position == Position(x, y) }
                 if (res != null) {
                     print(res.second + "|")
                 } else
