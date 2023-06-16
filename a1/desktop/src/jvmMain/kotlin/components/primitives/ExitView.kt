@@ -24,7 +24,7 @@ fun ExitView(exit: Exit) {
         drawCircle(
             color = Color.Black,
             radius = (radius - strokeWidth / 2f),
-            center = Offset((exit.position.x * 32f) + radius, (exit.position.y * 32f) + radius),
+            center = center,
             style = Stroke(width = strokeWidth.toFloat())
         )
     }

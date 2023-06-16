@@ -24,12 +24,12 @@ fun onKeyEvent(e: KeyEvent) {
 
 fun main() = application {
     var gameClient: GameClient
-    var gameState by mutableStateOf(GameBoard(mutableSetOf(), mutableSetOf(), 32, 32))
-    var messages by remember { mutableStateOf(emptyList<String>()) }
-    val tileSize = 32
     val rows = 30
     val columns = 30
-    val windowState = rememberWindowState(size = DpSize(800.dp, 800.dp))
+    var gameState by mutableStateOf(GameBoard(mutableSetOf(), mutableSetOf(), rows, columns))
+    var messages by remember { mutableStateOf(emptyList<String>()) }
+    val tileSize = 32
+    val windowState = rememberWindowState(size = DpSize(960.dp, 960.dp))
 
     Window(
         onCloseRequest = ::exitApplication,
@@ -39,14 +39,14 @@ fun main() = application {
         App(messages, tileSize, rows, columns)
     }
 
-    windowState.size = windowState.size.copy(
+    /*windowState.size = windowState.size.copy(
         width = (rows * tileSize - 16).dp,
         height = (columns * tileSize + 7).dp
-    )
+    )*/
     LaunchedEffect(true) {
         windowState.size = windowState.size.copy(
-            width = (rows * tileSize - 16).dp,
-            height = (columns * tileSize + 7).dp
+            width = (columns * tileSize).dp,
+            height = (rows * tileSize + 37).dp
         )
 
         /*gameClient = GameClient("127.0.0.1", 8080) {
