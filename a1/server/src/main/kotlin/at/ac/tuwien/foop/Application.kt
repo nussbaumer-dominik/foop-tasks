@@ -7,7 +7,7 @@ import io.ktor.server.application.*
 
 fun main() {
     //generates a game board and prints it
-    val gameBoard = GameBoardGenerator().generateGameBoard(10, 20, 2, 2, 10)
+    val gameBoard = GameBoardGenerator().generateGameBoard(10, 40, 4, 2, 10)
     gameBoard.generateGrid()
     println(gameBoard)
     println("Winning Subway: " + gameBoard.winningSubway)
@@ -17,7 +17,7 @@ fun main() {
         gameBoard.moveMice()
         gameBoard.printGrid()
         println("---------------------------------------------------------")
-        Thread.sleep(500)
+        Thread.sleep(1000)
     }
     println("Mice won!")
     /*embeddedServer(

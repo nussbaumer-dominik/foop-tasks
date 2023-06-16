@@ -1,6 +1,8 @@
 package at.ac.tuwien.foop.common.util
 
 import at.ac.tuwien.foop.common.domain.*
+import at.ac.tuwien.foop.common.util.MouseAlgorithms
+
 
 class GameBoardGenerator {
     fun generateGameBoard(
@@ -22,6 +24,7 @@ class GameBoardGenerator {
                             x = (0 until rows).random(),
                             y = (0 until columns).random(),
                         ),
+                        subwayId = subway.id
                     )
                     if (gameBoard.isFieldEmpty(exit.position)) {
                         if (subway.addExit(exit)) {
@@ -40,12 +43,13 @@ class GameBoardGenerator {
     }
 
     private fun placeMiceOnGameBoard(gameBoard: GameBoard, numberOfMice: Int) {
-        val exitPositions = gameBoard.getExitPositions()
+        val subwayExitPairs = gameBoard.getSubwayExitPairs()
         for (i in 0 until numberOfMice) {
+            val subwayExitPair = subwayExitPairs.random()
             val mouse = Mouse(
-                position = exitPositions.random().copy(),
-                inTube = true,
-                moveAlgorithm = MouseAlgorithms::moveDirectlyTowardsClosestWinningExit
+                position = subwayExitPair.second.position.copy(),
+                subway = subwayExitPair.first,
+                moveAlgorithm = MouseAlgorithms::moveOptimal
             )
             gameBoard.mice.add(mouse)
         }

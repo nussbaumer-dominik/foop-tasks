@@ -12,8 +12,6 @@ fun Application.socketEndpoint() {
         webSocket("/ws") {
             //generates a game board and prints it
             val gameBoard = GameBoardGenerator().generateGameBoard(20, 20, 10, 4, 10)
-            gameBoard.print()
-            println(gameBoard)
             while (true) {
                 delay(500)
                 for (mouse in gameBoard.mice) {

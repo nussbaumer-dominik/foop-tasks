@@ -133,7 +133,7 @@ data class GameBoard(
                     printGrid[x][y] = '-'
             }
         }
-        var myArray = Array(rows) { ' ' }
+        val myArray = Array(rows) { ' ' }
         myArray[2] = 'a'
         //print grid
         printGrid.forEach { row ->
@@ -157,17 +157,11 @@ data class GameBoard(
         winningSubway = subways.elementAt(random)
     }
 
-    fun getExitPositions(): Set<Position> {
-        val exits = mutableSetOf<Position>()
-        for (s in subways) {
-            for (e in s.exits) {
-                exits.add(e.position)
-            }
-        }
-        return exits
-    }
-
     fun isWinningState(): Boolean {
         return mice.all { m -> winningSubway!!.exits.any { e -> e.position == m.position } }
+    }
+
+    fun getSubwayExitPairs(): List<Pair<Subway, Exit>> {
+        return subways.flatMap { s -> s.exits.map { e -> Pair(s, e) } }
     }
 }
