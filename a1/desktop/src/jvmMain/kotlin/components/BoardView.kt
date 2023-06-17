@@ -1,5 +1,6 @@
 package components
 
+import Constants
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
@@ -12,25 +13,22 @@ import androidx.compose.ui.input.key.*
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.useResource
 import androidx.compose.ui.unit.dp
-import at.ac.tuwien.foop.common.domain.Player
-import at.ac.tuwien.foop.common.domain.Mouse
-import at.ac.tuwien.foop.common.domain.Position
-import at.ac.tuwien.foop.common.domain.Subway
-import at.ac.tuwien.foop.common.domain.Exit
-import at.ac.tuwien.foop.common.domain.Direction as Direction
+import at.ac.tuwien.foop.common.domain.*
 import components.primitives.CatView
 import components.primitives.MouseView
 import components.primitives.SubwayView
 import components.primitives.TileView
 
 @Composable
-fun BoardView(tileSize: Int = 32, rows: Int, columns: Int, onKeyEvent: (KeyEvent) -> Unit) {
+fun BoardView(gameBoard: GameBoard, onKeyEvent: (KeyEvent) -> Unit) {
     val requester = remember { FocusRequester() }
+    val rows = gameBoard.rows
+    val columns = gameBoard.columns
     Column {
         for (row in 0 until rows) {
             Row {
                 for (column in 0 until columns) {
-                    TileView(x = column, y = row, tileSize = tileSize)
+                    TileView(x = column, y = row, tileSize = Constants.TILE_SIZE)
                 }
             }
         }
@@ -45,14 +43,14 @@ fun BoardView(tileSize: Int = 32, rows: Int, columns: Int, onKeyEvent: (KeyEvent
             )
         }
         CatView(Player(0, "Red", selectedImageOffset))
-        MouseView(Mouse("1", Position(tileSize / 2, tileSize / 2), false, emptyList()))
+        MouseView(Mouse("1", Position(Constants.TILE_SIZE / 2, Constants.TILE_SIZE / 2), false, emptyList()))
         Image(
             bitmap = useResource("images/cat-head.png") { loadImageBitmap(it) },
             contentDescription = "Cat",
             modifier = Modifier
                 .offset(
-                    selectedImageOffset.x.dp * tileSize,
-                    selectedImageOffset.y.dp * tileSize,
+                    selectedImageOffset.x.dp * Constants.TILE_SIZE,
+                    selectedImageOffset.y.dp * Constants.TILE_SIZE,
                 )
                 .onKeyEvent {
                     selectedImageOffset = handleKeyEvent(it, selectedImageOffset)

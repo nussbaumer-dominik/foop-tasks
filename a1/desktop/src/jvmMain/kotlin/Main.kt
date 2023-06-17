@@ -11,10 +11,10 @@ import components.BoardView
 import components.GameClient
 
 @Composable
-fun App(messages: List<String>, tileSize: Int = 32, rows: Int, columns: Int) {
+fun App(messages: List<String>, gameBoard: GameBoard) {
     MaterialTheme {
         //WelcomeScreen(messages)
-        BoardView(tileSize = tileSize, rows = rows, columns = columns, ::onKeyEvent)
+        BoardView(gameBoard, ::onKeyEvent)
     }
 }
 
@@ -26,9 +26,8 @@ fun main() = application {
     var gameClient: GameClient
     val rows = 30
     val columns = 30
-    var gameState by mutableStateOf(GameBoard(mutableSetOf(), mutableSetOf(), rows, columns))
+    val gameBoard by mutableStateOf(GameBoard(mutableSetOf(), mutableSetOf(), rows, columns))
     var messages by remember { mutableStateOf(emptyList<String>()) }
-    val tileSize = 32
     val windowState = rememberWindowState(size = DpSize(960.dp, 960.dp))
 
     Window(
@@ -36,17 +35,13 @@ fun main() = application {
         resizable = true,
         state = windowState,
     ) {
-        App(messages, tileSize, rows, columns)
+        App(messages, gameBoard)
     }
 
-    /*windowState.size = windowState.size.copy(
-        width = (rows * tileSize - 16).dp,
-        height = (columns * tileSize + 7).dp
-    )*/
     LaunchedEffect(true) {
         windowState.size = windowState.size.copy(
-            width = (columns * tileSize).dp,
-            height = (rows * tileSize + 37).dp
+            width = (columns * Constants.TILE_SIZE).dp,
+            height = (rows * Constants.TILE_SIZE + 37).dp
         )
 
         /*gameClient = GameClient("127.0.0.1", 8080) {
