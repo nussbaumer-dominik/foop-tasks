@@ -1,4 +1,4 @@
-package at.ac.tuwien.foop.common.util
+package at.ac.tuwien.foop.util
 
 import at.ac.tuwien.foop.common.domain.*
 import at.ac.tuwien.foop.common.exceptions.IllegalPositionException
