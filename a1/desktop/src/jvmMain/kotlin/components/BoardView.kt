@@ -1,6 +1,5 @@
 package components
 
-import Constants
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import at.ac.tuwien.foop.common.domain.GameBoard
-import at.ac.tuwien.foop.common.domain.Player
-import at.ac.tuwien.foop.common.domain.Position
 import components.primitives.CatView
 import components.primitives.MouseView
 import components.primitives.SubwayView
@@ -21,19 +18,20 @@ fun BoardView(gameBoard: GameBoard) {
     val columns = gameBoard.columns
 
     Column {
+        println("inside grid column")
         for (row in 0 until rows) {
             Row {
+                println("inside grid row")
                 for (column in 0 until columns) {
-                    TileView(x = column, y = row, tileSize = Constants.TILE_SIZE)
+                    TileView(x = column, y = row)
                 }
             }
         }
     }
     Box(modifier = Modifier.fillMaxSize()) {
-        /*gameBoard.cats.forEach{
+        gameBoard.cats.forEach {
             CatView(it)
-        }*/
-        CatView(Player("a", "Red", Position(0, 0)))
+        }
         gameBoard.mice.forEach {
             MouseView(it)
         }

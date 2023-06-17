@@ -1,3 +1,4 @@
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -11,9 +12,8 @@ import components.BoardView
 import components.GameClient
 
 @Composable
-fun App(messages: List<String>, gameBoard: GameBoard) {
+fun App(gameBoard: GameBoard) {
     MaterialTheme {
-        //WelcomeScreen(messages)
         BoardView(gameBoard)
     }
 }
@@ -21,13 +21,8 @@ fun App(messages: List<String>, gameBoard: GameBoard) {
 fun main() = application {
     var composeWindow: ComposeWindow by mutableStateOf(ComposeWindow())
     var gameClient: GameClient
-    val rows = 10
-    val columns = 10
-    //val gameBoard by mutableStateOf(GameBoard(mutableSetOf(), mutableSetOf(), rows, columns))
-    var gameBoard by mutableStateOf(
-        GameBoard(rows = rows, columns = columns)
-    )
-    val messages by remember { mutableStateOf(emptyList<String>()) }
+    var gameBoard: GameBoard? by mutableStateOf(null)
+    var firstGameBoard = false
 
     Window(
         create = {
@@ -44,38 +39,27 @@ fun main() = application {
         },
         dispose = ComposeWindow::dispose,
     ) {
-        App(messages, gameBoard)
+        if (gameBoard != null)
+            App(gameBoard!!)
     }
 
     LaunchedEffect(true) {
-        composeWindow.setContentSize(columns * Constants.TILE_SIZE, rows * Constants.TILE_SIZE)
-
         gameClient = GameClient("127.0.0.1", 8080) {
+            /*if (gameBoard == null && !firstGameBoard) {
+                firstGameBoard = true
+                println(it.columns)
+                println(it.rows)
+                composeWindow.setContentSize(
+                    it.columns * Constants.TILE_SIZE,
+                    it.rows * Constants.TILE_SIZE
+                )
+            }*/
             gameBoard = it
-            println(it)
         }
 
-        while (true) {
-            gameClient.receive()
-        }
+        gameClient.receive()
+
         gameClient.dispose()
-        /*val client = HttpClient {
-            install(WebSockets) {
-                contentConverter = KotlinxWebsocketSerializationConverter(Json)
-            }
-        }
-        client.webSocket(
-            method = HttpMethod.Get,
-            host = "127.0.0.1",
-            port = 8080,
-            path = "/ws"
-        ) {
-            while (true) {
-                val message = incoming.receive() as? Frame.Text ?: continue
-                messages = messages + message.readText()
-            }
-        }
-        client.close()*/
     }
 }
 

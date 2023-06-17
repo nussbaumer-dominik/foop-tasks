@@ -47,8 +47,7 @@ class GameClient(
             path = "/ws"
         ) {
             while (true) {
-                val incomingMessage = receiveDeserialized<AoopMessage>()
-                when (incomingMessage) {
+                when (val incomingMessage = receiveDeserialized<AoopMessage>()) {
                     is GlobalMessage.MapUpdate -> {
                         println(incomingMessage)
                         onGameStateUpdate(incomingMessage.map)
