@@ -1,17 +1,27 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import at.ac.tuwien.foop.common.PrivateMessage
 import at.ac.tuwien.foop.common.domain.*
+import at.ac.tuwien.foop.common.domain.Direction
 import components.BoardView
 import components.GameClient
 import kotlinx.coroutines.GlobalScope
@@ -46,9 +56,23 @@ fun AppPreview() {
 }
 
 @Composable
-fun App(gameBoard: GameBoard) {
+fun App(gameBoard: GameBoard?) {
     MaterialTheme {
-        BoardView(gameBoard)
+        Column {
+            Row(
+                Modifier
+                    .background(Color.LightGray)
+                    .size(height = 30.dp, width = Dp.Unspecified)
+            ) {
+                Text("TODO: add debugging options or score here", Modifier.weight(1f).align(Alignment.CenterVertically))
+            }
+            Box(Modifier.fillMaxSize()) {
+                if (gameBoard != null)
+                    BoardView(gameBoard)
+                else
+                    CircularProgressIndicator(Modifier.size(50.dp))
+            }
+        }
     }
 }
 
@@ -79,9 +103,7 @@ fun main() = application {
         },
         dispose = ComposeWindow::dispose,
     ) {
-        if (gameBoard != null)
-            App(gameBoard!!)
-        else CircularProgressIndicator()
+        App(gameBoard)
     }
 
     LaunchedEffect(true) {
@@ -94,7 +116,7 @@ fun main() = application {
                     firstGameBoard = true
                     composeWindow.setContentSize(
                         it.columns * Constants.TILE_SIZE,
-                        it.rows * Constants.TILE_SIZE
+                        it.rows * Constants.TILE_SIZE + 30
                     )
                 }
             },

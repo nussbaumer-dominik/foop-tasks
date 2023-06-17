@@ -20,6 +20,7 @@ fun CatView(cat: Player) {
     } else {
         useResource("images/cat-head@64.png") { loadImageBitmap(it) }
     }
+
     Image(
         bitmap = image,
         contentDescription = "Cat",

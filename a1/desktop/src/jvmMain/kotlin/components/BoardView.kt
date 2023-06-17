@@ -14,13 +14,10 @@ import components.primitives.TileView
 
 @Composable
 fun BoardView(gameBoard: GameBoard) {
-    val rows = gameBoard.rows
-    val columns = gameBoard.columns
-
     Column {
-        for (row in 0 until rows) {
+        for (row in 0 until gameBoard.rows) {
             Row {
-                for (column in 0 until columns) {
+                for (column in 0 until gameBoard.columns) {
                     TileView(x = column, y = row)
                 }
             }

@@ -39,28 +39,32 @@ class GameClient(
     }
 
     suspend fun receive() {
-        client.webSocket(
-            method = HttpMethod.Get,
-            host = host,
-            port = port,
-            path = "/ws"
-        ) {
-            while (true) {
-                when (val incomingMessage = receiveDeserialized<AoopMessage>()) {
-                    is GlobalMessage.MapUpdate -> {
-                        println(incomingMessage)
-                        onMapUpdate(incomingMessage.map)
-                    }
+        try {
+            client.webSocket(
+                method = HttpMethod.Get,
+                host = host,
+                port = port,
+                path = "/ws"
+            ) {
+                while (true) {
+                    when (val incomingMessage = receiveDeserialized<AoopMessage>()) {
+                        is GlobalMessage.MapUpdate -> {
+                            println(incomingMessage)
+                            onMapUpdate(incomingMessage.map)
+                        }
 
-                    is GlobalMessage.StateUpdate -> {
-                        println(incomingMessage)
-                        onStateUpdate(incomingMessage)
-                    }
+                        is GlobalMessage.StateUpdate -> {
+                            println(incomingMessage)
+                            onStateUpdate(incomingMessage)
+                        }
 
-                    is PrivateMessage.SetupInfo -> TODO()
-                    else -> println("Something else")
+                        is PrivateMessage.SetupInfo -> TODO()
+                        else -> println("Something else")
+                    }
                 }
             }
+        } catch (e: Exception) {
+            println("Exception: $e")
         }
     }
 

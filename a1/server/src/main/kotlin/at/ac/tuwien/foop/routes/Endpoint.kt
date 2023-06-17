@@ -19,6 +19,7 @@ fun Application.socketEndpoint() {
             //generates a game board and prints it
             val gameBoard = GameBoardGenerator.generateGameBoard(20, 20, 10, 4, 10)
 
+            // Send initial map
             sendSerialized(
                 GlobalMessage.MapUpdate(map = gameBoard) as AoopMessage,
             )
@@ -30,9 +31,9 @@ fun Application.socketEndpoint() {
                     for (frame in incoming) {
                         frame as? Frame.Text ?: continue
                         val text = frame.readText()
-                        println("Received: $text")
                         val moveCommand = Json.decodeFromString(PrivateMessage.MoveCommand.serializer(), text)
                         println(moveCommand)
+                        // TODO: store move command and process it
                     }
                 }
 
