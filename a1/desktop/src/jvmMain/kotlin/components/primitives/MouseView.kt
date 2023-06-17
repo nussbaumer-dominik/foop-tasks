@@ -11,7 +11,7 @@ import at.ac.tuwien.foop.common.domain.Mouse
 
 @Composable
 fun MouseView(mouse: Mouse) {
-    if (mouse.inTube) return
+    if (mouse.subway != null) return
     Image(
         bitmap = useResource("images/mouse.png") { loadImageBitmap(it) },
         contentDescription = "Mouse",

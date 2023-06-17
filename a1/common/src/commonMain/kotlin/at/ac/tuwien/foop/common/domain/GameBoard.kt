@@ -164,4 +164,14 @@ data class GameBoard(
     fun getSubwayExitPairs(): List<Pair<Subway, Exit>> {
         return subways.flatMap { s -> s.exits.map { e -> Pair(s, e) } }
     }
+
+    fun getPossiblePositions(position: Position): List<Pair<Position, Int>> {
+        val field = getFieldAtPosition(position)
+        //TODO: implement
+        if (field is Exit) {
+
+        }
+
+        return emptyList()
+    }
 }

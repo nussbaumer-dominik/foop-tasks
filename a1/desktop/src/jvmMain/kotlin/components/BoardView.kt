@@ -33,7 +33,7 @@ fun BoardView(gameBoard: GameBoard) {
         /*gameBoard.cats.forEach{
             CatView(it)
         }*/
-        CatView(Player(0, "Red", Position(0, 0)))
+        CatView(Player("a", "Red", Position(0, 0)))
         gameBoard.mice.forEach {
             MouseView(it)
         }
