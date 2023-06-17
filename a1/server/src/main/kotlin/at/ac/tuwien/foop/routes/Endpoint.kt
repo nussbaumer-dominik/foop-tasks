@@ -6,6 +6,7 @@ import at.ac.tuwien.foop.common.util.MouseAlgorithms
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
+import io.ktor.websocket.*
 import kotlinx.coroutines.delay
 
 fun Application.socketEndpoint() {

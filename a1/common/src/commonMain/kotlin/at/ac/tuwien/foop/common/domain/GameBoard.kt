@@ -13,7 +13,7 @@ data class GameBoard(
      * The subway which are positioned on the map
      * */
     @SerialName("subways")
-    private val subways: MutableSet<Subway> = mutableSetOf(),
+    val subways: MutableSet<Subway> = mutableSetOf(),
     @SerialName("mice")
     val mice: MutableSet<Mouse> = mutableSetOf(),
     val rows: Int,
