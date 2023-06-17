@@ -24,7 +24,7 @@ fun main() = application {
     val rows = 10
     val columns = 10
     //val gameBoard by mutableStateOf(GameBoard(mutableSetOf(), mutableSetOf(), rows, columns))
-    val gameBoard by mutableStateOf(
+    var gameBoard by mutableStateOf(
         GameBoard(rows = rows, columns = columns)
     )
     val messages by remember { mutableStateOf(emptyList<String>()) }
@@ -50,14 +50,15 @@ fun main() = application {
     LaunchedEffect(true) {
         composeWindow.setContentSize(columns * Constants.TILE_SIZE, rows * Constants.TILE_SIZE)
 
-        /*gameClient = GameClient("127.0.0.1", 8080) {
-            gameState = it
+        gameClient = GameClient("127.0.0.1", 8080) {
+            gameBoard = it
+            println(it)
         }
 
         while (true) {
             gameClient.receive()
         }
-        gameClient.dispose()*/
+        gameClient.dispose()
         /*val client = HttpClient {
             install(WebSockets) {
                 contentConverter = KotlinxWebsocketSerializationConverter(Json)

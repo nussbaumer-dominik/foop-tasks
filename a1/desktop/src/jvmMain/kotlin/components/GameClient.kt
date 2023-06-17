@@ -41,6 +41,7 @@ class GameClient(
             while (true) {
                 val message = incoming.receive() as? Frame.Text ?: continue
                 val gameState = Json.decodeFromString(GameBoard.serializer(), message.readText())
+                println(gameState)
                 onGameStateUpdate(gameState)
             }
         }

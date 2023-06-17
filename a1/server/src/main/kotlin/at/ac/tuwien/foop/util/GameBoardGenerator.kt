@@ -2,7 +2,6 @@ package at.ac.tuwien.foop.util
 
 import at.ac.tuwien.foop.common.domain.*
 
-
 class GameBoardGenerator {
     companion object {
         fun generateGameBoard(

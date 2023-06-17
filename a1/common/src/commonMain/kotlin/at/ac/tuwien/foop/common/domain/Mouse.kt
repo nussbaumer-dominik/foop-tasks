@@ -2,7 +2,7 @@ package at.ac.tuwien.foop.common.domain
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.UUID
+import java.util.*
 
 /**
  * A mouse which can move across the map
@@ -19,12 +19,9 @@ data class Mouse(
      * */
     @SerialName("position")
     val position: Position,
-
     @SerialName("subway")
     var subway: Subway?,
-
     var moveAlgorithm: (Mouse, GameBoard) -> Position,
-
     var catsPositions: List<Position> = mutableListOf(),
     var targetPosition: Position? = null
 ) : Field {
@@ -32,11 +29,10 @@ data class Mouse(
         val newPosition = moveAlgorithm(this, gameBoard)
         val field = gameBoard.getFieldAtPosition(newPosition)
         if (field is Exit) {
-            subway = gameBoard.subways.first {it.id == field.subwayId}
+            subway = gameBoard.subways.first { it.id == field.subwayId }
         }
         position.x = newPosition.x
         position.y = newPosition.y
-
     }
 
     override fun toChar(): Char {
