@@ -7,7 +7,6 @@ import androidx.compose.ui.input.key.*
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import at.ac.tuwien.foop.common.domain.*
-import at.ac.tuwien.foop.common.domain.Direction
 import components.BoardView
 import components.GameClient
 
@@ -67,31 +66,8 @@ fun main() = application {
         },
         dispose = ComposeWindow::dispose,
     ) {
-        /*if (gameBoard != null)
-            App(gameBoard!!)*/
-        App(
-            GameBoard(
-                subways = mutableSetOf(
-                    Subway(
-                        "0",
-                        mutableSetOf(
-                            Exit(Position(0, 0), "0"),
-                            Exit(Position(10, 10), "1"),
-                        )
-                    )
-                ),
-                mice = mutableSetOf(
-                    Mouse("0", position = Position(1, 1), subway = null),
-                    Mouse("1", position = Position(11, 11), subway = null),
-                ),
-                cats = mutableSetOf(
-                    Player("0", color = "red", position = Position(2, 2)),
-                    Player("1", color = "blue", position = Position(12, 12)),
-                ),
-                rows = 20,
-                columns = 20
-            )
-        )
+        if (gameBoard != null)
+            App(gameBoard!!)
     }
 
     LaunchedEffect(true) {
