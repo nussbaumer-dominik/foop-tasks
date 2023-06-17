@@ -2,6 +2,7 @@ package at.ac.tuwien.foop.common.domain
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import java.util.*
 
 /**
@@ -21,9 +22,12 @@ data class Mouse(
     val position: Position,
     @SerialName("subway")
     var subway: Subway?,
-    var moveAlgorithm: (Mouse, GameBoard) -> Position,
+    @Transient
+    var moveAlgorithm: (Mouse, GameBoard) -> Position = { _, _ -> Position(0, 0) },
+    @Transient
     var catsPositions: List<Position> = mutableListOf(),
-    var targetPosition: Position? = null
+    @Transient
+    var targetPosition: Position? = null,
 ) : Field {
     fun move(gameBoard: GameBoard) {
         val newPosition = moveAlgorithm(this, gameBoard)

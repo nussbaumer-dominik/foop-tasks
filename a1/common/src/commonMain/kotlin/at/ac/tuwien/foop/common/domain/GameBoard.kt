@@ -3,6 +3,7 @@ package at.ac.tuwien.foop.common.domain
 import at.ac.tuwien.foop.common.exceptions.IllegalPositionException
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * The structure of the current map of the current game
@@ -16,10 +17,15 @@ data class GameBoard(
     val subways: MutableSet<Subway> = mutableSetOf(),
     @SerialName("mice")
     val mice: MutableSet<Mouse> = mutableSetOf(),
+    @SerialName("cats")
     val cats: MutableSet<Player> = mutableSetOf(),
-    val rows: Int,
-    val columns: Int,
+    @Transient
+    val rows: Int = 0,
+    @Transient
+    val columns: Int = 0,
+    @Transient
     var winningSubway: Subway? = null,
+    @Transient
     var grid: Array<Array<Field>>? = null
 ) {
     /**

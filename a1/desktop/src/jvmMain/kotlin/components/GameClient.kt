@@ -1,7 +1,11 @@
 package components
 
+import at.ac.tuwien.foop.common.AoopMessage
+import at.ac.tuwien.foop.common.GlobalMessage
+import at.ac.tuwien.foop.common.PrivateMessage
 import at.ac.tuwien.foop.common.domain.GameBoard
 import at.ac.tuwien.foop.common.domain.MoveCommand
+import at.ac.tuwien.foop.common.serializerConfig
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
@@ -16,7 +20,11 @@ class GameClient(
 ) {
     private val client = HttpClient {
         install(WebSockets) {
-            contentConverter = KotlinxWebsocketSerializationConverter(Json)
+            contentConverter = KotlinxWebsocketSerializationConverter(
+                Json {
+                    serializersModule = serializerConfig
+                }
+            )
         }
     }
 
@@ -39,10 +47,17 @@ class GameClient(
             path = "/ws"
         ) {
             while (true) {
-                val message = incoming.receive() as? Frame.Text ?: continue
-                val gameState = Json.decodeFromString(GameBoard.serializer(), message.readText())
-                println(gameState)
-                onGameStateUpdate(gameState)
+                val incomingMessage = receiveDeserialized<AoopMessage>()
+                when (incomingMessage) {
+                    is GlobalMessage.MapUpdate -> {
+                        println(incomingMessage)
+                        onGameStateUpdate(incomingMessage.map)
+                    }
+
+                    is GlobalMessage.StateUpdate -> TODO()
+                    is PrivateMessage.SetupInfo -> TODO()
+                    else -> println("Something else")
+                }
             }
         }
     }
