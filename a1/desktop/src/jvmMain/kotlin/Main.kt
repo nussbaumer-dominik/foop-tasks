@@ -21,11 +21,11 @@ fun App(messages: List<String>, gameBoard: GameBoard) {
 fun main() = application {
     var composeWindow: ComposeWindow by mutableStateOf(ComposeWindow())
     var gameClient: GameClient
-    val rows = 30
-    val columns = 30
+    val rows = 10
+    val columns = 10
     //val gameBoard by mutableStateOf(GameBoard(mutableSetOf(), mutableSetOf(), rows, columns))
     val gameBoard by mutableStateOf(
-        GameBoard(rows = 10, columns = 10)
+        GameBoard(rows = rows, columns = columns)
     )
     val messages by remember { mutableStateOf(emptyList<String>()) }
 
