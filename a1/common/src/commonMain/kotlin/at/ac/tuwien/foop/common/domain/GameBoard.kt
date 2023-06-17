@@ -174,4 +174,35 @@ data class GameBoard(
 
         return emptyList()
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as GameBoard
+
+        if (subways != other.subways) return false
+        if (mice != other.mice) return false
+        if (cats != other.cats) return false
+        if (rows != other.rows) return false
+        if (columns != other.columns) return false
+        if (winningSubway != other.winningSubway) return false
+        if (grid != null) {
+            if (other.grid == null) return false
+            if (!grid.contentDeepEquals(other.grid)) return false
+        } else if (other.grid != null) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = subways.hashCode()
+        result = 31 * result + mice.hashCode()
+        result = 31 * result + cats.hashCode()
+        result = 31 * result + rows
+        result = 31 * result + columns
+        result = 31 * result + (winningSubway?.hashCode() ?: 0)
+        result = 31 * result + (grid?.contentDeepHashCode() ?: 0)
+        return result
+    }
 }
