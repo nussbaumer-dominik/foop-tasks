@@ -20,19 +20,29 @@ data class Mouse(
     @SerialName("position")
     val position: Position,
 
-    @SerialName("inTube")
-    var inTube: Boolean,
+    @SerialName("subway")
+    var subway: Subway?,
 
-    var catsPositions: List<Position> = mutableListOf()
-): Field {
-    fun move(moveAlgorithm: (Mouse, GameBoard) -> Position, gameBoard: GameBoard) {
+    var moveAlgorithm: (Mouse, GameBoard) -> Position,
+
+    var catsPositions: List<Position> = mutableListOf(),
+    var targetPosition: Position? = null
+) : Field {
+    fun move(gameBoard: GameBoard) {
         val newPosition = moveAlgorithm(this, gameBoard)
-        if (gameBoard.isFieldEmpty(newPosition)) {
-            if (gameBoard.getFieldAtPosition(newPosition) is Exit) {
-                inTube = true
-            }
-            position.x = newPosition.x
-            position.y = newPosition.y
+        val field = gameBoard.getFieldAtPosition(newPosition)
+        if (field is Exit) {
+            subway = gameBoard.subways.first {it.id == field.subwayId}
         }
+        position.x = newPosition.x
+        position.y = newPosition.y
+
+    }
+
+    override fun toChar(): Char {
+        if (subway != null) {
+            return 'm'
+        }
+        return 'M'
     }
 }

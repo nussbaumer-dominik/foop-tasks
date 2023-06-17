@@ -7,7 +7,6 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import at.ac.tuwien.foop.common.domain.Direction
 import at.ac.tuwien.foop.common.domain.GameBoard
-import at.ac.tuwien.foop.common.util.GameBoardGenerator
 import components.BoardView
 import components.GameClient
 
@@ -26,14 +25,9 @@ fun main() = application {
     val columns = 30
     //val gameBoard by mutableStateOf(GameBoard(mutableSetOf(), mutableSetOf(), rows, columns))
     val gameBoard by mutableStateOf(
-        GameBoardGenerator().generateGameBoard(
-            rows,
-            columns,
-            numberOfSubways = 10,
-            numberOfMice = 50
-        )
+        GameBoard(rows = 10, columns = 10)
     )
-    var messages by remember { mutableStateOf(emptyList<String>()) }
+    val messages by remember { mutableStateOf(emptyList<String>()) }
 
     Window(
         create = {

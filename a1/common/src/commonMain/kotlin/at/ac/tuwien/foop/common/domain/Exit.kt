@@ -13,6 +13,21 @@ data class Exit(
      * */
     @SerialName("position")
     val position: Position,
-): Field {
 
+    val subwayId: String
+): Field {
+    fun getDistancesToOtherExits(gameBoard: GameBoard): List<Pair<Int, Exit>> {
+        val distances = mutableListOf<Pair<Int, Exit>>()
+        for (s in gameBoard.subways) {
+            for (e in s.exits) {
+                distances.add(Pair(position.distanceTo(e.position), e))
+            }
+        }
+        distances.sortBy { it.first }
+        return distances
+    }
+
+    override fun toChar(): Char {
+        return '0'
+    }
 }

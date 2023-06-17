@@ -2,6 +2,7 @@ package at.ac.tuwien.foop.common.domain
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 /**
  * A cat controlled by a player
@@ -12,7 +13,7 @@ data class Player(
      * The unique id of the play assigned when they join the game
      * */
     @SerialName("id")
-    val id: Long,
+    val id: String = UUID.randomUUID().toString(),
     /**
      * The unique color assigned to this play to distinguish it form others
      * */
@@ -23,4 +24,8 @@ data class Player(
      * */
     @SerialName("position")
     val position: Position,
-): Field
+): Field {
+    override fun toChar(): Char {
+        return '#'
+    }
+}
