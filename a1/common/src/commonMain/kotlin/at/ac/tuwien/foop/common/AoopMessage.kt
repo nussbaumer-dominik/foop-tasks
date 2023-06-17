@@ -29,10 +29,12 @@ sealed interface GlobalMessage : AoopMessage {
     @Serializable
     @SerialName("global_state_update")
     data class StateUpdate(
-        @SerialName("players")
+        /*@SerialName("players")
         val players: Set<Player>,
         @SerialName("mice")
-        val mice: Set<Mouse>,
+        val mice: Set<Mouse>,*/
+        @SerialName("map")
+        val map: GameBoard,
         @SerialName("state")
         val state: GameState,
     ) : GlobalMessage

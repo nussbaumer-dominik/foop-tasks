@@ -3,6 +3,7 @@ package at.ac.tuwien.foop.routes
 import at.ac.tuwien.foop.common.AoopMessage
 import at.ac.tuwien.foop.common.GlobalMessage
 import at.ac.tuwien.foop.common.PrivateMessage
+import at.ac.tuwien.foop.common.domain.GameState
 import at.ac.tuwien.foop.util.GameBoardGenerator
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
@@ -17,6 +18,10 @@ fun Application.socketEndpoint() {
         webSocket("/ws") {
             //generates a game board and prints it
             val gameBoard = GameBoardGenerator.generateGameBoard(20, 20, 10, 4, 10)
+
+            sendSerialized(
+                GlobalMessage.MapUpdate(map = gameBoard) as AoopMessage,
+            )
 
             // TODO: store playersession on first connection
             // TODO: send setup info to player on first connection
@@ -39,7 +44,7 @@ fun Application.socketEndpoint() {
                 gameBoard.generateGrid()
 
                 sendSerialized(
-                    GlobalMessage.MapUpdate(map = gameBoard) as AoopMessage,
+                    GlobalMessage.StateUpdate(map = gameBoard, state = GameState.RUNNING) as AoopMessage,
                 )
             }
         }

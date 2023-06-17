@@ -18,10 +18,8 @@ fun BoardView(gameBoard: GameBoard) {
     val columns = gameBoard.columns
 
     Column {
-        //println("inside grid column")
         for (row in 0 until rows) {
             Row {
-                //println("inside grid row")
                 for (column in 0 until columns) {
                     TileView(x = column, y = row)
                 }
