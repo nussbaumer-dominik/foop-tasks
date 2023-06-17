@@ -1,4 +1,4 @@
-import androidx.compose.foundation.layout.Box
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -6,10 +6,38 @@ import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import at.ac.tuwien.foop.common.domain.*
 import at.ac.tuwien.foop.common.domain.Direction
-import at.ac.tuwien.foop.common.domain.GameBoard
 import components.BoardView
 import components.GameClient
+
+@Preview
+@Composable
+fun AppPreview() {
+    App(
+        GameBoard(
+            subways = mutableSetOf(
+                Subway(
+                    "0",
+                    mutableSetOf(
+                        Exit(Position(0, 0), "0"),
+                        Exit(Position(10, 10), "1"),
+                    )
+                )
+            ),
+            mice = mutableSetOf(
+                Mouse("0", position = Position(1, 1), subway = null),
+                Mouse("1", position = Position(11, 11), subway = null),
+            ),
+            cats = mutableSetOf(
+                Player("0", color = "red", position = Position(2, 2)),
+                Player("1", color = "blue", position = Position(12, 12)),
+            ),
+            rows = 20,
+            columns = 20
+        )
+    )
+}
 
 @Composable
 fun App(gameBoard: GameBoard) {
@@ -39,13 +67,37 @@ fun main() = application {
         },
         dispose = ComposeWindow::dispose,
     ) {
-        if (gameBoard != null)
-            App(gameBoard!!)
+        /*if (gameBoard != null)
+            App(gameBoard!!)*/
+        App(
+            GameBoard(
+                subways = mutableSetOf(
+                    Subway(
+                        "0",
+                        mutableSetOf(
+                            Exit(Position(0, 0), "0"),
+                            Exit(Position(10, 10), "1"),
+                        )
+                    )
+                ),
+                mice = mutableSetOf(
+                    Mouse("0", position = Position(1, 1), subway = null),
+                    Mouse("1", position = Position(11, 11), subway = null),
+                ),
+                cats = mutableSetOf(
+                    Player("0", color = "red", position = Position(2, 2)),
+                    Player("1", color = "blue", position = Position(12, 12)),
+                ),
+                rows = 20,
+                columns = 20
+            )
+        )
     }
 
     LaunchedEffect(true) {
-        gameClient = GameClient("127.0.0.1", 8080) {
-            /*if (gameBoard == null && !firstGameBoard) {
+        /*gameClient = GameClient("127.0.0.1", 8080) {
+            // TODO: rework into its own callback
+            if (gameBoard == null && !firstGameBoard) {
                 firstGameBoard = true
                 println(it.columns)
                 println(it.rows)
@@ -53,13 +105,13 @@ fun main() = application {
                     it.columns * Constants.TILE_SIZE,
                     it.rows * Constants.TILE_SIZE
                 )
-            }*/
+            }
             gameBoard = it
         }
 
         gameClient.receive()
 
-        gameClient.dispose()
+        gameClient.dispose()*/
     }
 }
 

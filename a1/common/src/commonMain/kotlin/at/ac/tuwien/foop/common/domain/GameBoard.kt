@@ -19,9 +19,7 @@ data class GameBoard(
     val mice: MutableSet<Mouse> = mutableSetOf(),
     @SerialName("cats")
     val cats: MutableSet<Player> = mutableSetOf(),
-    @Transient
     val rows: Int = 0,
-    @Transient
     val columns: Int = 0,
     @Transient
     var winningSubway: Subway? = null,
