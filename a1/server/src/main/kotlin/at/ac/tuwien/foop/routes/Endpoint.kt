@@ -5,7 +5,6 @@ import at.ac.tuwien.foop.util.GameBoardGenerator
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
-import io.ktor.websocket.*
 import kotlinx.coroutines.delay
 
 fun Application.socketEndpoint() {
@@ -16,7 +15,7 @@ fun Application.socketEndpoint() {
             while (true) {
                 delay(500)
                 for (mouse in gameBoard.mice) {
-                    mouse.move(gameBoard)
+                    //TODO: move mice
                 }
                 gameBoard.generateGrid()
 

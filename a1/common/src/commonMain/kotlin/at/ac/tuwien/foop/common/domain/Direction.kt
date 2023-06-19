@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 enum class Direction {
-    UP, DOWN, LEFT, RIGHT
+    UP, DOWN, LEFT, RIGHT, ACCESS_SUBWAY, STAY
 }

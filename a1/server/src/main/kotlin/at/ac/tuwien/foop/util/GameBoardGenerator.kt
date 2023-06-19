@@ -46,10 +46,11 @@ class GameBoardGenerator {
             val subwayExitPairs = gameBoard.getSubwayExitPairs()
             for (i in 0 until numberOfMice) {
                 val subwayExitPair = subwayExitPairs.random()
+                val position = subwayExitPair.second.position.copy()
+                position.subwayId = subwayExitPair.first.id
                 val mouse = Mouse(
-                    position = subwayExitPair.second.position.copy(),
-                    subway = subwayExitPair.first,
-                    moveAlgorithm = MouseAlgorithms::moveOptimal
+                    position = position,
+                    moveAlgorithm = MouseAlgorithms::moveLikeJagger
                 )
                 gameBoard.mice.add(mouse)
             }
