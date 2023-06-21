@@ -4,7 +4,7 @@ import Constants
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
@@ -13,17 +13,8 @@ import androidx.compose.ui.unit.dp
 import at.ac.tuwien.foop.common.domain.Mouse
 
 @Composable
-fun MouseView(mouse: Mouse) {
-    println(mouse)
-    var oldPosition by remember {
-        mutableStateOf(mouse.position)
-    }
-    SideEffect {
-        oldPosition = mouse.position
-    }
-    println("oldPosition: $oldPosition")
-    println("newPosition: ${mouse.position}")
-    if (mouse.subway != null) return
+fun MouseView(mouse: Mouse, alwaysVisible: Boolean = false) {
+    if (mouse.subway != null && !alwaysVisible) return
     val density = LocalDensity.current.density
     val image = if (density <= 1) {
         useResource("images/mouse@32.png") { loadImageBitmap(it) }

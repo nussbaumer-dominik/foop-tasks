@@ -1,7 +1,10 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.Checkbox
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -19,8 +22,8 @@ import androidx.compose.ui.window.application
 import at.ac.tuwien.foop.common.PrivateMessage
 import at.ac.tuwien.foop.common.domain.*
 import at.ac.tuwien.foop.common.domain.Direction
-import components.DebuggingOptions
 import components.BoardView
+import components.DebuggingOptions
 import components.GameClient
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -64,30 +67,36 @@ fun App(gameBoard: GameBoard?) {
                 Modifier
                     .background(Color.LightGray)
                     .size(height = Constants.TOP_NAV_HEIGHT.dp, width = Dp.Unspecified)
+                    .fillMaxWidth()
             ) {
                 Row(modifier = Modifier.align(Alignment.CenterVertically)) {
                     Checkbox(
                         checked = debuggingOptions.showEmptyTiles,
-                        onCheckedChange = null
-                        /*onCheckedChange = (checked) {
+                        onCheckedChange = { checked ->
                             debuggingOptions = debuggingOptions.copy(showEmptyTiles = checked)
-                        }*/
+                        }
                     )
-                    Text("showEmptyTiles")
-                    Text(debuggingOptions.showEmptyTiles.toString() + "")
+                    Spacer(Modifier.width(2.dp))
+                    Text(modifier = Modifier.align(Alignment.CenterVertically), text = "showEmptyTiles")
+                }
+                Row(modifier = Modifier.align(Alignment.CenterVertically)) {
+                    Checkbox(
+                        checked = debuggingOptions.showMouseTrace,
+                        onCheckedChange = { checked ->
+                            debuggingOptions = debuggingOptions.copy(showMouseTrace = checked)
+                        }
+                    )
+                    Spacer(Modifier.width(5.dp))
+                    Text(modifier = Modifier.align(Alignment.CenterVertically), text = "showMouseTrace")
                 }
             }
             Box(Modifier.fillMaxSize()) {
                 if (gameBoard != null)
-                    BoardView(gameBoard)
+                    BoardView(gameBoard, debuggingOptions)
                 else
                     CircularProgressIndicator(Modifier.size(50.dp))
             }
         }
-    }
-
-    fun onCheckChange(checked: Boolean) {
-        debuggingOptions = debuggingOptions.copy(showEmptyTiles = checked)
     }
 }
 
@@ -117,7 +126,7 @@ fun main() = application {
         },
         dispose = ComposeWindow::dispose,
     ) {
-        //App(gameBoard)
+        App(gameBoard)
     }
 
     LaunchedEffect(true) {
@@ -134,7 +143,7 @@ fun main() = application {
                 gameBoard = it
             },
             onStateUpdate = {
-                //println("State update: $it")
+                println("State update: $it")
                 gameBoard = it.map
             }
         )

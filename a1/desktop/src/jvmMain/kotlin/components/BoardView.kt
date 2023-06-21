@@ -1,27 +1,24 @@
 package components
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import at.ac.tuwien.foop.common.domain.GameBoard
-import components.primitives.*
+import components.primitives.CatView
+import components.primitives.MouseView
+import components.primitives.SubwayView
+import components.primitives.Tiles
 
 @Composable
-fun BoardView(gameBoard: GameBoard) {
-    Tiles(gameBoard.rows, gameBoard.columns)
+fun BoardView(gameBoard: GameBoard, debuggingOptions: DebuggingOptions) {
+    Tiles(gameBoard.rows, gameBoard.columns, debuggingOptions.showEmptyTiles)
     Box(modifier = Modifier.fillMaxSize()) {
         gameBoard.cats.forEach {
             CatView(it)
         }
         gameBoard.mice.forEach {
-            MouseView(it)
+            MouseView(it, alwaysVisible = debuggingOptions.showMouseTrace)
         }
         gameBoard.subways.forEach {
             SubwayView(it)
