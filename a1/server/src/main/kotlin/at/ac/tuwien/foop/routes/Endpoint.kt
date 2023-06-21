@@ -17,9 +17,9 @@ import kotlinx.serialization.json.Json
 fun Application.socketEndpoint(game: Game) {
     routing {
         webSocket("/ws") {
-            val gameBoard = game.board!!
+            val gameBoard = game.board
             val player = Player(
-                color = "red", position = Position(game.board!!.columns / 2, game.board!!.rows / 2)
+                color = "red", position = Position(game.board.columns / 2, game.board.rows / 2)
             )
 
             // Send initial info
@@ -33,13 +33,15 @@ fun Application.socketEndpoint(game: Game) {
             }
 
             launch {
-                for (frame in incoming) {
-                    frame as? Frame.Text ?: continue
-                    val text = frame.readText()
-                    println("Received on server: $text")
-                    val moveCommand = Json.decodeFromString(PrivateMessage.MoveCommand.serializer(), text)
-                    println(moveCommand)
-                    // TODO: process command
+                while (true) {
+                    for (frame in incoming) {
+                        frame as? Frame.Text ?: continue
+                        val text = frame.readText()
+                        println("Received on server: $text")
+                        val moveCommand = Json.decodeFromString(PrivateMessage.MoveCommand.serializer(), text)
+                        println(moveCommand)
+                        game.addMove(playerId = player.id, direction = moveCommand.direction)
+                    }
                 }
             }
         }

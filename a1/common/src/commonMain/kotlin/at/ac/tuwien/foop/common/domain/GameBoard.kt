@@ -161,6 +161,7 @@ data class GameBoard(
         winningSubway = subways.elementAt(random)
     }
 
+    // TODO: Return MICE_WON or CATS_WON instead of boolean if mice have won
     fun isWinningState(): Boolean {
         return mice.all { m -> winningSubway!!.exits.any { e -> e.position == m.position } }
     }
