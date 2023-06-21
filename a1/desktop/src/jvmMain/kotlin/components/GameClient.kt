@@ -15,7 +15,8 @@ class GameClient(
     private val host: String,
     private val port: Int,
     private val onStateUpdate: (GlobalMessage.StateUpdate) -> Unit,
-    private val onMapUpdate: (GameBoard) -> Unit
+    private val onMapUpdate: (GameBoard) -> Unit,
+    private val onSetupInfo: (PrivateMessage.SetupInfo) -> Unit
 ) {
     private val client = HttpClient {
         install(WebSockets) {
@@ -47,20 +48,19 @@ class GameClient(
                 path = "/ws"
             ) {
                 while (true) {
-                    when (val incomingMessage = receiveDeserialized<AoopMessage>()) {
+                    val incomingMessage = receiveDeserialized<AoopMessage>()
+                    println(incomingMessage)
+                    when (incomingMessage) {
                         is GlobalMessage.MapUpdate -> {
-                            println(incomingMessage)
                             onMapUpdate(incomingMessage.map)
                         }
 
                         is GlobalMessage.StateUpdate -> {
-                            println(incomingMessage)
                             onStateUpdate(incomingMessage)
                         }
 
                         is PrivateMessage.SetupInfo -> {
-                            println(incomingMessage)
-                            TODO()
+                            onSetupInfo(incomingMessage)
                         }
 
                         else -> println("Something else")

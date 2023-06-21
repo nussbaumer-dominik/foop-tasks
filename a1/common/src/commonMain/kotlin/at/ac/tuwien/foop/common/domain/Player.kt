@@ -3,6 +3,7 @@ package at.ac.tuwien.foop.common.domain
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * A cat controlled by a player
@@ -24,7 +25,7 @@ data class Player(
      * */
     @SerialName("position")
     val position: Position,
-): Field {
+) : Field {
     override fun toChar(): Char {
         return '#'
     }

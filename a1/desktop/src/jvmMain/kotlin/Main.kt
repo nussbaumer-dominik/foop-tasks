@@ -69,7 +69,7 @@ fun App(gameBoard: GameBoard?) {
                     .size(height = Constants.TOP_NAV_HEIGHT.dp, width = Dp.Unspecified)
                     .fillMaxWidth()
             ) {
-                Row(modifier = Modifier.align(Alignment.CenterVertically)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
                         checked = debuggingOptions.showEmptyTiles,
                         onCheckedChange = { checked ->
@@ -79,7 +79,7 @@ fun App(gameBoard: GameBoard?) {
                     Spacer(Modifier.width(2.dp))
                     Text(modifier = Modifier.align(Alignment.CenterVertically), text = "showEmptyTiles")
                 }
-                Row(modifier = Modifier.align(Alignment.CenterVertically)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
                         checked = debuggingOptions.showMouseTrace,
                         onCheckedChange = { checked ->
@@ -94,7 +94,12 @@ fun App(gameBoard: GameBoard?) {
                 if (gameBoard != null)
                     BoardView(gameBoard, debuggingOptions)
                 else
-                    CircularProgressIndicator(Modifier.size(50.dp))
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                            .align(Alignment.Center)
+                    ) {
+                        CircularProgressIndicator(Modifier.size(50.dp))
+                    }
             }
         }
     }
@@ -104,6 +109,7 @@ fun main() = application {
     var composeWindow: ComposeWindow by mutableStateOf(ComposeWindow())
     var gameClient: GameClient? = null
     var gameBoard: GameBoard? by mutableStateOf(null)
+    var player: Player? by mutableStateOf(null)
 
     Window(
         create = {
@@ -117,7 +123,7 @@ fun main() = application {
         onKeyEvent = { keyEvent ->
             val direction = if (keyEvent.type != KeyEventType.KeyDown) null else keyEvent.key.toDirection()
             if (direction != null) {
-                val command = PrivateMessage.MoveCommand(direction)
+                val command = PrivateMessage.MoveCommand(player = player, direction = direction)
                 // TODO: solve without using GlobalScope
                 GlobalScope.launch { gameClient?.send(command) }
             }
@@ -145,7 +151,11 @@ fun main() = application {
             onStateUpdate = {
                 println("State update: $it")
                 gameBoard = it.map
-            }
+            },
+            onSetupInfo = {
+                println("Setup info: $it")
+                player = it.player
+            },
         )
 
         gameClient!!.receive()

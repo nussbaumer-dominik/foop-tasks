@@ -1,19 +1,16 @@
 package at.ac.tuwien.foop.util
 
+import at.ac.tuwien.foop.GameConfiguration
 import at.ac.tuwien.foop.common.domain.*
 
 class GameBoardGenerator {
     companion object {
-        fun generateGameBoard(
-            rows: Int,
-            columns: Int,
-            numberOfSubways: Int,
-            maxNumberOfExits: Int = 5,
-            numberOfMice: Int
-        ): GameBoard {
+        fun generateGameBoard(gameConfiguration: GameConfiguration): GameBoard {
+            val rows = gameConfiguration.rows
+            val columns = gameConfiguration.columns
             val gameBoard = GameBoard(rows = rows, columns = columns)
-            for (i in 0 until numberOfSubways) {
-                val numberOfExits = (2..maxNumberOfExits).random()
+            for (i in 0 until gameConfiguration.numberOfSubways) {
+                val numberOfExits = (2..gameConfiguration.maxNumberOfExits).random()
                 val subway = Subway()
                 for (j in 0 until numberOfExits) {
                     // generate exits as long as they are not on the same position
@@ -35,7 +32,7 @@ class GameBoardGenerator {
                 gameBoard.addSubway(subway)
             }
             gameBoard.selectWinningSubway()
-            placeMiceOnGameBoard(gameBoard, numberOfMice)
+            placeMiceOnGameBoard(gameBoard, gameConfiguration.numberOfMice)
             placeCatsRandomlyOnGameBoard(gameBoard, 4)
             gameBoard.generateGrid()
             return gameBoard
