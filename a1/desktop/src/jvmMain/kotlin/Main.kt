@@ -1,8 +1,7 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -64,7 +63,6 @@ fun App(gameBoard: GameBoard?) {
         Column {
             Row(
                 modifier = Modifier
-                    .background(Color.LightGray)
                     .size(height = Constants.TOP_NAV_HEIGHT.dp, width = Dp.Unspecified)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,

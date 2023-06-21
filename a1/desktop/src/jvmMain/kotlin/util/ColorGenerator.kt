@@ -6,8 +6,8 @@ import kotlin.math.abs
 class ColorGenerator {
     companion object {
         private val hRange = intArrayOf(0, 360)
-        private val sRange = intArrayOf(50, 75)
-        private val lRange = intArrayOf(25, 60)
+        private val sRange = intArrayOf(15, 100)
+        private val lRange = intArrayOf(10, 100)
 
         fun generateHSL(str: String): Color {
             val hash = getHashOfString(str)
