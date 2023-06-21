@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import at.ac.tuwien.foop.common.domain.Exit
 
 @Composable
-fun ExitView(exit: Exit) {
+fun ExitView(exit: Exit, color: Color = Color.Black) {
     val density = LocalDensity.current.density
     val radius = (Constants.TILE_SIZE / 2) * density
     val strokeWidth = 2 * density
@@ -28,7 +28,7 @@ fun ExitView(exit: Exit) {
             },
     ) {
         drawCircle(
-            color = Color.Black,
+            color = color,
             radius = (radius - strokeWidth / 2f),
             center = center,
             style = Stroke(width = strokeWidth)

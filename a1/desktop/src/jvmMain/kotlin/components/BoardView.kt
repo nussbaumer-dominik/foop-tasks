@@ -21,7 +21,7 @@ fun BoardView(gameBoard: GameBoard, debuggingOptions: DebuggingOptions) {
             MouseView(it, alwaysVisible = debuggingOptions.showMouseTrace)
         }
         gameBoard.subways.forEach {
-            SubwayView(it)
+            SubwayView(it, debuggingOptions = debuggingOptions)
         }
     }
 }

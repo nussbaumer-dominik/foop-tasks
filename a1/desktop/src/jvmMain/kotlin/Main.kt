@@ -1,10 +1,8 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Checkbox
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -25,6 +23,7 @@ import at.ac.tuwien.foop.common.domain.Direction
 import components.BoardView
 import components.DebuggingOptions
 import components.GameClient
+import components.primitives.OptionTile
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -64,40 +63,39 @@ fun App(gameBoard: GameBoard?) {
     MaterialTheme {
         Column {
             Row(
-                Modifier
+                modifier = Modifier
                     .background(Color.LightGray)
                     .size(height = Constants.TOP_NAV_HEIGHT.dp, width = Dp.Unspecified)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
-                        checked = debuggingOptions.showEmptyTiles,
-                        onCheckedChange = { checked ->
-                            debuggingOptions = debuggingOptions.copy(showEmptyTiles = checked)
-                        }
-                    )
-                    Spacer(Modifier.width(2.dp))
-                    Text(modifier = Modifier.align(Alignment.CenterVertically), text = "showEmptyTiles")
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
-                        checked = debuggingOptions.showMouseTrace,
-                        onCheckedChange = { checked ->
-                            debuggingOptions = debuggingOptions.copy(showMouseTrace = checked)
-                        }
-                    )
-                    Spacer(Modifier.width(5.dp))
-                    Text(modifier = Modifier.align(Alignment.CenterVertically), text = "showMouseTrace")
-                }
+                OptionTile(
+                    checked = debuggingOptions.showEmptyTiles,
+                    text = "Show empty tiles",
+                    onCheckedChange = { checked ->
+                        debuggingOptions = debuggingOptions.copy(showEmptyTiles = checked)
+                    }
+                )
+                OptionTile(
+                    checked = debuggingOptions.showMouseTrace,
+                    text = "Show mouse trace",
+                    onCheckedChange = { checked ->
+                        debuggingOptions = debuggingOptions.copy(showMouseTrace = checked)
+                    }
+                )
+                OptionTile(
+                    checked = debuggingOptions.showColoredSubways,
+                    text = "Show colored Subways",
+                    onCheckedChange = { checked ->
+                        debuggingOptions = debuggingOptions.copy(showColoredSubways = checked)
+                    }
+                )
             }
             Box(Modifier.fillMaxSize()) {
                 if (gameBoard != null)
                     BoardView(gameBoard, debuggingOptions)
                 else
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                            .align(Alignment.Center)
-                    ) {
+                    Box(Modifier.fillMaxSize().align(Alignment.Center)) {
                         CircularProgressIndicator(Modifier.size(50.dp))
                     }
             }
