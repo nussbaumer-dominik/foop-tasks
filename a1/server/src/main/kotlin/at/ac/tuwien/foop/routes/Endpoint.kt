@@ -31,6 +31,7 @@ fun Application.socketEndpoint() {
                     for (frame in incoming) {
                         frame as? Frame.Text ?: continue
                         val text = frame.readText()
+                        println("Received on server: $text")
                         val moveCommand = Json.decodeFromString(PrivateMessage.MoveCommand.serializer(), text)
                         println(moveCommand)
                         // TODO: store move command and process it

@@ -1,10 +1,7 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -22,6 +19,7 @@ import androidx.compose.ui.window.application
 import at.ac.tuwien.foop.common.PrivateMessage
 import at.ac.tuwien.foop.common.domain.*
 import at.ac.tuwien.foop.common.domain.Direction
+import components.DebuggingOptions
 import components.BoardView
 import components.GameClient
 import kotlinx.coroutines.GlobalScope
@@ -57,14 +55,27 @@ fun AppPreview() {
 
 @Composable
 fun App(gameBoard: GameBoard?) {
+    var debuggingOptions by remember {
+        mutableStateOf(DebuggingOptions())
+    }
     MaterialTheme {
         Column {
             Row(
                 Modifier
                     .background(Color.LightGray)
-                    .size(height = 30.dp, width = Dp.Unspecified)
+                    .size(height = Constants.TOP_NAV_HEIGHT.dp, width = Dp.Unspecified)
             ) {
-                Text("TODO: add debugging options or score here", Modifier.weight(1f).align(Alignment.CenterVertically))
+                Row(modifier = Modifier.align(Alignment.CenterVertically)) {
+                    Checkbox(
+                        checked = debuggingOptions.showEmptyTiles,
+                        onCheckedChange = null
+                        /*onCheckedChange = (checked) {
+                            debuggingOptions = debuggingOptions.copy(showEmptyTiles = checked)
+                        }*/
+                    )
+                    Text("showEmptyTiles")
+                    Text(debuggingOptions.showEmptyTiles.toString() + "")
+                }
             }
             Box(Modifier.fillMaxSize()) {
                 if (gameBoard != null)
@@ -74,13 +85,16 @@ fun App(gameBoard: GameBoard?) {
             }
         }
     }
+
+    fun onCheckChange(checked: Boolean) {
+        debuggingOptions = debuggingOptions.copy(showEmptyTiles = checked)
+    }
 }
 
 fun main() = application {
     var composeWindow: ComposeWindow by mutableStateOf(ComposeWindow())
     var gameClient: GameClient? = null
     var gameBoard: GameBoard? by mutableStateOf(null)
-    var firstGameBoard = false
 
     Window(
         create = {
@@ -103,7 +117,7 @@ fun main() = application {
         },
         dispose = ComposeWindow::dispose,
     ) {
-        App(gameBoard)
+        //App(gameBoard)
     }
 
     LaunchedEffect(true) {
@@ -111,17 +125,16 @@ fun main() = application {
             host = "127.0.0.1",
             port = 8080,
             onMapUpdate = {
-                gameBoard = it
-                if (!firstGameBoard) {
-                    firstGameBoard = true
+                if (gameBoard == null) {
                     composeWindow.setContentSize(
                         it.columns * Constants.TILE_SIZE,
-                        it.rows * Constants.TILE_SIZE + 30
+                        it.rows * Constants.TILE_SIZE + Constants.TOP_NAV_HEIGHT
                     )
                 }
+                gameBoard = it
             },
             onStateUpdate = {
-                println("State update: $it")
+                //println("State update: $it")
                 gameBoard = it.map
             }
         )

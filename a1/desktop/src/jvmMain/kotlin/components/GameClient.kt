@@ -49,16 +49,18 @@ class GameClient(
                 while (true) {
                     when (val incomingMessage = receiveDeserialized<AoopMessage>()) {
                         is GlobalMessage.MapUpdate -> {
-                            println(incomingMessage)
+                            //println(incomingMessage)
                             onMapUpdate(incomingMessage.map)
                         }
 
                         is GlobalMessage.StateUpdate -> {
-                            println(incomingMessage)
+                            //println(incomingMessage)
                             onStateUpdate(incomingMessage)
                         }
 
-                        is PrivateMessage.SetupInfo -> TODO()
+                        is PrivateMessage.SetupInfo -> {
+                            TODO()
+                        }
                         else -> println("Something else")
                     }
                 }

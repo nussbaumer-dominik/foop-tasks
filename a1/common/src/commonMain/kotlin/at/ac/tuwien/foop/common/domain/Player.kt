@@ -15,7 +15,7 @@ data class Player(
     @SerialName("id")
     val id: String = UUID.randomUUID().toString(),
     /**
-     * The unique color assigned to this play to distinguish it form others
+     * The unique color assigned to this player to distinguish it form others
      * */
     @SerialName("color")
     val color: String,
