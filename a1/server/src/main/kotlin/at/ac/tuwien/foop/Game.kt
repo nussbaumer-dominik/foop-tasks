@@ -7,7 +7,7 @@ import at.ac.tuwien.foop.common.domain.GameBoard
 import at.ac.tuwien.foop.common.domain.GameState
 import at.ac.tuwien.foop.util.GameBoardGenerator
 import io.ktor.server.websocket.*
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 
 data class Game(
     val configuration: GameConfiguration,
@@ -31,12 +31,12 @@ data class Game(
             val currentTimeMs = System.currentTimeMillis()
 
             // TODO: process player moves, take last value in the list
-            println("current moves: ${currentMoves.size}}")
+            println("current moves: ${currentMoves.size}")
             for (currentMove in currentMoves) {
                 println(currentMove.value)
                 val player = board.cats.find { it.id == currentMove.key }!!
                 val direction = currentMove.value.lastOrNull() ?: continue
-                //player.move(board, direction)
+                player.move(direction)
             }
             for (mouse in board.mice) {
                 mouse.move(board)

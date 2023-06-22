@@ -12,8 +12,8 @@ import io.ktor.serialization.kotlinx.*
 import kotlinx.serialization.json.Json
 
 class GameClient(
-    private val host: String,
-    private val port: Int,
+    private val host: String = "127.0.0.1",
+    private val port: Int = 8080,
     private val onStateUpdate: (GlobalMessage.StateUpdate) -> Unit,
     private val onMapUpdate: (GameBoard) -> Unit,
     private val onSetupInfo: (PrivateMessage.SetupInfo) -> Unit
@@ -35,6 +35,7 @@ class GameClient(
             port = port,
             path = "/ws"
         ) {
+            println("Sending: $moveCommand")
             sendSerialized(moveCommand)
         }
     }
@@ -49,7 +50,7 @@ class GameClient(
             ) {
                 while (true) {
                     val incomingMessage = receiveDeserialized<AoopMessage>()
-                    println(incomingMessage)
+                    println("incomingMessage in GameClient.receive: $incomingMessage")
                     when (incomingMessage) {
                         is GlobalMessage.MapUpdate -> {
                             onMapUpdate(incomingMessage.map)

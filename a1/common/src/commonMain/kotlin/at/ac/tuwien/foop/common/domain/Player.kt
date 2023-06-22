@@ -2,8 +2,7 @@ package at.ac.tuwien.foop.common.domain
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.UUID
-import java.util.concurrent.atomic.AtomicInteger
+import java.util.*
 
 /**
  * A cat controlled by a player
@@ -24,8 +23,14 @@ data class Player(
      * The current position of the player on the map relative to the top left corner
      * */
     @SerialName("position")
-    val position: Position,
+    var position: Position,
 ) : Field {
+
+    fun move(direction: Direction) {
+        // TODO: add collision with mice and maybe exits
+        position = position.getNewPosition(direction)
+    }
+
     override fun toChar(): Char {
         return '#'
     }

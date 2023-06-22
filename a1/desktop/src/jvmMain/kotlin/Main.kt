@@ -1,14 +1,11 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
@@ -18,13 +15,14 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import at.ac.tuwien.foop.common.PrivateMessage
 import at.ac.tuwien.foop.common.domain.*
-import at.ac.tuwien.foop.common.domain.Direction
 import components.BoardView
 import components.DebuggingOptions
 import components.GameClient
 import components.primitives.OptionTile
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import util.setContentSize
+import util.toDirection
 
 @Preview
 @Composable
@@ -116,12 +114,18 @@ fun main() = application {
                 setSize(800, 600)
             }
         },
-        onKeyEvent = { keyEvent ->
-            val direction = if (keyEvent.type != KeyEventType.KeyDown) null else keyEvent.key.toDirection()
-            if (direction != null) {
-                val command = PrivateMessage.MoveCommand(player = player, direction = direction)
-                // TODO: solve without using GlobalScope
-                GlobalScope.launch { gameClient?.send(command) }
+        onKeyEvent = {
+            suspend {
+                val keyEvent = it
+                val direction = if (keyEvent.type != KeyEventType.KeyDown) null else keyEvent.key.toDirection()
+                if (direction != null) {
+                    val command = PrivateMessage.MoveCommand(player = player, direction = direction)
+                    try {
+                        coroutineScope { gameClient?.send(command) }
+                    } catch (e: Exception) {
+                        println("Error sending command: $e")
+                    }
+                }
             }
 
             true
@@ -145,36 +149,14 @@ fun main() = application {
                 gameBoard = it
             },
             onStateUpdate = {
-                println("State update: $it")
                 gameBoard = it.map
             },
             onSetupInfo = {
-                println("Setup info: $it")
                 player = it.player
             },
         )
 
         gameClient!!.receive()
         gameClient!!.dispose()
-    }
-}
-
-fun ComposeWindow.setContentSize(width: Int, height: Int) {
-    this.pack()
-    val insets = this.insets
-    setSize(
-        width + insets.left + insets.right,
-        height + insets.top + insets.bottom
-    )
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-fun Key.toDirection(): Direction? {
-    return when (this) {
-        Key.DirectionUp -> Direction.UP
-        Key.DirectionDown -> Direction.DOWN
-        Key.DirectionLeft -> Direction.LEFT
-        Key.DirectionRight -> Direction.RIGHT
-        else -> null
     }
 }

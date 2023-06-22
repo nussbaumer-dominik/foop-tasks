@@ -10,39 +10,49 @@ import at.ac.tuwien.foop.common.domain.Position
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
-import io.ktor.websocket.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 
 fun Application.socketEndpoint(game: Game) {
     routing {
         webSocket("/ws") {
-            val gameBoard = game.board
             val player = Player(
                 color = "red", position = Position(game.board.columns / 2, game.board.rows / 2)
             )
 
             // Send initial info
             game.addPlayerSession(this)
-            sendSerialized(GlobalMessage.MapUpdate(map = gameBoard) as AoopMessage)
+            sendSerialized(GlobalMessage.MapUpdate(map = game.board) as AoopMessage)
             sendSerialized(PrivateMessage.SetupInfo(player = player) as AoopMessage)
+
+            // start listening for incoming messages in a separate coroutine
+            val coroutineScope = CoroutineScope(Dispatchers.IO)
+            coroutineScope.launch {
+                println("inside key listener for player ${player.id}")
+                while (true) {
+                    try {
+                        for (frame in incoming) {
+                            val moveCommand = receiveDeserialized<PrivateMessage.MoveCommand>()
+                            println("Received on server: $moveCommand")
+                            game.addMove(playerId = player.id, direction = moveCommand.direction)
+                        }
+                    } catch (e: ClosedReceiveChannelException) {
+                        println("Channel closed: ${closeReason.await()}")
+                    } catch (e: Throwable) {
+                        println("Error: ${closeReason.await()}")
+                        e.printStackTrace()
+                    }
+                }
+            }
 
             // start game if not running
             if (game.state == GameState.WAITING) {
-                game.start()
-            }
-
-            launch {
-                while (true) {
-                    for (frame in incoming) {
-                        frame as? Frame.Text ?: continue
-                        val text = frame.readText()
-                        println("Received on server: $text")
-                        val moveCommand = Json.decodeFromString(PrivateMessage.MoveCommand.serializer(), text)
-                        println(moveCommand)
-                        game.addMove(playerId = player.id, direction = moveCommand.direction)
-                    }
+                CoroutineScope(Dispatchers.Default).launch {
+                    game.start()
                 }
+                //game.start()
             }
         }
     }
