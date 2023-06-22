@@ -1,7 +1,6 @@
 package at.ac.tuwien.foop.common
 
 import at.ac.tuwien.foop.common.domain.*
-import at.ac.tuwien.foop.common.domain.GameBoard
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -20,7 +19,7 @@ sealed interface GlobalMessage : AoopMessage {
     @Serializable
     @SerialName("global_map_update")
     data class MapUpdate(
-            @SerialName("map")
+        @SerialName("map")
         val map: GameBoard,
     ) : GlobalMessage
 
@@ -30,10 +29,8 @@ sealed interface GlobalMessage : AoopMessage {
     @Serializable
     @SerialName("global_state_update")
     data class StateUpdate(
-        @SerialName("players")
-        val players: Set<Player>,
-        @SerialName("mice")
-        val mice: Set<Mouse>,
+        @SerialName("map")
+        val map: GameBoard,
         @SerialName("state")
         val state: GameState,
     ) : GlobalMessage
@@ -56,12 +53,14 @@ sealed interface PrivateMessage : AoopMessage {
     ) : PrivateMessage
 
     /**
-     * Message sent to the server when the position of the player changes because of play movement
+     * Message sent to the server when a keypress has occurred
      * */
     @Serializable
-    @SerialName("private_position_update")
-    data class PositionUpdate(
-        @SerialName("position")
-        val position: Position,
+    @SerialName("private_move_command")
+    data class MoveCommand(
+        @SerialName("player")
+        val player: Player? = null,
+        @SerialName("direction")
+        val direction: Direction,
     ) : PrivateMessage
 }

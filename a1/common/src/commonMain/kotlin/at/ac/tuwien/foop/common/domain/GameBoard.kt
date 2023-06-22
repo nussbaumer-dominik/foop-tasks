@@ -3,6 +3,7 @@ package at.ac.tuwien.foop.common.domain
 import at.ac.tuwien.foop.common.exceptions.IllegalPositionException
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * The structure of the current map of the current game
@@ -16,10 +17,13 @@ data class GameBoard(
     val subways: MutableSet<Subway> = mutableSetOf(),
     @SerialName("mice")
     val mice: MutableSet<Mouse> = mutableSetOf(),
+    @SerialName("cats")
     val cats: MutableSet<Player> = mutableSetOf(),
-    val rows: Int,
-    val columns: Int,
+    val rows: Int = 0,
+    val columns: Int = 0,
+    @Transient
     var winningSubway: Subway? = null,
+    @Transient
     var grid: Array<Array<Field>>? = null
 ) {
     /**
@@ -157,6 +161,7 @@ data class GameBoard(
         winningSubway = subways.elementAt(random)
     }
 
+    // TODO: Return MICE_WON or CATS_WON instead of boolean if mice have won
     fun isWinningState(): Boolean {
         return mice.all { m -> winningSubway!!.exits.any { e -> e.position == m.position } }
     }
@@ -173,5 +178,36 @@ data class GameBoard(
         }
 
         return emptyList()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as GameBoard
+
+        if (subways != other.subways) return false
+        if (mice != other.mice) return false
+        if (cats != other.cats) return false
+        if (rows != other.rows) return false
+        if (columns != other.columns) return false
+        if (winningSubway != other.winningSubway) return false
+        if (grid != null) {
+            if (other.grid == null) return false
+            if (!grid.contentDeepEquals(other.grid)) return false
+        } else if (other.grid != null) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = subways.hashCode()
+        result = 31 * result + mice.hashCode()
+        result = 31 * result + cats.hashCode()
+        result = 31 * result + rows
+        result = 31 * result + columns
+        result = 31 * result + (winningSubway?.hashCode() ?: 0)
+        result = 31 * result + (grid?.contentDeepHashCode() ?: 0)
+        return result
     }
 }

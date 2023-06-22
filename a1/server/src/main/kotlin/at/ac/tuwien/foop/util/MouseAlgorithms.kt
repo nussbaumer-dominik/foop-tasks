@@ -81,7 +81,7 @@ class MouseAlgorithms {
             //var suboptimalDirections = Direction.values().filter { d -> directions.none { it == d } }
             val otherDirections = Direction.values().toMutableList()
             otherDirections.shuffle()
-            println("Shuffled directions: $otherDirections")
+            //println("Shuffled directions: $otherDirections")
             directions.addAll(otherDirections)
             for (direction in directions) {
                 val newPosition = currentPosition.getNewPosition(direction)
