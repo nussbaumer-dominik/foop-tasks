@@ -48,12 +48,18 @@ data class GameBoard(
      */
     fun isFieldEmpty(position: Position): Boolean {
         for (s in subways) {
-            if (s.exits.stream().anyMatch { e -> e.position == position }) {
+            if (s.exits.stream().anyMatch { e ->
+                    position.x >= e.position.x && position.x < e.position.x + e.size.width &&
+                            position.y >= e.position.y && position.y < e.position.y + e.size.height
+                }) {
                 return false
             }
         }
-        for (c in players) {
-            if (c.position == position) {
+
+        for (p in players) {
+            if (position.x >= p.position.x && position.x < p.position.x + p.size.width &&
+                position.y >= p.position.y && position.y < p.position.y + p.size.height
+            ) {
                 return false
             }
         }

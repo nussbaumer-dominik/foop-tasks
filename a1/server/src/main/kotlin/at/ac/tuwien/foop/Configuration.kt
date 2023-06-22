@@ -10,4 +10,5 @@ data class GameConfiguration(
     val numberOfMice: Int = 10,
     val numberOfSubways: Int = 10,
     val maxNumberOfExits: Int = 4,
+    val fieldSize: Int = 32,
 )

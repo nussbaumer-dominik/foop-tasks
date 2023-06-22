@@ -15,7 +15,7 @@ data class Position(
     @SerialName("y")
     var y: Int,
     @Transient
-    val moveSize: Int = 5,
+    val moveSize: Int = 4,
 ) {
     fun getNewPosition(direction: Direction): Position {
         return when (direction) {

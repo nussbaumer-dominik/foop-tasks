@@ -15,8 +15,8 @@ class GameBoardGenerator {
                     while (true) {
                         val exit = Exit(
                             position = Position(
-                                x = (0 until gameBoard.width).random(),
-                                y = (0 until gameBoard.height).random(),
+                                x = (0 until gameBoard.width - gameConfiguration.fieldSize).random(),
+                                y = (0 until gameBoard.height - gameConfiguration.fieldSize).random(),
                             ),
                             subwayId = subway.id
                         )
