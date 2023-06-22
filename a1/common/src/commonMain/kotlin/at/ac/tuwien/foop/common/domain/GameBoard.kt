@@ -48,26 +48,28 @@ data class GameBoard(
      */
     fun isFieldEmpty(position: Position): Boolean {
         for (s in subways) {
-            if (s.exits.stream().anyMatch { e ->
-                    position.x >= e.position.x && position.x < e.position.x + e.size.width &&
-                            position.y >= e.position.y && position.y < e.position.y + e.size.height
-                }) {
-                return false
+            for (e in s.exits) {
+                if (position.x in e.position.x - e.size.width..e.position.x + e.size.width &&
+                    position.y in e.position.y - e.size.height ..e.position.y + e.size.height
+                ) {
+                    return false
+                }
             }
         }
 
         for (p in players) {
-            if (position.x >= p.position.x && position.x < p.position.x + p.size.width &&
-                position.y >= p.position.y && position.y < p.position.y + p.size.height
+            if (position.x in p.position.x..p.position.x + p.size.width &&
+                position.y in p.position.y..p.position.y + p.size.height
             ) {
                 return false
             }
         }
+
         return true
     }
 
     fun generateGrid() {
-        /*grid = Array(rows) { Array(columns) { EmptyField() } }
+        grid = Array(width + 1) { Array(height + 1) { EmptyField() } }
         for (m in mice) {
             grid!![m.position.x][m.position.y] = m
         }
@@ -76,9 +78,9 @@ data class GameBoard(
                 grid!![e.position.x][e.position.y] = e
             }
         }
-        for (c in cats) {
-            grid!![c.position.x][c.position.y] = c
-        }*/
+        for (p in players) {
+            grid!![p.position.x][p.position.y] = p
+        }
     }
 
     fun moveMice() {
@@ -95,13 +97,13 @@ data class GameBoard(
         }
         val exits = mySubways.flatMap { (s, c) -> s.exits.map { e -> Pair(e.position, c) } }
         val mice = mice.map { m -> Pair(m.position, 'M') }
-        /*for (x in 0 until rows) {
+        for (x in 0 until height) {
             print("|")
-            for (y in 0 until columns) {
+            for (y in 0 until width) {
                 val exit = exits.firstOrNull { pair -> pair.first == Position(x, y) }
                 val mouse = mice.filter { pair -> pair.first == Position(x, y) }
-                val cat = cats.firstOrNull { c -> c.position == Position(x, y) }
-                if (cat != null)
+                val player = players.firstOrNull { p -> p.position == Position(x, y) }
+                if (player != null)
                     print("#|")
                 else {
                     if (exit != null) {
@@ -116,7 +118,7 @@ data class GameBoard(
                 }
             }
             print("\n")
-        }*/
+        }
     }
 
     fun printGrid() {
@@ -137,14 +139,15 @@ data class GameBoard(
                 }
             }
         }
-        /*catHitbox.forEach { (x, y) ->
-            if (x >= 0 && x < rows && y >= 0 && y < columns) {
+        catHitbox.forEach { (x, y) ->
+            if (x in 0 until width && y in 0 until height) {
                 if (printGrid[x][y] == ' ')
                     printGrid[x][y] = '-'
             }
         }
-        val myArray = Array(rows) { ' ' }
-        myArray[2] = 'a'*/
+        val myArray = Array(height) { ' ' }
+        myArray[2] = 'a'
+
         //print grid
         printGrid.forEach { row ->
             print("|")

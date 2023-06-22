@@ -102,7 +102,7 @@ fun main() = application {
             ComposeWindow().apply {
                 composeWindow = this
                 title = "Cat and Mouse"
-                isResizable = false
+                isResizable = true
                 setSize(800, 600)
             }
         },
@@ -133,7 +133,7 @@ fun main() = application {
             port = 8080,
             onMapUpdate = {
                 if (gameBoard == null) {
-                    composeWindow.setContentSize(it.width, it.height)
+                    composeWindow.setContentSize(it.width, it.height + Constants.TOP_NAV_HEIGHT)
                 }
                 gameBoard = it
             },
