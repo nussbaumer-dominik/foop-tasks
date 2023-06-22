@@ -10,10 +10,9 @@ import at.ac.tuwien.foop.common.domain.Position
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 
 fun Application.socketEndpoint(game: Game) {
     routing {
@@ -23,13 +22,12 @@ fun Application.socketEndpoint(game: Game) {
             )
 
             // Send initial info
-            game.addPlayerSession(this)
+            game.addPlayerSession(this, player)
             sendSerialized(GlobalMessage.MapUpdate(map = game.board) as AoopMessage)
             sendSerialized(PrivateMessage.SetupInfo(player = player) as AoopMessage)
 
             // start listening for incoming messages in a separate coroutine
-            val coroutineScope = CoroutineScope(Dispatchers.IO)
-            coroutineScope.launch {
+            val listener = launch {
                 println("inside key listener for player ${player.id}")
                 while (true) {
                     try {
@@ -41,18 +39,21 @@ fun Application.socketEndpoint(game: Game) {
                     } catch (e: ClosedReceiveChannelException) {
                         println("Channel closed: ${closeReason.await()}")
                     } catch (e: Throwable) {
-                        println("Error: ${closeReason.await()}")
-                        e.printStackTrace()
+                        println("Exception: $e, ${closeReason.await()}")
+                        exitProcess(1)
                     }
                 }
             }
 
+            listener.start()
+
             // start game if not running
             if (game.state == GameState.WAITING) {
-                CoroutineScope(Dispatchers.Default).launch {
+                val gameRoutine = launch {
                     game.start()
                 }
-                //game.start()
+
+                gameRoutine.join()
             }
         }
     }

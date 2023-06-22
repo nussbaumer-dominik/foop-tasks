@@ -33,7 +33,7 @@ class GameBoardGenerator {
             }
             gameBoard.selectWinningSubway()
             placeMiceOnGameBoard(gameBoard, gameConfiguration.numberOfMice)
-            placeCatsRandomlyOnGameBoard(gameBoard, 4)
+            //placeCatsRandomlyOnGameBoard(gameBoard, 4)
             gameBoard.generateGrid()
             return gameBoard
         }

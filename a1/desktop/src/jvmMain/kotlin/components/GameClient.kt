@@ -9,7 +9,12 @@ import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.*
+import kotlinx.coroutines.channels.ClosedSendChannelException
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.BlockingQueue
 
 class GameClient(
     private val host: String = "127.0.0.1",
@@ -28,48 +33,71 @@ class GameClient(
         }
     }
 
-    suspend fun send(moveCommand: PrivateMessage.MoveCommand) {
+    private val commandQueue: BlockingQueue<PrivateMessage.MoveCommand> = ArrayBlockingQueue(5)
+
+    suspend fun start() {
         client.webSocket(
             method = HttpMethod.Get,
             host = host,
             port = port,
             path = "/ws"
         ) {
-            println("Sending: $moveCommand")
-            sendSerialized(moveCommand)
+            println("Connected to server")
+            val connection = this
+            val updateRoutine = launch { receive(connection) }
+            val inputRoutine = launch { sendLoop(connection) }
+
+            inputRoutine.start()
+            updateRoutine.join()
         }
     }
 
-    suspend fun receive() {
+    private suspend fun sendLoop(connection: DefaultClientWebSocketSession) {
+        while (true) {
+            val command = commandQueue.take()
+            println("Sending: $command")
+
+            try {
+                connection.sendSerialized(command)
+            } catch (e: ClosedSendChannelException) {
+                println("Channel closed: ${connection.closeReason.await()}")
+            } catch (e: Throwable) {
+                println("Exception: $e, ${connection.closeReason.await()}}")
+            }
+
+            commandQueue.clear()
+        }
+    }
+
+    fun sendCommand(command: PrivateMessage.MoveCommand) {
+        commandQueue.add(command)
+    }
+
+    private suspend fun receive(connection: DefaultClientWebSocketSession) {
         try {
-            client.webSocket(
-                method = HttpMethod.Get,
-                host = host,
-                port = port,
-                path = "/ws"
-            ) {
-                while (true) {
-                    val incomingMessage = receiveDeserialized<AoopMessage>()
-                    println("incomingMessage in GameClient.receive: $incomingMessage")
-                    when (incomingMessage) {
-                        is GlobalMessage.MapUpdate -> {
-                            onMapUpdate(incomingMessage.map)
-                        }
-
-                        is GlobalMessage.StateUpdate -> {
-                            onStateUpdate(incomingMessage)
-                        }
-
-                        is PrivateMessage.SetupInfo -> {
-                            onSetupInfo(incomingMessage)
-                        }
-
-                        else -> println("Something else")
+            while (true) {
+                val incomingMessage = connection.receiveDeserialized<AoopMessage>()
+                //println("incomingMessage in GameClient.receive: $incomingMessage")
+                when (incomingMessage) {
+                    is GlobalMessage.MapUpdate -> {
+                        onMapUpdate(incomingMessage.map)
                     }
+
+                    is GlobalMessage.StateUpdate -> {
+                        onStateUpdate(incomingMessage)
+                    }
+
+                    is PrivateMessage.SetupInfo -> {
+                        onSetupInfo(incomingMessage)
+                    }
+
+                    else -> println("Something else")
                 }
             }
-        } catch (e: Exception) {
-            println("Exception: $e")
+        } catch (e: ClosedSendChannelException) {
+            println("Channel closed: ${connection.closeReason.await()}")
+        } catch (e: Throwable) {
+            println("Exception: $e, ${connection.closeReason.await()}}")
         }
     }
 

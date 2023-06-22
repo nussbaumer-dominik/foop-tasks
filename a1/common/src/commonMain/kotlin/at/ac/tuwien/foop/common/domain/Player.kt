@@ -27,7 +27,6 @@ data class Player(
 ) : Field {
 
     fun move(direction: Direction) {
-        // TODO: add collision with mice and maybe exits
         position = position.getNewPosition(direction)
     }
 

@@ -19,8 +19,7 @@ import components.BoardView
 import components.DebuggingOptions
 import components.GameClient
 import components.primitives.OptionTile
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import util.setContentSize
 import util.toDirection
 
@@ -115,13 +114,13 @@ fun main() = application {
             }
         },
         onKeyEvent = {
-            suspend {
+            runBlocking {
                 val keyEvent = it
                 val direction = if (keyEvent.type != KeyEventType.KeyDown) null else keyEvent.key.toDirection()
                 if (direction != null) {
                     val command = PrivateMessage.MoveCommand(player = player, direction = direction)
                     try {
-                        coroutineScope { gameClient?.send(command) }
+                        gameClient?.sendCommand(command)
                     } catch (e: Exception) {
                         println("Error sending command: $e")
                     }
@@ -156,7 +155,7 @@ fun main() = application {
             },
         )
 
-        gameClient!!.receive()
+        gameClient!!.start()
         gameClient!!.dispose()
     }
 }

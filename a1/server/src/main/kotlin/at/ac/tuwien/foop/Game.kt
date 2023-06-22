@@ -5,6 +5,7 @@ import at.ac.tuwien.foop.common.GlobalMessage
 import at.ac.tuwien.foop.common.domain.Direction
 import at.ac.tuwien.foop.common.domain.GameBoard
 import at.ac.tuwien.foop.common.domain.GameState
+import at.ac.tuwien.foop.common.domain.Player
 import at.ac.tuwien.foop.util.GameBoardGenerator
 import io.ktor.server.websocket.*
 import kotlinx.coroutines.*
@@ -16,8 +17,9 @@ data class Game(
     val connections: MutableSet<WebSocketServerSession> = mutableSetOf(),
     val currentMoves: MutableMap<String, MutableList<Direction>> = mutableMapOf(),
 ) {
-    fun addPlayerSession(session: WebSocketServerSession) {
+    fun addPlayerSession(session: WebSocketServerSession, player: Player) {
         connections += session
+        board.cats += player
     }
 
     fun addMove(playerId: String, direction: Direction) {
@@ -30,21 +32,21 @@ data class Game(
         while (true) {
             val currentTimeMs = System.currentTimeMillis()
 
-            // TODO: process player moves, take last value in the list
-            println("current moves: ${currentMoves.size}")
             for (currentMove in currentMoves) {
                 println(currentMove.value)
+                println("currentMove key: ${currentMove.key}")
                 val player = board.cats.find { it.id == currentMove.key }!!
                 val direction = currentMove.value.lastOrNull() ?: continue
                 player.move(direction)
             }
-            for (mouse in board.mice) {
-                mouse.move(board)
-            }
+            // TODO: add mouse collision
+            currentMoves.clear()
+            board.moveMice()
             board.generateGrid()
 
             state = if (board.isWinningState()) GameState.MICE_WON else GameState.RUNNING
             val timeElapsedMs = System.currentTimeMillis() - currentTimeMs
+            println("time elapsed: $timeElapsedMs")
             delay(1000 - timeElapsedMs)
 
             // send update every tick to all connected players
