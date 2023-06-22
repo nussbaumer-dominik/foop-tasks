@@ -12,14 +12,14 @@ import components.primitives.SubwayView
 @Composable
 fun BoardView(gameBoard: GameBoard, debuggingOptions: DebuggingOptions) {
     Box(modifier = Modifier.fillMaxSize()) {
-        gameBoard.cats.forEach {
-            CatView(it)
+        gameBoard.subways.forEach {
+            SubwayView(it, debuggingOptions = debuggingOptions)
         }
         gameBoard.mice.forEach {
             MouseView(it, alwaysVisible = debuggingOptions.showMouseTrace)
         }
-        gameBoard.subways.forEach {
-            SubwayView(it, debuggingOptions = debuggingOptions)
+        gameBoard.players.forEach {
+            CatView(it)
         }
     }
 }

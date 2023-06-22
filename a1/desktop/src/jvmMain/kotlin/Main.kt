@@ -41,7 +41,7 @@ fun AppPreview() {
                 Mouse("0", position = Position(40, 36), subway = null, size = Size(32, 32)),
                 Mouse("1", position = Position(352, 352), subway = null, size = Size(32, 32)),
             ),
-            cats = mutableSetOf(
+            players = mutableSetOf(
                 Player("0", color = "red", position = Position(400, 300), size = Size(32, 32)),
                 Player("1", color = "blue", position = Position(200, 212), size = Size(32, 32)),
             ),

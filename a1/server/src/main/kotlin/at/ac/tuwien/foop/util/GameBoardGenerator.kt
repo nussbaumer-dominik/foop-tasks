@@ -20,11 +20,9 @@ class GameBoardGenerator {
                             ),
                             subwayId = subway.id
                         )
-                        if (gameBoard.isFieldEmpty(exit.position)) {
-                            if (subway.addExit(exit)) {
-                                break
-                            }
-                        }
+
+                        if (gameBoard.isFieldEmpty(exit.position) && subway.addExit(exit))
+                            break
                     }
                 }
                 gameBoard.addSubway(subway)
@@ -61,7 +59,7 @@ class GameBoardGenerator {
                         color = "#"
                     )
                     if (gameBoard.isFieldEmpty(cat.position)) {
-                        gameBoard.cats.add(cat)
+                        gameBoard.players.add(cat)
                         break
                     }
                 }

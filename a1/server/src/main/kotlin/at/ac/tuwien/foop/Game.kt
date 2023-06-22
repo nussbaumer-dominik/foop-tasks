@@ -8,7 +8,7 @@ import at.ac.tuwien.foop.common.domain.GameState
 import at.ac.tuwien.foop.common.domain.Player
 import at.ac.tuwien.foop.util.GameBoardGenerator
 import io.ktor.server.websocket.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
 
 data class Game(
     val fps: Int = 30,
@@ -20,7 +20,7 @@ data class Game(
 ) {
     fun addPlayerSession(session: WebSocketServerSession, player: Player) {
         connections += session
-        board.cats += player
+        board.players += player
     }
 
     fun addMove(playerId: String, direction: Direction) {
@@ -37,14 +37,14 @@ data class Game(
             for (currentMove in currentMoves) {
                 println(currentMove.value)
                 println("currentMove key: ${currentMove.key}")
-                val player = board.cats.find { it.id == currentMove.key }!!
+                val player = board.players.find { it.id == currentMove.key }!!
                 val direction = currentMove.value.lastOrNull() ?: continue
                 player.move(direction)
             }
             // TODO: add mouse collision
             currentMoves.clear()
-            board.moveMice()
-            board.generateGrid()
+            //board.moveMice()
+            //board.generateGrid()
 
             state = if (board.isWinningState()) GameState.MICE_WON else GameState.RUNNING
             val timeElapsedMs = System.currentTimeMillis() - currentTimeMs

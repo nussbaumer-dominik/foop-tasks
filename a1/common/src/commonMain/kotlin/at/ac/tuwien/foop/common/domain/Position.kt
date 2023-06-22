@@ -2,6 +2,7 @@ package at.ac.tuwien.foop.common.domain
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlin.math.abs
 
 /**
@@ -13,13 +14,15 @@ data class Position(
     var x: Int,
     @SerialName("y")
     var y: Int,
+    @Transient
+    val moveSize: Int = 5,
 ) {
     fun getNewPosition(direction: Direction): Position {
         return when (direction) {
-            Direction.UP -> Position(x, y - 1)
-            Direction.DOWN -> Position(x, y + 1)
-            Direction.LEFT -> Position(x - 1, y)
-            Direction.RIGHT -> Position(x + 1, y)
+            Direction.UP -> Position(x, y - moveSize)
+            Direction.DOWN -> Position(x, y + moveSize)
+            Direction.LEFT -> Position(x - moveSize, y)
+            Direction.RIGHT -> Position(x + moveSize, y)
         }
     }
 

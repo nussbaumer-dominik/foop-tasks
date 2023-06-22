@@ -2,7 +2,7 @@ package at.ac.tuwien.foop.common.domain
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.UUID
+import java.util.*
 
 /**
  * A subway which is positioned on the map and has its exits
@@ -24,11 +24,12 @@ data class Subway(
         if (containsExit(exit)) {
             return false
         }
+
         exits.add(exit)
         return true
     }
 
-    fun containsExit(exit: Exit): Boolean {
+    private fun containsExit(exit: Exit): Boolean {
         return exits.stream().anyMatch { e -> e.position == exit.position }
     }
 }

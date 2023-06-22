@@ -18,7 +18,7 @@ data class GameBoard(
     @SerialName("mice")
     val mice: MutableSet<Mouse> = mutableSetOf(),
     @SerialName("cats")
-    val cats: MutableSet<Player> = mutableSetOf(),
+    val players: MutableSet<Player> = mutableSetOf(),
     val width: Int = 0,
     val height: Int = 0,
     @Transient
@@ -52,7 +52,7 @@ data class GameBoard(
                 return false
             }
         }
-        for (c in cats) {
+        for (c in players) {
             if (c.position == position) {
                 return false
             }
@@ -188,7 +188,7 @@ data class GameBoard(
 
         if (subways != other.subways) return false
         if (mice != other.mice) return false
-        if (cats != other.cats) return false
+        if (players != other.players) return false
         if (width != other.width) return false
         if (height != other.height) return false
         if (winningSubway != other.winningSubway) return false
@@ -203,11 +203,15 @@ data class GameBoard(
     override fun hashCode(): Int {
         var result = subways.hashCode()
         result = 31 * result + mice.hashCode()
-        result = 31 * result + cats.hashCode()
+        result = 31 * result + players.hashCode()
         result = 31 * result + width
         result = 31 * result + height
         result = 31 * result + (winningSubway?.hashCode() ?: 0)
         result = 31 * result + (grid?.contentDeepHashCode() ?: 0)
         return result
+    }
+
+    override fun toString(): String {
+        return "GameBoard(subways=$subways, mice=$mice, cats=$players, width=$width, height=$height, winningSubway=$winningSubway, grid=${grid?.contentDeepToString()})"
     }
 }
