@@ -12,11 +12,11 @@ data class Exit(
      * The top left corner position of the exit
      * */
     @SerialName("position")
-    val position: Position,
+    override val position: Position,
     @SerialName("size")
-    val size: Size = Size(32, 32),
+    override val size: Size = Size(32, 32),
     val subwayId: String
-): Field {
+) : Field {
     fun getDistancesToOtherExits(gameBoard: GameBoard): List<Pair<Int, Exit>> {
         val distances = mutableListOf<Pair<Int, Exit>>()
         for (s in gameBoard.subways) {

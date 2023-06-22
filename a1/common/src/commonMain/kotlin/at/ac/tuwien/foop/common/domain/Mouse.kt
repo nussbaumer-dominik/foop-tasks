@@ -19,9 +19,9 @@ data class Mouse(
      * The current position of this mouse on the map relative to the top left corner
      * */
     @SerialName("position")
-    val position: Position,
+    override val position: Position,
     @SerialName("size")
-    val size: Size = Size(32, 32),
+    override val size: Size = Size(32, 32),
     @SerialName("subway")
     var subway: Subway?,
     @Transient

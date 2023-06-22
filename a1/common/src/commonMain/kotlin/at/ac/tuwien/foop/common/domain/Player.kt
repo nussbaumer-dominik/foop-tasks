@@ -15,17 +15,17 @@ data class Player(
     @SerialName("id")
     val id: String = UUID.randomUUID().toString(),
     @SerialName("size")
-    val size: Size = Size(32, 32),
+    override val size: Size = Size(32, 32),
+    /**
+     * The current position of the player on the map relative to the top left corner
+     * */
+    @SerialName("position")
+    override var position: Position,
     /**
      * The unique color assigned to this player to distinguish it form others
      * */
     @SerialName("color")
     val color: String,
-    /**
-     * The current position of the player on the map relative to the top left corner
-     * */
-    @SerialName("position")
-    var position: Position,
 ) : Field {
 
     fun move(direction: Direction) {

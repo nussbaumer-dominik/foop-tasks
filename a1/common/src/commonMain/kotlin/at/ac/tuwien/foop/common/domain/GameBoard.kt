@@ -46,21 +46,20 @@ data class GameBoard(
      * Compares the position of all subway exits to the given position
      * Returns true if a tile is empty, else false
      */
-    fun isFieldEmpty(position: Position): Boolean {
+    fun isFieldEmpty(field: Field): Boolean {
         for (s in subways) {
             for (e in s.exits) {
-                if (position.x in e.position.x - e.size.width..e.position.x + e.size.width &&
-                    position.y in e.position.y - e.size.height ..e.position.y + e.size.height
-                ) {
+                println(e)
+                println(field)
+                val intersects = e.intersects(field)
+                if (intersects) {
                     return false
                 }
             }
         }
 
         for (p in players) {
-            if (position.x in p.position.x..p.position.x + p.size.width &&
-                position.y in p.position.y..p.position.y + p.size.height
-            ) {
+            if (p.intersects(field)) {
                 return false
             }
         }
@@ -68,8 +67,22 @@ data class GameBoard(
         return true
     }
 
+    // TODO: maybe rework into field, after it has been transformed to an abstract class
+    private fun Field.intersects(other: Field): Boolean {
+        return position.x <= other.position.x + other.size.width &&
+                position.x + size.width >= other.position.x &&
+                position.y <= other.position.y + other.size.height &&
+                position.y + size.height >= other.position.y
+    }
+
     fun generateGrid() {
-        grid = Array(width + 1) { Array(height + 1) { EmptyField() } }
+        grid = Array(width + 1) {
+            Array(height + 1) {
+                EmptyField(
+                    Position(it, it), Size(1, 1)
+                )
+            }
+        }
         for (m in mice) {
             grid!![m.position.x][m.position.y] = m
         }

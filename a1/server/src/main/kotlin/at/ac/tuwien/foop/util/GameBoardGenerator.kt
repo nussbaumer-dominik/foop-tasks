@@ -23,7 +23,7 @@ class GameBoardGenerator {
 
                         println("Exit position: ${exit.position}")
 
-                        if (gameBoard.isFieldEmpty(exit.position) && subway.addExit(exit))
+                        if (gameBoard.isFieldEmpty(exit) && subway.addExit(exit))
                             break
                     }
                 }
@@ -60,7 +60,7 @@ class GameBoardGenerator {
                         ),
                         color = "#"
                     )
-                    if (gameBoard.isFieldEmpty(cat.position)) {
+                    if (gameBoard.isFieldEmpty(cat)) {
                         gameBoard.players.add(cat)
                         break
                     }
