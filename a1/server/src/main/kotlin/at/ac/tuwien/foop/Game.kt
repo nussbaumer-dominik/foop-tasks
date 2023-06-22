@@ -37,6 +37,7 @@ data class Game(
             for (currentMove in currentMoves) {
                 println(currentMove.value)
                 println("currentMove key: ${currentMove.key}")
+                // TODO: test processing all moves
                 val player = board.players.find { it.id == currentMove.key }!!
                 val direction = currentMove.value.lastOrNull() ?: continue
                 player.move(direction)

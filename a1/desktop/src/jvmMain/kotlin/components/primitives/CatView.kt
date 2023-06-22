@@ -11,6 +11,7 @@ import androidx.compose.ui.res.useResource
 import androidx.compose.ui.unit.dp
 import at.ac.tuwien.foop.common.domain.Player
 
+//TODO: emphasize the current players cat (shadow or glow or smth)
 @Composable
 fun CatView(cat: Player) {
     val density = LocalDensity.current.density
