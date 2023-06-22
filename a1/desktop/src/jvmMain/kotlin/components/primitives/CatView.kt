@@ -1,6 +1,5 @@
 package components.primitives
 
-import Constants
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
@@ -25,10 +24,8 @@ fun CatView(cat: Player) {
         bitmap = image,
         contentDescription = "Cat",
         modifier = Modifier
-            .offset(
-                (cat.position.x * Constants.TILE_SIZE).dp,
-                (cat.position.y * Constants.TILE_SIZE).dp
-            ).size(Constants.TILE_SIZE.dp)
+            .offset(x = cat.position.x.dp, y = cat.position.y.dp)
+            .size(width = cat.size.width.dp, height = cat.size.height.dp)
     )
     /*
     Canvas(modifier = Modifier.size(32.dp).align(Alignment.Center)) {

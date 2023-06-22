@@ -6,9 +6,7 @@ import at.ac.tuwien.foop.common.domain.*
 class GameBoardGenerator {
     companion object {
         fun generateGameBoard(gameConfiguration: GameConfiguration): GameBoard {
-            val rows = gameConfiguration.rows
-            val columns = gameConfiguration.columns
-            val gameBoard = GameBoard(rows = rows, columns = columns)
+            val gameBoard = GameBoard(width = gameConfiguration.width, height = gameConfiguration.height)
             for (i in 0 until gameConfiguration.numberOfSubways) {
                 val numberOfExits = (2..gameConfiguration.maxNumberOfExits).random()
                 val subway = Subway()
@@ -17,8 +15,8 @@ class GameBoardGenerator {
                     while (true) {
                         val exit = Exit(
                             position = Position(
-                                x = (0 until rows).random(),
-                                y = (0 until columns).random(),
+                                x = (0 until gameBoard.width).random(),
+                                y = (0 until gameBoard.height).random(),
                             ),
                             subwayId = subway.id
                         )
@@ -57,8 +55,8 @@ class GameBoardGenerator {
                 while (true) {
                     val cat = Player(
                         position = Position(
-                            x = (0 until gameBoard.rows).random(),
-                            y = (0 until gameBoard.columns).random(),
+                            x = (0 until gameBoard.width).random(),
+                            y = (0 until gameBoard.height).random(),
                         ),
                         color = "#"
                     )

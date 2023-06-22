@@ -1,6 +1,5 @@
 package components.primitives
 
-import Constants
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
@@ -25,9 +24,8 @@ fun MouseView(mouse: Mouse, alwaysVisible: Boolean = false) {
     Image(
         bitmap = image,
         contentDescription = "Mouse",
-        modifier = Modifier.offset(
-            (mouse.position.x * Constants.TILE_SIZE).dp,
-            (mouse.position.y * Constants.TILE_SIZE).dp
-        ).size(Constants.TILE_SIZE.dp)
+        modifier = Modifier
+            .offset(x = mouse.position.x.dp, y = mouse.position.y.dp)
+            .size(width = mouse.size.width.dp, height = mouse.size.height.dp)
     )
 }

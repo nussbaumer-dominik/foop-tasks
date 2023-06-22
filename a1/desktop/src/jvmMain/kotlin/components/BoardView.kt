@@ -8,11 +8,9 @@ import at.ac.tuwien.foop.common.domain.GameBoard
 import components.primitives.CatView
 import components.primitives.MouseView
 import components.primitives.SubwayView
-import components.primitives.Tiles
 
 @Composable
 fun BoardView(gameBoard: GameBoard, debuggingOptions: DebuggingOptions) {
-    Tiles(gameBoard.rows, gameBoard.columns, debuggingOptions.showEmptyTiles)
     Box(modifier = Modifier.fillMaxSize()) {
         gameBoard.cats.forEach {
             CatView(it)

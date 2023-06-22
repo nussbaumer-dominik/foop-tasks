@@ -11,6 +11,7 @@ import io.ktor.server.websocket.*
 import kotlinx.coroutines.*
 
 data class Game(
+    val fps: Int = 30,
     val configuration: GameConfiguration,
     var board: GameBoard = GameBoardGenerator.generateGameBoard(configuration),
     var state: GameState = GameState.WAITING,
@@ -28,6 +29,7 @@ data class Game(
     }
 
     suspend fun start() {
+        val tickRate = 1000 / fps
         state = GameState.RUNNING
         while (true) {
             val currentTimeMs = System.currentTimeMillis()
@@ -47,7 +49,7 @@ data class Game(
             state = if (board.isWinningState()) GameState.MICE_WON else GameState.RUNNING
             val timeElapsedMs = System.currentTimeMillis() - currentTimeMs
             println("time elapsed: $timeElapsedMs")
-            delay(1000 - timeElapsedMs)
+            delay(tickRate - timeElapsedMs)
 
             // send update every tick to all connected players
             connections.forEach {

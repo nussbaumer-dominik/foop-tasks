@@ -5,8 +5,8 @@ data class Configuration(
 )
 
 data class GameConfiguration(
-    val rows: Int = 20,
-    val columns: Int = 20,
+    val width: Int = 800,
+    val height: Int = 600,
     val numberOfMice: Int = 10,
     val numberOfSubways: Int = 10,
     val maxNumberOfExits: Int = 4,

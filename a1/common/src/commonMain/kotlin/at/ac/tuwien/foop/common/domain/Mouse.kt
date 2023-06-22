@@ -20,6 +20,8 @@ data class Mouse(
      * */
     @SerialName("position")
     val position: Position,
+    @SerialName("size")
+    val size: Size = Size(32, 32),
     @SerialName("subway")
     var subway: Subway?,
     @Transient

@@ -18,7 +18,7 @@ fun Application.socketEndpoint(game: Game) {
     routing {
         webSocket("/ws") {
             val player = Player(
-                color = "red", position = Position(game.board.columns / 2, game.board.rows / 2)
+                color = "red", position = Position(game.board.width / 2, game.board.height / 2)
             )
 
             // Send initial info

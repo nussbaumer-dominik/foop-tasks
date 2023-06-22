@@ -14,6 +14,8 @@ data class Player(
      * */
     @SerialName("id")
     val id: String = UUID.randomUUID().toString(),
+    @SerialName("size")
+    val size: Size = Size(32, 32),
     /**
      * The unique color assigned to this player to distinguish it form others
      * */

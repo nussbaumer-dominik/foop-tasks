@@ -9,11 +9,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Exit(
     /**
-     * The starting position of the exit
+     * The top left corner position of the exit
      * */
     @SerialName("position")
     val position: Position,
-
+    @SerialName("size")
+    val size: Size = Size(32, 32),
     val subwayId: String
 ): Field {
     fun getDistancesToOtherExits(gameBoard: GameBoard): List<Pair<Int, Exit>> {

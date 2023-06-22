@@ -32,21 +32,21 @@ fun AppPreview() {
                 Subway(
                     "0",
                     mutableSetOf(
-                        Exit(Position(0, 0), "0"),
-                        Exit(Position(10, 10), "1"),
+                        Exit(position = Position(0, 0), size = Size(32, 32), subwayId = "0"),
+                        Exit(position = Position(400, 400), size = Size(32, 32), subwayId = "1"),
                     )
                 )
             ),
             mice = mutableSetOf(
-                Mouse("0", position = Position(1, 1), subway = null),
-                Mouse("1", position = Position(11, 11), subway = null),
+                Mouse("0", position = Position(40, 36), subway = null, size = Size(32, 32)),
+                Mouse("1", position = Position(352, 352), subway = null, size = Size(32, 32)),
             ),
             cats = mutableSetOf(
-                Player("0", color = "red", position = Position(2, 2)),
-                Player("1", color = "blue", position = Position(12, 12)),
+                Player("0", color = "red", position = Position(400, 300), size = Size(32, 32)),
+                Player("1", color = "blue", position = Position(200, 212), size = Size(32, 32)),
             ),
-            rows = 20,
-            columns = 20
+            width = 800,
+            height = 600,
         )
     )
 }
@@ -64,13 +64,6 @@ fun App(gameBoard: GameBoard?) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                OptionTile(
-                    checked = debuggingOptions.showEmptyTiles,
-                    text = "Show empty tiles",
-                    onCheckedChange = { checked ->
-                        debuggingOptions = debuggingOptions.copy(showEmptyTiles = checked)
-                    }
-                )
                 OptionTile(
                     checked = debuggingOptions.showMouseTrace,
                     text = "Show mouse trace",
@@ -140,10 +133,7 @@ fun main() = application {
             port = 8080,
             onMapUpdate = {
                 if (gameBoard == null) {
-                    composeWindow.setContentSize(
-                        it.columns * Constants.TILE_SIZE,
-                        it.rows * Constants.TILE_SIZE + Constants.TOP_NAV_HEIGHT
-                    )
+                    composeWindow.setContentSize(it.width, it.height)
                 }
                 gameBoard = it
             },

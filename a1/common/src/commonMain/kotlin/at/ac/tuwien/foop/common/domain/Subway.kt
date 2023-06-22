@@ -9,6 +9,9 @@ import java.util.UUID
  * */
 @Serializable
 data class Subway(
+    /**
+     * The unique id of a subway which is assigned when it is spawned
+     */
     @SerialName("id")
     val id: String = UUID.randomUUID().toString(),
     /**
@@ -28,5 +31,4 @@ data class Subway(
     fun containsExit(exit: Exit): Boolean {
         return exits.stream().anyMatch { e -> e.position == exit.position }
     }
-
 }
