@@ -1,6 +1,8 @@
 package at.ac.tuwien.foop.domain
 
 import at.ac.tuwien.foop.common.domain.MouseDto
+import at.ac.tuwien.foop.domain.mouseStrategy.MouseRandomStrategy
+import at.ac.tuwien.foop.domain.mouseStrategy.MouseStrategy
 import java.util.*
 
 class Mouse(
@@ -14,7 +16,7 @@ class Mouse(
     override val position: Position,
     override val size: Size = Size(32, 32),
     var subway: Subway?,
-    var moveAlgorithm: (Mouse, GameBoard) -> Position = { _, _ -> Position(0, 0) },
+    val strategy: MouseStrategy = MouseRandomStrategy(),
     var catsPositions: List<Position> = mutableListOf(),
     var targetPosition: Position? = null,
 ) : Entity() {
@@ -30,7 +32,7 @@ class Mouse(
     }
 
     fun move(gameBoard: GameBoard) {
-        val newPosition = moveAlgorithm(this, gameBoard)
+        val newPosition = strategy.newPosition(this, gameBoard)
         val field = gameBoard.getFieldAtPosition(newPosition)
         if (field is Exit) {
             subway = gameBoard.subways.first { it.id == field.subwayId }
@@ -39,7 +41,6 @@ class Mouse(
         position.x = newPosition.x
         position.y = newPosition.y
     }
-
 
     fun toDto(): MouseDto {
         return MouseDto(
