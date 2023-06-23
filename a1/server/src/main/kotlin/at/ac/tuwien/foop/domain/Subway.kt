@@ -1,25 +1,27 @@
-package at.ac.tuwien.foop.common.domain
+package at.ac.tuwien.foop.domain
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import at.ac.tuwien.foop.common.domain.SubwayDto
 import java.util.*
 
-/**
- * A subway which is positioned on the map and has its exits
- * */
-@Serializable
-data class Subway(
+class Subway(
     /**
      * The unique id of a subway which is assigned when it is spawned
      */
-    @SerialName("id")
     val id: String = UUID.randomUUID().toString(),
     /**
      * The exits that exist on this subway
      * */
-    @SerialName("exits")
     val exits: MutableSet<Exit> = mutableSetOf(),
 ) {
+    companion object {
+        fun fromDto(dto: SubwayDto): Subway {
+            return Subway(
+                id = dto.id,
+                exits = dto.exitDtos.map { Exit.fromDto(it) }.toMutableSet(),
+            )
+        }
+    }
+
     fun addExit(exit: Exit): Boolean {
         if (containsExit(exit)) {
             return false
@@ -31,5 +33,12 @@ data class Subway(
 
     private fun containsExit(exit: Exit): Boolean {
         return exits.stream().anyMatch { e -> e.position == exit.position }
+    }
+
+    fun toDto(): SubwayDto {
+        return SubwayDto(
+            id = id,
+            exitDtos = exits.map { it.toDto() }.toMutableSet(),
+        )
     }
 }

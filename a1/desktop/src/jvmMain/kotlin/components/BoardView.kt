@@ -5,24 +5,24 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import at.ac.tuwien.foop.common.domain.GameBoard
+import at.ac.tuwien.foop.common.domain.GameBoardDto
 import components.primitives.CatView
 import components.primitives.MouseView
 import components.primitives.SubwayView
 
 @Composable
-fun BoardView(gameBoard: GameBoard, debuggingOptions: DebuggingOptions) {
+fun BoardView(gameBoardDto: GameBoardDto, debuggingOptions: DebuggingOptions) {
     Box(
-        modifier = Modifier.size(width = gameBoard.width.dp, height = gameBoard.height.dp)
+        modifier = Modifier.size(width = gameBoardDto.width.dp, height = gameBoardDto.height.dp)
     ) {
         //Tiles(gameBoard.width / Constants.TILE_SIZE, gameBoard.height / Constants.TILE_SIZE)
-        gameBoard.subways.forEach {
+        gameBoardDto.subwayDtos.forEach {
             SubwayView(it, debuggingOptions = debuggingOptions)
         }
-        gameBoard.mice.forEach {
+        gameBoardDto.mice.forEach {
             MouseView(it, alwaysVisible = debuggingOptions.showMouseTrace)
         }
-        gameBoard.players.forEach {
+        gameBoardDto.playerDtos.forEach {
             CatView(it)
         }
     }

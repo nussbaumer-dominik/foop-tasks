@@ -8,31 +8,22 @@ import java.util.*
  * A cat controlled by a player
  * */
 @Serializable
-data class Player(
+data class PlayerDto(
     /**
      * The unique id of the play assigned when they join the game
      * */
     @SerialName("id")
     val id: String = UUID.randomUUID().toString(),
-    @SerialName("size")
-    override val size: Size = Size(32, 32),
+    @SerialName("sizeDto")
+    val sizeDto: SizeDto = SizeDto(32, 32),
     /**
      * The current position of the player on the map relative to the top left corner
      * */
-    @SerialName("position")
-    override var position: Position,
+    @SerialName("positionDto")
+    var positionDto: PositionDto,
     /**
      * The unique color assigned to this player to distinguish it form others
      * */
     @SerialName("color")
     val color: String,
-) : Field {
-
-    fun move(direction: Direction) {
-        position = position.getNewPosition(direction)
-    }
-
-    override fun toChar(): Char {
-        return '#'
-    }
-}
+)

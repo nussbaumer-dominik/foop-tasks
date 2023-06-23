@@ -1,7 +1,7 @@
 package at.ac.tuwien.foop.util
 
 import at.ac.tuwien.foop.GameConfiguration
-import at.ac.tuwien.foop.common.domain.*
+import at.ac.tuwien.foop.domain.*
 
 class GameBoardGenerator {
     companion object {
@@ -31,7 +31,7 @@ class GameBoardGenerator {
             gameBoard.selectWinningSubway()
             placeMiceOnGameBoard(gameBoard, gameConfiguration.numberOfMice)
             //placeCatsRandomlyOnGameBoard(gameBoard, 4)
-            gameBoard.generateGrid()
+            //gameBoard.generateGrid()
             return gameBoard
         }
 
@@ -46,7 +46,7 @@ class GameBoardGenerator {
                 )
                 gameBoard.mice.add(mouse)
             }
-            gameBoard.generateGrid()
+            //gameBoard.generateGrid()
         }
 
         private fun placeCatsRandomlyOnGameBoard(gameBoard: GameBoard, numberOfCats: Int) {
@@ -59,6 +59,7 @@ class GameBoardGenerator {
                         ),
                         color = "#"
                     )
+
                     if (gameBoard.isFieldEmpty(cat)) {
                         gameBoard.players.add(cat)
                         break

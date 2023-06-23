@@ -4,12 +4,14 @@ import at.ac.tuwien.foop.common.AoopMessage
 import at.ac.tuwien.foop.common.GlobalMessage
 import at.ac.tuwien.foop.common.PrivateMessage
 import at.ac.tuwien.foop.common.domain.Direction
-import at.ac.tuwien.foop.common.domain.GameBoard
 import at.ac.tuwien.foop.common.domain.GameState
-import at.ac.tuwien.foop.common.domain.Player
+import at.ac.tuwien.foop.domain.GameBoard
+import at.ac.tuwien.foop.domain.Player
 import at.ac.tuwien.foop.util.GameBoardGenerator
 import io.ktor.server.websocket.*
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.delay
+import kotlin.system.exitProcess
 
 data class Game(
     val fps: Int = 30,
@@ -19,12 +21,28 @@ data class Game(
     val connections: MutableSet<WebSocketServerSession> = mutableSetOf(),
     val currentMoves: MutableMap<String, MutableList<Direction>> = mutableMapOf(),
 ) {
+    //private val gameScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     suspend fun addPlayerSession(session: WebSocketServerSession, player: Player) {
         connections += session
         board.players += player
-        session.sendSerialized(GlobalMessage.MapUpdate(map = board) as AoopMessage)
-        session.sendSerialized(PrivateMessage.SetupInfo(player = player) as AoopMessage)
+        session.sendSerialized(GlobalMessage.MapUpdate(map = board.toDto()) as AoopMessage)
+        session.sendSerialized(PrivateMessage.SetupInfo(playerDto = player.toDto()) as AoopMessage)
     }
+
+    private suspend fun broadcast(message: AoopMessage) {
+        /*gameScope.launch {*/
+        connections.forEach {
+            try {
+                it.sendSerialized(message)
+            } catch (e: ClosedReceiveChannelException) {
+                println("Channel closed: $e")
+            } catch (e: Throwable) {
+                println("Exception in broadcast: $e")
+                exitProcess(1)
+            }
+        }
+    }
+//}
 
     fun addMove(playerId: String, direction: Direction) {
         println("adding move $direction for player $playerId")
@@ -57,11 +75,12 @@ data class Game(
             delay(tickRate - timeElapsedMs)
 
             // send update every tick to all connected players
-            connections.forEach {
-                it.sendSerialized(
-                    GlobalMessage.StateUpdate(map = board, state = state) as AoopMessage,
-                )
-            }
+            broadcast(
+                GlobalMessage.StateUpdate(
+                    map = board.toDto(),
+                    state = state
+                ) as AoopMessage
+            )
 
             if (state != GameState.RUNNING) break
         }

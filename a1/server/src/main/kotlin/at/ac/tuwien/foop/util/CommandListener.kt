@@ -2,7 +2,7 @@ package at.ac.tuwien.foop.util
 
 import at.ac.tuwien.foop.Game
 import at.ac.tuwien.foop.common.PrivateMessage
-import at.ac.tuwien.foop.common.domain.Player
+import at.ac.tuwien.foop.domain.Player
 import io.ktor.server.websocket.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlin.system.exitProcess
@@ -24,7 +24,7 @@ class CommandListener(
             } catch (e: ClosedReceiveChannelException) {
                 println("Channel closed: ${connection.closeReason.await()}")
             } catch (e: Throwable) {
-                println("Exception: $e, ${connection.closeReason.await()}")
+                println("Exception in Commandlistener: $e, ${connection.closeReason.await()}")
                 exitProcess(1)
             }
         }

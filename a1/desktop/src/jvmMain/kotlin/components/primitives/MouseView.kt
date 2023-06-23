@@ -12,11 +12,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.useResource
 import androidx.compose.ui.unit.dp
-import at.ac.tuwien.foop.common.domain.Mouse
+import at.ac.tuwien.foop.common.domain.MouseDto
 
 @Composable
-fun MouseView(mouse: Mouse, alwaysVisible: Boolean = false) {
-    if (mouse.subway != null && !alwaysVisible) return
+fun MouseView(mouseDto: MouseDto, alwaysVisible: Boolean = false) {
+    if (mouseDto.subwayDto != null && !alwaysVisible) return
     val density = LocalDensity.current.density
     val image = if (density <= 1) {
         useResource("images/mouse@32.png") { loadImageBitmap(it) }
@@ -24,7 +24,7 @@ fun MouseView(mouse: Mouse, alwaysVisible: Boolean = false) {
         useResource("images/mouse@64.png") { loadImageBitmap(it) }
     }
 
-    val colorFilter = if (mouse.subway != null && alwaysVisible)
+    val colorFilter = if (mouseDto.subwayDto != null && alwaysVisible)
         ColorFilter.tint(Color.Gray, BlendMode.SrcIn)
     else null
 
@@ -33,7 +33,7 @@ fun MouseView(mouse: Mouse, alwaysVisible: Boolean = false) {
         contentDescription = "Mouse",
         colorFilter = colorFilter,
         modifier = Modifier
-            .offset(x = mouse.position.x.dp, y = mouse.position.y.dp)
-            .size(width = mouse.size.width.dp, height = mouse.size.height.dp)
+            .offset(x = mouseDto.positionDto.x.dp, y = mouseDto.positionDto.y.dp)
+            .size(width = mouseDto.sizeDto.width.dp, height = mouseDto.sizeDto.height.dp)
     )
 }
