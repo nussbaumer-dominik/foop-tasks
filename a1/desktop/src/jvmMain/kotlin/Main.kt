@@ -1,11 +1,13 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
@@ -17,8 +19,8 @@ import at.ac.tuwien.foop.common.PrivateMessage
 import at.ac.tuwien.foop.common.domain.*
 import components.BoardView
 import components.DebuggingOptions
+import components.DebuggingOptionsView
 import components.GameClient
-import components.primitives.OptionTile
 import kotlinx.coroutines.runBlocking
 import util.setContentSize
 import util.toDirection
@@ -64,21 +66,14 @@ fun App(gameBoard: GameBoard?) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                OptionTile(
-                    checked = debuggingOptions.showMouseTrace,
-                    text = "Show mouse trace",
-                    onCheckedChange = { checked ->
-                        debuggingOptions = debuggingOptions.copy(showMouseTrace = checked)
-                    }
-                )
-                OptionTile(
-                    checked = debuggingOptions.showColoredSubways,
-                    text = "Show colored Subways",
-                    onCheckedChange = { checked ->
-                        debuggingOptions = debuggingOptions.copy(showColoredSubways = checked)
+                DebuggingOptionsView(
+                    debuggingOptions,
+                    onChange = {
+                        debuggingOptions = it
                     }
                 )
             }
+            Divider(color = Color.Black, thickness = 1.dp)
             Box(Modifier.fillMaxSize()) {
                 if (gameBoard != null)
                     BoardView(gameBoard, debuggingOptions)

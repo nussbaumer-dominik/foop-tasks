@@ -21,14 +21,13 @@ class GameBoardGenerator {
                             subwayId = subway.id
                         )
 
-                        println("Exit position: ${exit.position}")
-
                         if (gameBoard.isFieldEmpty(exit) && subway.addExit(exit))
                             break
                     }
                 }
                 gameBoard.addSubway(subway)
             }
+
             gameBoard.selectWinningSubway()
             placeMiceOnGameBoard(gameBoard, gameConfiguration.numberOfMice)
             //placeCatsRandomlyOnGameBoard(gameBoard, 4)

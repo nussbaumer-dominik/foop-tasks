@@ -2,6 +2,7 @@ package at.ac.tuwien.foop
 
 import at.ac.tuwien.foop.common.AoopMessage
 import at.ac.tuwien.foop.common.GlobalMessage
+import at.ac.tuwien.foop.common.PrivateMessage
 import at.ac.tuwien.foop.common.domain.Direction
 import at.ac.tuwien.foop.common.domain.GameBoard
 import at.ac.tuwien.foop.common.domain.GameState
@@ -18,9 +19,11 @@ data class Game(
     val connections: MutableSet<WebSocketServerSession> = mutableSetOf(),
     val currentMoves: MutableMap<String, MutableList<Direction>> = mutableMapOf(),
 ) {
-    fun addPlayerSession(session: WebSocketServerSession, player: Player) {
+    suspend fun addPlayerSession(session: WebSocketServerSession, player: Player) {
         connections += session
         board.players += player
+        session.sendSerialized(GlobalMessage.MapUpdate(map = board) as AoopMessage)
+        session.sendSerialized(PrivateMessage.SetupInfo(player = player) as AoopMessage)
     }
 
     fun addMove(playerId: String, direction: Direction) {
@@ -35,16 +38,17 @@ data class Game(
             val currentTimeMs = System.currentTimeMillis()
 
             for (currentMove in currentMoves) {
-                println(currentMove.value)
-                println("currentMove key: ${currentMove.key}")
-                // TODO: test processing all moves
                 val player = board.players.find { it.id == currentMove.key }!!
-                val direction = currentMove.value.lastOrNull() ?: continue
-                player.move(direction)
+                for (move in currentMove.value) {
+                    val direction = currentMove.value.lastOrNull() ?: continue
+                    player.move(direction)
+                }
             }
+
             // TODO: add mouse collision
             currentMoves.clear()
-            //board.moveMice()
+            //TODO: correctly move mouse into the subway
+            board.moveMice()
             //board.generateGrid()
 
             state = if (board.isWinningState()) GameState.MICE_WON else GameState.RUNNING
