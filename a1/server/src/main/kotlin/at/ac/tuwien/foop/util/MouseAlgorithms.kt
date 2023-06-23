@@ -106,7 +106,7 @@ class MouseAlgorithms {
             val distanceToClosestCat = positionOfClosestCat?.distanceTo(mouse.position) ?: Int.MAX_VALUE
             if (mouse.subway == null) {
                 //mouse is not in subway
-                mouse.catsPositions = gameBoard.cats.map { it.position }
+                mouse.catsPositions = gameBoard.players.map { it.position }
                 //TODO: replace value with environment variable
                 if (distanceToClosestCat < 3) {
                     //quickly enter the next subway

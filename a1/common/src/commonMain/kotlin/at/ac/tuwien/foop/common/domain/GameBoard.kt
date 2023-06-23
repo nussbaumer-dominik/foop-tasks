@@ -18,9 +18,9 @@ data class GameBoard(
     @SerialName("mice")
     val mice: MutableSet<Mouse> = mutableSetOf(),
     @SerialName("cats")
-    val cats: MutableSet<Player> = mutableSetOf(),
-    val rows: Int = 0,
-    val columns: Int = 0,
+    val players: MutableSet<Player> = mutableSetOf(),
+    val width: Int = 0,
+    val height: Int = 0,
     @Transient
     var winningSubway: Subway? = null,
     @Transient
@@ -46,22 +46,43 @@ data class GameBoard(
      * Compares the position of all subway exits to the given position
      * Returns true if a tile is empty, else false
      */
-    fun isFieldEmpty(position: Position): Boolean {
+    fun isFieldEmpty(field: Field): Boolean {
         for (s in subways) {
-            if (s.exits.stream().anyMatch { e -> e.position == position }) {
+            for (e in s.exits) {
+                println(e)
+                println(field)
+                val intersects = e.intersects(field)
+                if (intersects) {
+                    return false
+                }
+            }
+        }
+
+        for (p in players) {
+            if (p.intersects(field)) {
                 return false
             }
         }
-        for (c in cats) {
-            if (c.position == position) {
-                return false
-            }
-        }
+
         return true
     }
 
+    // TODO: maybe rework into field, after it has been transformed to an abstract class
+    private fun Field.intersects(other: Field): Boolean {
+        return position.x <= other.position.x + other.size.width &&
+                position.x + size.width >= other.position.x &&
+                position.y <= other.position.y + other.size.height &&
+                position.y + size.height >= other.position.y
+    }
+
     fun generateGrid() {
-        grid = Array(rows) { Array(columns) { EmptyField() } }
+        grid = Array(width + 1) {
+            Array(height + 1) {
+                EmptyField(
+                    Position(it, it), Size(1, 1)
+                )
+            }
+        }
         for (m in mice) {
             grid!![m.position.x][m.position.y] = m
         }
@@ -70,8 +91,8 @@ data class GameBoard(
                 grid!![e.position.x][e.position.y] = e
             }
         }
-        for (c in cats) {
-            grid!![c.position.x][c.position.y] = c
+        for (p in players) {
+            grid!![p.position.x][p.position.y] = p
         }
     }
 
@@ -89,13 +110,13 @@ data class GameBoard(
         }
         val exits = mySubways.flatMap { (s, c) -> s.exits.map { e -> Pair(e.position, c) } }
         val mice = mice.map { m -> Pair(m.position, 'M') }
-        for (x in 0 until rows) {
+        for (x in 0 until height) {
             print("|")
-            for (y in 0 until columns) {
+            for (y in 0 until width) {
                 val exit = exits.firstOrNull { pair -> pair.first == Position(x, y) }
                 val mouse = mice.filter { pair -> pair.first == Position(x, y) }
-                val cat = cats.firstOrNull { c -> c.position == Position(x, y) }
-                if (cat != null)
+                val player = players.firstOrNull { p -> p.position == Position(x, y) }
+                if (player != null)
                     print("#|")
                 else {
                     if (exit != null) {
@@ -132,13 +153,14 @@ data class GameBoard(
             }
         }
         catHitbox.forEach { (x, y) ->
-            if (x >= 0 && x < rows && y >= 0 && y < columns) {
+            if (x in 0 until width && y in 0 until height) {
                 if (printGrid[x][y] == ' ')
                     printGrid[x][y] = '-'
             }
         }
-        val myArray = Array(rows) { ' ' }
+        val myArray = Array(height) { ' ' }
         myArray[2] = 'a'
+
         //print grid
         printGrid.forEach { row ->
             print("|")
@@ -150,7 +172,7 @@ data class GameBoard(
     }
 
     fun getFieldAtPosition(position: Position): Field {
-        if (position.x < 0 || position.x >= rows || position.y < 0 || position.y >= columns)
+        if (position.x < 0 || position.x >= width || position.y < 0 || position.y >= height)
             throw IllegalPositionException("Position is out of bounds")
 
         return grid!![position.x][position.y]
@@ -188,9 +210,9 @@ data class GameBoard(
 
         if (subways != other.subways) return false
         if (mice != other.mice) return false
-        if (cats != other.cats) return false
-        if (rows != other.rows) return false
-        if (columns != other.columns) return false
+        if (players != other.players) return false
+        if (width != other.width) return false
+        if (height != other.height) return false
         if (winningSubway != other.winningSubway) return false
         if (grid != null) {
             if (other.grid == null) return false
@@ -203,11 +225,15 @@ data class GameBoard(
     override fun hashCode(): Int {
         var result = subways.hashCode()
         result = 31 * result + mice.hashCode()
-        result = 31 * result + cats.hashCode()
-        result = 31 * result + rows
-        result = 31 * result + columns
+        result = 31 * result + players.hashCode()
+        result = 31 * result + width
+        result = 31 * result + height
         result = 31 * result + (winningSubway?.hashCode() ?: 0)
         result = 31 * result + (grid?.contentDeepHashCode() ?: 0)
         return result
+    }
+
+    override fun toString(): String {
+        return "GameBoard(subways=$subways, mice=$mice, cats=$players, width=$width, height=$height, winningSubway=$winningSubway, grid=${grid?.contentDeepToString()})"
     }
 }

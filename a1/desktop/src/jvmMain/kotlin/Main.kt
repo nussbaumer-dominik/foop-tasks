@@ -1,11 +1,13 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
@@ -17,8 +19,8 @@ import at.ac.tuwien.foop.common.PrivateMessage
 import at.ac.tuwien.foop.common.domain.*
 import components.BoardView
 import components.DebuggingOptions
+import components.DebuggingOptionsView
 import components.GameClient
-import components.primitives.OptionTile
 import kotlinx.coroutines.runBlocking
 import util.setContentSize
 import util.toDirection
@@ -32,21 +34,21 @@ fun AppPreview() {
                 Subway(
                     "0",
                     mutableSetOf(
-                        Exit(Position(0, 0), "0"),
-                        Exit(Position(10, 10), "1"),
+                        Exit(position = Position(0, 0), size = Size(32, 32), subwayId = "0"),
+                        Exit(position = Position(400, 400), size = Size(32, 32), subwayId = "1"),
                     )
                 )
             ),
             mice = mutableSetOf(
-                Mouse("0", position = Position(1, 1), subway = null),
-                Mouse("1", position = Position(11, 11), subway = null),
+                Mouse("0", position = Position(40, 36), subway = null, size = Size(32, 32)),
+                Mouse("1", position = Position(352, 352), subway = null, size = Size(32, 32)),
             ),
-            cats = mutableSetOf(
-                Player("0", color = "red", position = Position(2, 2)),
-                Player("1", color = "blue", position = Position(12, 12)),
+            players = mutableSetOf(
+                Player("0", color = "red", position = Position(400, 300), size = Size(32, 32)),
+                Player("1", color = "blue", position = Position(200, 212), size = Size(32, 32)),
             ),
-            rows = 20,
-            columns = 20
+            width = 800,
+            height = 600,
         )
     )
 }
@@ -64,28 +66,14 @@ fun App(gameBoard: GameBoard?) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                OptionTile(
-                    checked = debuggingOptions.showEmptyTiles,
-                    text = "Show empty tiles",
-                    onCheckedChange = { checked ->
-                        debuggingOptions = debuggingOptions.copy(showEmptyTiles = checked)
-                    }
-                )
-                OptionTile(
-                    checked = debuggingOptions.showMouseTrace,
-                    text = "Show mouse trace",
-                    onCheckedChange = { checked ->
-                        debuggingOptions = debuggingOptions.copy(showMouseTrace = checked)
-                    }
-                )
-                OptionTile(
-                    checked = debuggingOptions.showColoredSubways,
-                    text = "Show colored Subways",
-                    onCheckedChange = { checked ->
-                        debuggingOptions = debuggingOptions.copy(showColoredSubways = checked)
+                DebuggingOptionsView(
+                    debuggingOptions,
+                    onChange = {
+                        debuggingOptions = it
                     }
                 )
             }
+            Divider(color = Color.Black, thickness = 1.dp)
             Box(Modifier.fillMaxSize()) {
                 if (gameBoard != null)
                     BoardView(gameBoard, debuggingOptions)
@@ -109,7 +97,7 @@ fun main() = application {
             ComposeWindow().apply {
                 composeWindow = this
                 title = "Cat and Mouse"
-                isResizable = false
+                isResizable = true
                 setSize(800, 600)
             }
         },
@@ -140,10 +128,7 @@ fun main() = application {
             port = 8080,
             onMapUpdate = {
                 if (gameBoard == null) {
-                    composeWindow.setContentSize(
-                        it.columns * Constants.TILE_SIZE,
-                        it.rows * Constants.TILE_SIZE + Constants.TOP_NAV_HEIGHT
-                    )
+                    composeWindow.setContentSize(it.width, it.height + Constants.TOP_NAV_HEIGHT)
                 }
                 gameBoard = it
             },
