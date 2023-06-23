@@ -11,18 +11,16 @@ import at.ac.tuwien.foop.util.GameBoardGenerator
 import io.ktor.server.websocket.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.delay
-import kotlin.system.exitProcess
 
 data class Game(
     val fps: Int = 30,
     val configuration: GameConfiguration,
     var board: GameBoard = GameBoardGenerator.generateGameBoard(configuration),
     var state: GameState = GameState.WAITING,
-    val connections: MutableSet<WebSocketServerSession> = mutableSetOf(),
+    val connections: MutableSet<DefaultWebSocketServerSession> = mutableSetOf(),
     val currentMoves: MutableMap<String, MutableList<Direction>> = mutableMapOf(),
 ) {
-    //private val gameScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    suspend fun addPlayerSession(session: WebSocketServerSession, player: Player) {
+    suspend fun addPlayerSession(session: DefaultWebSocketServerSession, player: Player) {
         connections += session
         board.players += player
         session.sendSerialized(GlobalMessage.MapUpdate(map = board.toDto()) as AoopMessage)
@@ -30,19 +28,18 @@ data class Game(
     }
 
     private suspend fun broadcast(message: AoopMessage) {
-        /*gameScope.launch {*/
         connections.forEach {
             try {
                 it.sendSerialized(message)
             } catch (e: ClosedReceiveChannelException) {
                 println("Channel closed: $e")
+                connections.remove(it)
             } catch (e: Throwable) {
                 println("Exception in broadcast: $e")
-                exitProcess(1)
+                connections.remove(it)
             }
         }
     }
-//}
 
     fun addMove(playerId: String, direction: Direction) {
         println("adding move $direction for player $playerId")
@@ -50,6 +47,7 @@ data class Game(
     }
 
     suspend fun start() {
+        println("starting game")
         val tickRate = 1000 / fps
         state = GameState.RUNNING
         while (true) {
@@ -66,12 +64,12 @@ data class Game(
             // TODO: add mouse collision
             currentMoves.clear()
             //TODO: correctly move mouse into the subway
-            board.moveMice()
+            //board.moveMice()
             //board.generateGrid()
 
             state = if (board.isWinningState()) GameState.MICE_WON else GameState.RUNNING
             val timeElapsedMs = System.currentTimeMillis() - currentTimeMs
-            println("time elapsed: $timeElapsedMs")
+
             delay(tickRate - timeElapsedMs)
 
             // send update every tick to all connected players

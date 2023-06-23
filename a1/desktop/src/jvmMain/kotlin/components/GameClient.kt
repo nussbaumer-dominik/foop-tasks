@@ -9,6 +9,7 @@ import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.*
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -41,23 +42,23 @@ class GameClient(
             port = port,
             path = "/ws"
         ) {
-            println("Connected to server")
             val connection = this
             val updateRoutine = launch { receive(connection) }
             val inputRoutine = launch { sendLoop(connection) }
 
-            inputRoutine.start()
             updateRoutine.join()
+            inputRoutine.cancelAndJoin()
         }
     }
 
     private suspend fun sendLoop(connection: DefaultClientWebSocketSession) {
+        println("inside sendLoop")
         while (true) {
             val command = commandQueue.take()
             println("Sending: $command")
 
             try {
-                connection.sendSerialized(command)
+                connection.sendSerialized(command as AoopMessage)
             } catch (e: ClosedSendChannelException) {
                 println("Channel closed: ${connection.closeReason.await()}")
             } catch (e: Throwable) {
@@ -73,9 +74,12 @@ class GameClient(
     }
 
     private suspend fun receive(connection: DefaultClientWebSocketSession) {
+        println("inside receive")
         try {
             while (true) {
-                when (val incomingMessage = connection.receiveDeserialized<AoopMessage>()) {
+                val incomingMessage = connection.receiveDeserialized<AoopMessage>()
+                //println("Received: $incomingMessage")
+                when (incomingMessage) {
                     is GlobalMessage.MapUpdate -> {
                         onMapUpdate(incomingMessage.map)
                     }
