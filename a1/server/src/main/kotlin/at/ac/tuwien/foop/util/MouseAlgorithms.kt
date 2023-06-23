@@ -1,8 +1,9 @@
 package at.ac.tuwien.foop.util
 
-import at.ac.tuwien.foop.common.domain.*
+import at.ac.tuwien.foop.common.domain.Direction
 import at.ac.tuwien.foop.common.exceptions.IllegalPositionException
 import at.ac.tuwien.foop.common.exceptions.NoMovePossibleException
+import at.ac.tuwien.foop.domain.*
 
 class MouseAlgorithms {
     companion object {
@@ -12,7 +13,7 @@ class MouseAlgorithms {
                 val newPosition = mouse.position.getNewPosition(direction)
                 try {
                     val field = gameBoard.getFieldAtPosition(newPosition)
-                    if (field is EmptyField || field is Exit) {
+                    if (field is Exit) {
                         return newPosition
                     }
                 } catch (e: IllegalPositionException) {
@@ -136,7 +137,7 @@ class MouseAlgorithms {
                         if (mouse.position == mouse.targetPosition) {
                             mouse.targetPosition = null
                             val exit = gameBoard.getSubwayExitPairs()
-                                .firstOrNull() { (_, e) -> e.position == mouse.position }?.second
+                                .firstOrNull { (_, e) -> e.position == mouse.position }?.second
                             if (exit != null) {
                                 mouse.subway = gameBoard.subways.first { it.id == exit.subwayId }
                             }
@@ -148,17 +149,17 @@ class MouseAlgorithms {
             } else {
                 //mouse is in subway
                 if (mouseExit != null) {
-                    val possibleActions = Actions.values()
+                    val possibleActions = MouseActions.values()
                     return when (possibleActions.random()) {
-                        Actions.WAIT -> {
+                        MouseActions.WAIT -> {
                             mouse.position
                         }
 
-                        Actions.MOVE -> {
+                        MouseActions.MOVE -> {
                             moveDirectlyTowardsClosestWinningExit(mouse, gameBoard)
                         }
 
-                        Actions.LEAVE_SUBWAY -> {
+                        MouseActions.LEAVE_SUBWAY -> {
                             mouse.subway = null
                             //TODO: update location of cats
                             mouse.position
@@ -169,7 +170,11 @@ class MouseAlgorithms {
                     val closestExitToWinningSubway = gameBoard.getSubwayExitPairs()
                         .filter { (s, _) -> s == mouse.subway }
                         .minByOrNull { (_, e) -> e.position.distanceTo(mouse.position) }
-                    return moveTowardsPosition(mouse.position, closestExitToWinningSubway!!.second.position, gameBoard)
+                    return moveTowardsPosition(
+                        mouse.position,
+                        closestExitToWinningSubway!!.second.position,
+                        gameBoard
+                    )
                 }
             }
         }

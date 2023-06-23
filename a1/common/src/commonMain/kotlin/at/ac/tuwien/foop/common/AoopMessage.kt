@@ -1,6 +1,9 @@
 package at.ac.tuwien.foop.common
 
-import at.ac.tuwien.foop.common.domain.*
+import at.ac.tuwien.foop.common.domain.Direction
+import at.ac.tuwien.foop.common.domain.GameBoardDto
+import at.ac.tuwien.foop.common.domain.GameState
+import at.ac.tuwien.foop.common.domain.PlayerDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -20,7 +23,7 @@ sealed interface GlobalMessage : AoopMessage {
     @SerialName("global_map_update")
     data class MapUpdate(
         @SerialName("map")
-        val map: GameBoard,
+        val map: GameBoardDto,
     ) : GlobalMessage
 
     /**
@@ -30,7 +33,7 @@ sealed interface GlobalMessage : AoopMessage {
     @SerialName("global_state_update")
     data class StateUpdate(
         @SerialName("map")
-        val map: GameBoard,
+        val map: GameBoardDto,
         @SerialName("state")
         val state: GameState,
     ) : GlobalMessage
@@ -48,8 +51,8 @@ sealed interface PrivateMessage : AoopMessage {
     @Serializable
     @SerialName("private_setup_info")
     data class SetupInfo(
-        @SerialName("player")
-        val player: Player,
+        @SerialName("playerDto")
+        val playerDto: PlayerDto,
     ) : PrivateMessage
 
     /**
@@ -58,8 +61,8 @@ sealed interface PrivateMessage : AoopMessage {
     @Serializable
     @SerialName("private_move_command")
     data class MoveCommand(
-        @SerialName("player")
-        val player: Player? = null,
+        @SerialName("playerDto")
+        val playerDto: PlayerDto? = null,
         @SerialName("direction")
         val direction: Direction,
     ) : PrivateMessage

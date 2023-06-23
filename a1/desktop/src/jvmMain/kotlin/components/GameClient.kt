@@ -3,7 +3,7 @@ package components
 import at.ac.tuwien.foop.common.AoopMessage
 import at.ac.tuwien.foop.common.GlobalMessage
 import at.ac.tuwien.foop.common.PrivateMessage
-import at.ac.tuwien.foop.common.domain.GameBoard
+import at.ac.tuwien.foop.common.domain.GameBoardDto
 import at.ac.tuwien.foop.common.serializerConfig
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
@@ -11,7 +11,6 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.*
 import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
@@ -20,7 +19,7 @@ class GameClient(
     private val host: String = "127.0.0.1",
     private val port: Int = 8080,
     private val onStateUpdate: (GlobalMessage.StateUpdate) -> Unit,
-    private val onMapUpdate: (GameBoard) -> Unit,
+    private val onMapUpdate: (GameBoardDto) -> Unit,
     private val onSetupInfo: (PrivateMessage.SetupInfo) -> Unit
 ) {
     private val client = HttpClient {
@@ -62,7 +61,7 @@ class GameClient(
             } catch (e: ClosedSendChannelException) {
                 println("Channel closed: ${connection.closeReason.await()}")
             } catch (e: Throwable) {
-                println("Exception: $e, ${connection.closeReason.await()}}")
+                println("Exception in GameClient: $e, ${connection.closeReason.await()}}")
             }
 
             commandQueue.clear()
@@ -76,9 +75,7 @@ class GameClient(
     private suspend fun receive(connection: DefaultClientWebSocketSession) {
         try {
             while (true) {
-                val incomingMessage = connection.receiveDeserialized<AoopMessage>()
-                //println("incomingMessage in GameClient.receive: $incomingMessage")
-                when (incomingMessage) {
+                when (val incomingMessage = connection.receiveDeserialized<AoopMessage>()) {
                     is GlobalMessage.MapUpdate -> {
                         onMapUpdate(incomingMessage.map)
                     }
@@ -97,7 +94,7 @@ class GameClient(
         } catch (e: ClosedSendChannelException) {
             println("Channel closed: ${connection.closeReason.await()}")
         } catch (e: Throwable) {
-            println("Exception: $e, ${connection.closeReason.await()}}")
+            println("Exception in GameClient receive: $e, ${connection.closeReason.await()}}")
         }
     }
 

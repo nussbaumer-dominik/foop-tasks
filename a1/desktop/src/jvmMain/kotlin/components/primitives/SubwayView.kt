@@ -2,13 +2,13 @@ package components.primitives
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import at.ac.tuwien.foop.common.domain.Subway
+import at.ac.tuwien.foop.common.domain.SubwayDto
 import components.DebuggingOptions
 import util.ColorGenerator
 
 @Composable
 fun SubwayView(
-    subway: Subway,
+    subway: SubwayDto,
     debuggingOptions: DebuggingOptions
 ) {
     val color = if (debuggingOptions.showColoredSubways) {
@@ -17,7 +17,7 @@ fun SubwayView(
         Color.Black
     }
 
-    for (exit in subway.exits) {
+    for (exit in subway.exitDtos) {
         ExitView(exit, color)
     }
 }

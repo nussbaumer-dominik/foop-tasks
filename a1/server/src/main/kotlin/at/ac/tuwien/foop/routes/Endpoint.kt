@@ -2,8 +2,8 @@ package at.ac.tuwien.foop.routes
 
 import at.ac.tuwien.foop.Game
 import at.ac.tuwien.foop.common.domain.GameState
-import at.ac.tuwien.foop.common.domain.Player
-import at.ac.tuwien.foop.common.domain.Position
+import at.ac.tuwien.foop.domain.Player
+import at.ac.tuwien.foop.domain.Position
 import at.ac.tuwien.foop.util.CommandListener
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
@@ -22,9 +22,11 @@ fun Application.socketEndpoint(game: Game) {
             game.addPlayerSession(this, player)
 
             // start listening for incoming messages in a separate coroutine
-            launch {
+            val listener = launch {
                 CommandListener(this@webSocket, game, player).start()
             }
+
+            listener.join()
 
             // start game if not running
             if (game.state == GameState.WAITING) {

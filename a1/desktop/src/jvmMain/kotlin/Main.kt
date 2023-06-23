@@ -29,23 +29,23 @@ import util.toDirection
 @Composable
 fun AppPreview() {
     App(
-        GameBoard(
-            subways = mutableSetOf(
-                Subway(
+        GameBoardDto(
+            subwayDtos = mutableSetOf(
+                SubwayDto(
                     "0",
                     mutableSetOf(
-                        Exit(position = Position(0, 0), size = Size(32, 32), subwayId = "0"),
-                        Exit(position = Position(400, 400), size = Size(32, 32), subwayId = "1"),
+                        ExitDto(positionDto = PositionDto(0, 0), sizeDto = SizeDto(32, 32), subwayId = "0"),
+                        ExitDto(positionDto = PositionDto(400, 400), sizeDto = SizeDto(32, 32), subwayId = "1"),
                     )
                 )
             ),
             mice = mutableSetOf(
-                Mouse("0", position = Position(40, 36), subway = null, size = Size(32, 32)),
-                Mouse("1", position = Position(352, 352), subway = null, size = Size(32, 32)),
+                MouseDto("0", positionDto = PositionDto(40, 36), subwayDto = null, sizeDto = SizeDto(32, 32)),
+                MouseDto("1", positionDto = PositionDto(352, 352), subwayDto = null, sizeDto = SizeDto(32, 32)),
             ),
-            players = mutableSetOf(
-                Player("0", color = "red", position = Position(400, 300), size = Size(32, 32)),
-                Player("1", color = "blue", position = Position(200, 212), size = Size(32, 32)),
+            playerDtos = mutableSetOf(
+                PlayerDto("0", color = "red", positionDto = PositionDto(400, 300), sizeDto = SizeDto(32, 32)),
+                PlayerDto("1", color = "blue", positionDto = PositionDto(200, 212), sizeDto = SizeDto(32, 32)),
             ),
             width = 800,
             height = 600,
@@ -54,7 +54,7 @@ fun AppPreview() {
 }
 
 @Composable
-fun App(gameBoard: GameBoard?) {
+fun App(gameBoardDto: GameBoardDto?) {
     var debuggingOptions by remember {
         mutableStateOf(DebuggingOptions())
     }
@@ -75,8 +75,8 @@ fun App(gameBoard: GameBoard?) {
             }
             Divider(color = Color.Black, thickness = 1.dp)
             Box(Modifier.fillMaxSize()) {
-                if (gameBoard != null)
-                    BoardView(gameBoard, debuggingOptions)
+                if (gameBoardDto != null)
+                    BoardView(gameBoardDto, debuggingOptions)
                 else
                     Box(Modifier.fillMaxSize().align(Alignment.Center)) {
                         CircularProgressIndicator(Modifier.size(50.dp))
@@ -89,8 +89,8 @@ fun App(gameBoard: GameBoard?) {
 fun main() = application {
     var composeWindow: ComposeWindow by mutableStateOf(ComposeWindow())
     var gameClient: GameClient? = null
-    var gameBoard: GameBoard? by mutableStateOf(null)
-    var player: Player? by mutableStateOf(null)
+    var gameBoardDto: GameBoardDto? by mutableStateOf(null)
+    var playerDto: PlayerDto? by mutableStateOf(null)
 
     Window(
         create = {
@@ -104,9 +104,10 @@ fun main() = application {
         onKeyEvent = {
             runBlocking {
                 val keyEvent = it
-                val direction = if (keyEvent.type != KeyEventType.KeyDown) null else keyEvent.key.toDirection()
+                if (keyEvent.type != KeyEventType.KeyDown) return@runBlocking
+                val direction = keyEvent.key.toDirection()
                 if (direction != null) {
-                    val command = PrivateMessage.MoveCommand(player = player, direction = direction)
+                    val command = PrivateMessage.MoveCommand(playerDto = playerDto, direction = direction)
                     try {
                         gameClient?.sendCommand(command)
                     } catch (e: Exception) {
@@ -119,7 +120,7 @@ fun main() = application {
         },
         dispose = ComposeWindow::dispose,
     ) {
-        App(gameBoard)
+        App(gameBoardDto)
     }
 
     LaunchedEffect(true) {
@@ -127,16 +128,16 @@ fun main() = application {
             host = "127.0.0.1",
             port = 8080,
             onMapUpdate = {
-                if (gameBoard == null) {
+                if (gameBoardDto == null) {
                     composeWindow.setContentSize(it.width, it.height + Constants.TOP_NAV_HEIGHT)
                 }
-                gameBoard = it
+                gameBoardDto = it
             },
             onStateUpdate = {
-                gameBoard = it.map
+                gameBoardDto = it.map
             },
             onSetupInfo = {
-                player = it.player
+                playerDto = it.playerDto
             },
         )
 

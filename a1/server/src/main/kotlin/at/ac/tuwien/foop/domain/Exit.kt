@@ -1,22 +1,28 @@
-package at.ac.tuwien.foop.common.domain
+package at.ac.tuwien.foop.domain
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import at.ac.tuwien.foop.common.domain.ExitDto
 
 /**
  * The exit of a subway
  * */
-@Serializable
-data class Exit(
+class Exit(
     /**
      * The top left corner position of the exit
      * */
-    @SerialName("position")
     override val position: Position,
-    @SerialName("size")
     override val size: Size = Size(32, 32),
     val subwayId: String
-) : Field {
+) : Entity() {
+    companion object {
+        fun fromDto(dto: ExitDto): Exit {
+            return Exit(
+                position = Position.fromDto(dto.positionDto),
+                size = Size.fromDto(dto.sizeDto),
+                subwayId = dto.subwayId,
+            )
+        }
+    }
+
     fun getDistancesToOtherExits(gameBoard: GameBoard): List<Pair<Int, Exit>> {
         val distances = mutableListOf<Pair<Int, Exit>>()
         for (s in gameBoard.subways) {
@@ -28,7 +34,11 @@ data class Exit(
         return distances
     }
 
-    override fun toChar(): Char {
-        return '0'
+    fun toDto(): ExitDto {
+        return ExitDto(
+            positionDto = position.toDto(),
+            sizeDto = size.toDto(),
+            subwayId = subwayId,
+        )
     }
 }

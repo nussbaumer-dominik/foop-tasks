@@ -9,18 +9,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import at.ac.tuwien.foop.common.domain.Exit
+import at.ac.tuwien.foop.common.domain.ExitDto
 
 @Composable
-fun ExitView(exit: Exit, color: Color = Color.Black) {
+fun ExitView(exitDto: ExitDto, color: Color = Color.Black) {
     val density = LocalDensity.current.density
-    val radius = (exit.size.width / 2) * density
+    val radius = (exitDto.sizeDto.width / 2) * density
     val strokeWidth = 2 * density
 
     Canvas(
         modifier = Modifier
-            .size(width = exit.size.width.dp, height = exit.size.height.dp)
-            .offset(x = exit.position.x.dp, y = exit.position.y.dp)
+            .size(width = exitDto.sizeDto.width.dp, height = exitDto.sizeDto.height.dp)
+            .offset(x = exitDto.positionDto.x.dp, y = exitDto.positionDto.y.dp)
     ) {
         drawCircle(
             color = color,
