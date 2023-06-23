@@ -6,13 +6,14 @@ Class {
 
 { #category : #'event handling' }
 Cat >> handleKeystroke: anEvent [
-    | key |
-    key := anEvent keyString asLowercase.
-	Transcript show: 'Key pressed ', anEvent keyString asLowercase; cr.
-    key = 'w' ifTrue: [ self moveCat: 0@ -5 ].  "up arrow"
-    key = 's' ifTrue: [ self moveCat: 0@ 5 ].   "down arrow"
-    key = 'a' ifTrue: [ self moveCat: -5@0 ].  "left arrow"
-    key = 'd' ifTrue: [ self moveCat: 5@0 ].   "right arrow"
+	| key |
+	key := anEvent keyString asLowercase.
+	"Transcript show: 'Key pressed ', anEvent keyString asLowercase; cr."
+	key = 'w' ifTrue: [ self moveCat: 0@ -5 ].  "up arrow"
+	key = 's' ifTrue: [ self moveCat: 0@ 5 ].   "down arrow"
+	key = 'a' ifTrue: [ self moveCat: -5@0 ].  "left arrow"
+	key = 'd' ifTrue: [ self moveCat: 5@0 ].   "right arrow"
+
 ]
 
 { #category : #initialization }

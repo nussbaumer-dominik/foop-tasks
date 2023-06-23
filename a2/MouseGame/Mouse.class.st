@@ -44,5 +44,11 @@ Mouse class >> success [
 { #category : #initialization }
 Mouse >> initialize [
 super initialize.
-self color: Color orange
+self color: Color white .
+self height: 20
+]
+
+{ #category : #'stepping and presenter' }
+Mouse >> step [ 
+	"TODO do smthg"
 ]

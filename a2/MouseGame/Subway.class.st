@@ -9,7 +9,7 @@ Class {
 
 { #category : #adding }
 Subway >> addExit: exit [ 
-exits put: exit 
+exits add: exit 
 ]
 
 { #category : #initialization }

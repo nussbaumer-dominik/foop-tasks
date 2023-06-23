@@ -4,6 +4,7 @@ Class {
 	#instVars : [
 		'subways',
 		'exits',
+		'mice',
 		'cat'
 	],
 	#category : #MouseGame
@@ -44,6 +45,18 @@ MouseGame class >> status: aPositiveInteger [
 { #category : #'instance creation' }
 MouseGame class >> success [
 	^ self status: 0
+]
+
+{ #category : #'as yet unclassified' }
+MouseGame >> checkCollisions [
+    "Check each mouse for collision with the cat."
+    mice do: [ :mouse |
+        "Check if the cat and the mouse are overlapping."
+        (cat bounds intersects: mouse bounds) ifTrue: [
+            "Collision detected, remove the mouse from the game."
+            self removeMouse: mouse.
+        ]
+    ].
 ]
 
 { #category : #'as yet unclassified' }
@@ -98,9 +111,35 @@ self restartGame.
 ]
 
 { #category : #'as yet unclassified' }
+MouseGame >> placeMice: numMice [
+
+	| mouse exit |
+	
+	exits ifNil: [ ^ self ].  "Return if exits is nil."
+	
+	mice := Array new: numMice.
+		1 to: numMice do: [ :i |
+			mouse := Mouse new.
+			
+			"Get a random exit"
+			exit := exits atRandom.
+			mouse position: exit position.
+			self addMorph: mouse.
+			mice at: i put: mouse.
+		].
+]
+
+{ #category : #removing }
+MouseGame >> removeMouse: aMouse [
+    "Remove the mouse from the game."
+    mice remove: aMouse ifAbsent: [].
+    self removeMorph: aMouse.
+]
+
+{ #category : #'as yet unclassified' }
 MouseGame >> restartGame [
 
-	| subway pos numExits exit positions x y exitBounds exitColor |
+	| subway pos numSubways numExits exit positions x y exitBounds exitColor |
 	"delete all subways"
 	subways ifNotNil: [
 		1 to: subways size do: [ :i |
@@ -111,12 +150,13 @@ MouseGame >> restartGame [
 
 	pos := self position.
 
-	subways := Array new: 5.
+	numSubways := 3.
+	subways := Set new.
 	
 	"Array to store the used positions"
 	positions := Set new.
 
-	1 to: subways size do: [ :i |
+	1 to: numSubways do: [ :i |
 		"Generate random number of exits for that subway"
 		numExits := (2 to: 5) atRandom.
 		
@@ -126,7 +166,7 @@ MouseGame >> restartGame [
 		"Generate a random color for this subway"
 		exitColor := Color random.
 		
-		exits := Array new: numExits.
+		exits := Set new: numExits.
 		1 to: numExits do: [ :j |
 			exit := Exit new.
 			
@@ -140,14 +180,19 @@ MouseGame >> restartGame [
 				"Check if the position has been used, if it has, we continue generating new positions"
 				positions anySatisfy: [ :existingBounds | existingBounds intersects: exitBounds ]
 			] whileTrue.
-			Transcript show: 'x: ', x printString; cr.
+			"Transcript show: 'x: ', x printString; cr."
 			
 			"Add the new position to the set of used positions"
-         positions add: exitBounds.
+			positions add: exitBounds.
 			exit position: x @ y + pos.
 			exit color: exitColor.
 			self addMorph: exit.
-			exits at: j put: exit ].
+			exits add: exit.
+			subway addExit: exit.
+			].
 		
-		subways at: i put: subway ].
+		subways add: subway.
+		].
+	
+	self placeMice: 5.
 ]
