@@ -32,7 +32,7 @@ abstract class MouseStrategy {
             optimalDirections.add(Direction.UP)
         }
         if (optimalDirections.isEmpty()) {
-            throw NoMovePossibleException("Position: $currentPosition")
+            //throw NoMovePossibleException("Position: $currentPosition")
         }
         return optimalDirections
     }

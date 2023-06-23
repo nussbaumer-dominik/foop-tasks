@@ -11,6 +11,7 @@ class GameBoardGenerator {
             for (i in 0 until gameConfiguration.numberOfSubways) {
                 val numberOfExits = (2..gameConfiguration.maxNumberOfExits).random()
                 val subway = Subway()
+                gameBoard.addSubway(subway)
                 for (j in 0 until numberOfExits) {
                     // generate exits as long as they are not on the same position
                     while (true) {
@@ -26,7 +27,6 @@ class GameBoardGenerator {
                             break
                     }
                 }
-                gameBoard.addSubway(subway)
             }
 
             gameBoard.selectWinningSubway()

@@ -8,6 +8,8 @@ import at.ac.tuwien.foop.util.CommandListener
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 
 fun Application.socketEndpoint(game: Game) {
@@ -26,16 +28,17 @@ fun Application.socketEndpoint(game: Game) {
                 CommandListener(this@webSocket, game, player).start()
             }
 
-            listener.join()
 
+            var gameRoutine: Job? = null
             // start game if not running
             if (game.state == GameState.WAITING) {
-                val gameRoutine = launch {
+                gameRoutine = launch {
                     game.start()
                 }
 
-                gameRoutine.join()
             }
+            gameRoutine?.join()
+            listener.cancelAndJoin()
         }
     }
 }
