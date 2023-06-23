@@ -46,8 +46,18 @@ Exit class >> success [
 	^ self status: 0
 ]
 
+{ #category : #'as yet unclassified' }
+Exit >> getHeight [
+	^self height 
+]
+
+{ #category : #'as yet unclassified' }
+Exit >> getWidth [
+	^self width 
+]
+
 { #category : #initialization }
 Exit >> initialize [
 super initialize.
-self color: Color orange
+self color: Color orange.
 ]

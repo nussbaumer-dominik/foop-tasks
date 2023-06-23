@@ -8,6 +8,13 @@ Class {
 }
 
 { #category : #'code-critics' }
+ManifestMouseGame class >> ruleStringConcatenationRuleV1FalsePositive [
+
+	<ignoreForCoverage>
+	^ #(#(#(#RGPackageDefinition #(#MouseGame)) #'2023-06-23T20:02:43.762+02:00') )
+]
+
+{ #category : #'code-critics' }
 ManifestMouseGame class >> ruleToDoCollectRuleV1FalsePositive [
 
 	<ignoreForCoverage>

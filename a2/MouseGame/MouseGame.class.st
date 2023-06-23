@@ -1,6 +1,6 @@
 Class {
 	#name : #MouseGame,
-	#superclass : #Morph,
+	#superclass : #PasteUpMorph,
 	#instVars : [
 		'subways',
 		'exits',
@@ -64,14 +64,14 @@ MouseGame >> handleKeystroke: anEvent [
 { #category : #initialization }
 MouseGame >> initialize [
 
-| p cat  |
+| p |
  "self := Morph new openInWorld."
 super initialize.
 
 "score := 0."
 
 self position: 100@100.
-self extent: 640@480.
+self extent: 800@800.
 self color: Color black.
 self setNameTo: 'Simple Shooter'.
 
@@ -94,13 +94,13 @@ debugtext string: score asString fontName: #Atlanta size: 22."
 "debugtext extent: 320 @ 150."
 "debugtext text: Text fromString: 'hello'."
 
-"self restartGame."
+self restartGame.
 ]
 
 { #category : #'as yet unclassified' }
 MouseGame >> restartGame [
 
-	| subway pos numExits exit |
+	| subway pos numExits exit positions x y exitBounds exitColor |
 	"delete all subways"
 	subways ifNotNil: [
 		1 to: subways size do: [ :i |
@@ -111,23 +111,43 @@ MouseGame >> restartGame [
 
 	pos := self position.
 
-	subways := Array new: 4.
+	subways := Array new: 5.
+	
+	"Array to store the used positions"
+	positions := Set new.
 
 	1 to: subways size do: [ :i |
-		"TODO generate random number of exits for that subway"
-		"rand := Random new.
-		rand := (rand nextValue) * 10."
-		numExits := (1 to: 10) atRandom.
-	"	Transcript show: 'numExits: '.
-		Transcript show: numExits printString."
+		"Generate random number of exits for that subway"
+		numExits := (2 to: 5) atRandom.
+		
 		subway := Subway new.
 		subway setNumExits: numExits .
-		"TODO generate random position"
-		subway position: 320 @ 64 + pos.
+		
+		"Generate a random color for this subway"
+		exitColor := Color random.
 		
 		exits := Array new: numExits.
 		1 to: numExits do: [ :j |
 			exit := Exit new.
+			
+			"Generate random position that hasn't been used before"
+			[ 
+				x := (1 to: self width - exit getWidth) atRandom.
+				y := (1 to: self height - exit getHeight) atRandom.
+				
+				exitBounds := (x @ y extent: exit getWidth @ exit getHeight).
+				
+				"Check if the position has been used, if it has, we continue generating new positions"
+				positions anySatisfy: [ :existingBounds | existingBounds intersects: exitBounds ]
+			] whileTrue.
+			Transcript show: 'x: ', x printString; cr.
+			
+			"Add the new position to the set of used positions"
+         positions add: exitBounds.
+			exit position: x @ y + pos.
+			exit color: exitColor.
+			self addMorph: exit.
 			exits at: j put: exit ].
+		
 		subways at: i put: subway ].
 ]
