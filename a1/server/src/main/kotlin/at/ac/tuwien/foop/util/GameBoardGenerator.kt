@@ -37,7 +37,9 @@ class GameBoardGenerator {
         }
 
         private fun placeMiceOnGameBoard(gameBoard: GameBoard, numberOfMice: Int) {
-            val subwayExitPairs = gameBoard.getSubwayExitPairs()
+            val subwayExitPairs = gameBoard.getSubwayExitPairs().toMutableSet()
+            //remove the winning subway so no mice is directly at the winning subway
+            subwayExitPairs.removeIf { it.first == gameBoard.winningSubway }
             for (i in 0 until numberOfMice) {
                 val subwayExitPair = subwayExitPairs.random()
                 val mouse = Mouse(

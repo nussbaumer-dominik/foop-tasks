@@ -42,14 +42,13 @@ abstract class MouseStrategy {
         val directions = getDirectionsTowardsPosition(currentEntity.position, targetPosition) ?: return currentEntity.position
         //If no optimal move is possible, move random
         //var suboptimalDirections = Direction.values().filter { d -> directions.none { it == d } }
-        val otherDirections = Direction.values().toMutableList()
-        otherDirections.shuffle()
-        //println("Shuffled directions: $otherDirections")
-        directions.addAll(otherDirections)
+        val allDirections = Direction.values().toMutableList()
+        allDirections.shuffle()
+        directions.addAll(allDirections)
         for (direction in directions) {
             val newPosition = currentEntity.position.getNewPosition(direction)
-            val newEntity = ConcreteEntity(currentEntity)
-            newEntity.copyWith(position = newPosition)
+            var newEntity = ConcreteEntity(currentEntity)
+            newEntity = newEntity.copyWith(position = newPosition)
             try {
                 if (!gameBoard.players.any {p -> p.intersects(newEntity)}) {
                     return newPosition
