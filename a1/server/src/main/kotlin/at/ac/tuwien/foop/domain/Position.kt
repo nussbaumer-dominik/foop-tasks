@@ -10,7 +10,6 @@ import kotlin.math.abs
 data class Position(
     val x: Int,
     val y: Int,
-    val moveSize: Int = 4,
 ) {
     companion object {
         fun fromDto(dto: PositionDto): Position {
@@ -18,7 +17,7 @@ data class Position(
         }
     }
 
-    fun getNewPosition(direction: Direction): Position {
+    fun getNewPosition(direction: Direction, moveSize: Int): Position {
         return when (direction) {
             Direction.UP -> Position(x, y - moveSize)
             Direction.DOWN -> Position(x, y + moveSize)

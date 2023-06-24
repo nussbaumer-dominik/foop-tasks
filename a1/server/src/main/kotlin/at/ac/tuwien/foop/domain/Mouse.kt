@@ -15,6 +15,7 @@ class Mouse(
      * */
     override var position: Position,
     override val size: Size = Size(32, 32),
+    override val moveSize: Int = 2,
     var subway: Subway?,
     val strategy: MouseStrategy = MouseRandomStrategy(),
     var catsPositions: List<Position> = mutableListOf(),

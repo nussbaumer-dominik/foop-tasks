@@ -16,6 +16,7 @@ class Player(
      * The current position of the player on the map relative to the top left corner
      * */
     override var position: Position,
+    override val moveSize: Int = 4,
     /**
      * The unique color assigned to this player to distinguish it form others
      * */

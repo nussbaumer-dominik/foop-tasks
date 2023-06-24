@@ -12,7 +12,7 @@ class MouseRandomStrategy : MouseStrategy() {
             val direction = directions.random()
             directions.remove(direction)
             val tempMouse = mouse.toEntity()
-            tempMouse.position = tempMouse.position.getNewPosition(direction)
+            tempMouse.position = tempMouse.position.getNewPosition(direction, tempMouse.moveSize)
 
             for (subway in gameBoard.subways) {
                 for (exit in subway.exits) {

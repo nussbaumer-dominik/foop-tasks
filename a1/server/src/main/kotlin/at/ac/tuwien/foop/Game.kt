@@ -45,7 +45,7 @@ data class Game(
         when (direction) {
             Direction.UP -> {
                 if (type == PrivateMessage.MoveCommandType.MOVE) {
-                    player.velocity = player.velocity.copy(yu = -player.position.moveSize)
+                    player.velocity = player.velocity.copy(yu = -player.moveSize)
                 } else {
                     player.velocity = player.velocity.copy(yu = 0)
                 }
@@ -53,7 +53,7 @@ data class Game(
 
             Direction.DOWN -> {
                 if (type == PrivateMessage.MoveCommandType.MOVE) {
-                    player.velocity = player.velocity.copy(yd = player.position.moveSize)
+                    player.velocity = player.velocity.copy(yd = player.moveSize)
                 } else {
                     player.velocity = player.velocity.copy(yd = 0)
                 }
@@ -61,7 +61,7 @@ data class Game(
 
             Direction.LEFT -> {
                 if (type == PrivateMessage.MoveCommandType.MOVE) {
-                    player.velocity = player.velocity.copy(xl = -player.position.moveSize)
+                    player.velocity = player.velocity.copy(xl = -player.moveSize)
                 } else {
                     player.velocity = player.velocity.copy(xl = 0)
                 }
@@ -69,7 +69,7 @@ data class Game(
 
             Direction.RIGHT -> {
                 if (type == PrivateMessage.MoveCommandType.MOVE) {
-                    player.velocity = player.velocity.copy(xr = player.position.moveSize)
+                    player.velocity = player.velocity.copy(xr = player.moveSize)
                 } else {
                     player.velocity = player.velocity.copy(xr = 0)
                 }
