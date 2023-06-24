@@ -19,7 +19,12 @@ class CommandListener(
                 when (val incomingMessage = connection.receiveDeserialized<AoopMessage>()) {
                     is PrivateMessage.MoveCommand -> {
                         println("MoveCommand: $incomingMessage")
-                        game.addMove(playerId = player.id, direction = incomingMessage.direction)
+                        game.changePlayerVelocity(
+                            playerId = player.id,
+                            direction = incomingMessage.direction,
+                            type = incomingMessage.type
+                        )
+                        //game.addMove(playerId = player.id, direction = incomingMessage.direction)
                     }
 
                     else -> println("Received unknown message: $incomingMessage")

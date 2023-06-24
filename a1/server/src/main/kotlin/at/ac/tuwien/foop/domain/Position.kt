@@ -10,7 +10,7 @@ import kotlin.math.abs
 class Position(
     var x: Int,
     var y: Int,
-    private val moveSize: Int = 4,
+    val moveSize: Int = 4,
 ) {
     companion object {
         fun fromDto(dto: PositionDto): Position {
@@ -37,6 +37,13 @@ class Position(
 
     fun copy(): Position {
         return Position(x, y)
+    }
+
+    fun copyWith(x: Int?, y: Int?): Position {
+        return Position(
+            x = x ?: this.x,
+            y = y ?: this.y
+        )
     }
 }
 

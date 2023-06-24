@@ -1,6 +1,5 @@
 package at.ac.tuwien.foop.domain
 
-import at.ac.tuwien.foop.common.domain.Direction
 import at.ac.tuwien.foop.common.domain.PlayerDto
 import java.util.*
 
@@ -21,6 +20,7 @@ class Player(
      * The unique color assigned to this player to distinguish it form others
      * */
     val color: String,
+    var velocity: Velocity = Velocity(),
 ) : Entity() {
     companion object {
         fun fromDto(dto: PlayerDto): Player {
@@ -33,8 +33,11 @@ class Player(
         }
     }
 
-    fun move(direction: Direction) {
-        position = position.getNewPosition(direction)
+    fun move() {
+        position = position.copyWith(
+            x = position.x + velocity.xr + velocity.xl,
+            y = position.y + velocity.yu + velocity.yd,
+        )
     }
 
     fun toDto(): PlayerDto {
