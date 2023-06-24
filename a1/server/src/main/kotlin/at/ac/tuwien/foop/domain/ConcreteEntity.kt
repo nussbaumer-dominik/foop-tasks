@@ -8,10 +8,10 @@ class ConcreteEntity(
 
     constructor(entity: Entity) : this(entity.position.copy(), entity.size.copy())
 
-    fun copyWith(position: Position? = null, size: Size? = null): Entity {
+    fun copyWith(position: Position? = null, size: Size? = null): ConcreteEntity {
         return ConcreteEntity(
-            position = position ?: this.position,
-            size = size ?: this.size
+            position = position?.copy() ?: this.position.copy(),
+            size = size?.copy() ?: this.size.copy()
         )
     }
 }
