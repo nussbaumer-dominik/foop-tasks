@@ -40,25 +40,29 @@ abstract class MouseStrategy {
         targetEntity: Entity,
         gameBoard: GameBoard
     ): Position {
-        val directions =
+        val optimalDirections =
             getDirectionsTowardsEntity(movingEntity, targetEntity) ?: return movingEntity.position
 
-        //If no optimal move is possible, move random
-        val allDirections = Direction.values().toMutableList()
-        allDirections.shuffle()
-        directions.addAll(allDirections)
+        /*val directions = mutableSetOf<Direction>()
+        directions.addAll(optimalDirections)
+        directions.addAll(allDirections)*/
 
-        for (direction in directions) {
-            val newPosition = movingEntity.position.getNewPosition(direction, movingEntity.moveSize)
-            var newEntity = ConcreteMovingEntity(movingEntity)
-            newEntity = newEntity.copyWith(position = newPosition)
-            try {
-                if (!gameBoard.players.any { p -> p.intersects(newEntity) }) {
-                    return newPosition
-                }
-            } catch (e: IllegalPositionException) {
-                continue
+        val newPosition = if (optimalDirections.size == 2) {
+            //if there are two optimal directions -> move diagonal
+            val firstMovePosition =
+                movingEntity.position.getNewPosition(optimalDirections.elementAt(0), movingEntity.moveSize / 2)
+            firstMovePosition.getNewPosition(optimalDirections.elementAt(1), movingEntity.moveSize / 2)
+        } else {
+            movingEntity.position.getNewPosition(optimalDirections.first(), movingEntity.moveSize)
+        }
+        var newEntity = ConcreteMovingEntity(movingEntity)
+        newEntity = newEntity.copyWith(position = newPosition)
+        try {
+            if (!gameBoard.players.any { p -> p.intersects(newEntity) }) {
+                return newPosition
             }
+        } catch (e: IllegalPositionException) {
+            return movingEntity.position
         }
 
         Direction.values().random()
