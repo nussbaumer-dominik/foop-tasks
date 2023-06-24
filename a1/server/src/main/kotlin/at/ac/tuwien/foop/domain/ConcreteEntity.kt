@@ -6,7 +6,7 @@ class ConcreteEntity(
 ) : Entity() {
 
     constructor(entity: Entity) : this(entity.position, entity.size)
-    fun copyWith(position: Position?, size: Size? = null): Entity {
+    fun copyWith(position: Position? = null, size: Size? = null): Entity {
         return ConcreteEntity(
             position = position ?: this.position,
             size = size ?: this.size
