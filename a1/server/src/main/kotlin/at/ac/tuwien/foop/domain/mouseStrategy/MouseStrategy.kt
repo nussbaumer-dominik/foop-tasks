@@ -43,10 +43,6 @@ abstract class MouseStrategy {
         val optimalDirections =
             getDirectionsTowardsEntity(movingEntity, targetEntity) ?: return movingEntity.position
 
-        /*val directions = mutableSetOf<Direction>()
-        directions.addAll(optimalDirections)
-        directions.addAll(allDirections)*/
-
         val newPosition = if (optimalDirections.size == 2) {
             //if there are two optimal directions -> move diagonal
             val firstMovePosition =
