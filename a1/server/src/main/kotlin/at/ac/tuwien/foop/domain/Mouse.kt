@@ -13,7 +13,7 @@ class Mouse(
     /**
      * The current position of this mouse on the map relative to the top left corner
      * */
-    override val position: Position,
+    override var position: Position,
     override val size: Size = Size(32, 32),
     var subway: Subway?,
     val strategy: MouseStrategy = MouseRandomStrategy(),
@@ -38,8 +38,7 @@ class Mouse(
             subway = gameBoard.subways.first { it.id == field.subwayId }
         }*/
 
-        position.x = newPosition.x
-        position.y = newPosition.y
+        position = newPosition
     }
 
     fun toDto(): MouseDto {

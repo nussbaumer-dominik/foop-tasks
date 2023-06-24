@@ -51,7 +51,7 @@ class MouseOptimalStrategy : MouseStrategy() {
                     //found an exit that doesn't intersect with the closest cat
                     //set the exit as new target and move to that exit
                     mouse.targetPosition = subwayExitPair.second.position
-                    moveTowardsPosition(mouse.position, subwayExitPair.second.position, gameBoard)
+                    moveTowardsPosition(mouse, subwayExitPair.second.position, gameBoard)
                 }
                 return mouseDirectStrategy.newPosition(mouse, gameBoard)
             } else {
@@ -64,7 +64,7 @@ class MouseOptimalStrategy : MouseStrategy() {
                             mouse.subway = gameBoard.subways.first { it.id == exit.subwayId }
                         }
                     }
-                    moveTowardsPosition(mouse.position, mouse.targetPosition!!, gameBoard)
+                    moveTowardsPosition(mouse, mouse.targetPosition!!, gameBoard)
                 } else
                     mouseDirectStrategy.newPosition(mouse, gameBoard)
             }
@@ -93,7 +93,7 @@ class MouseOptimalStrategy : MouseStrategy() {
                     .filter { (s, _) -> s == mouse.subway }
                     .minByOrNull { (_, e) -> e.position.distanceTo(mouse.position) }
                 return moveTowardsPosition(
-                    mouse.position,
+                    mouse,
                     closestExitToWinningSubway!!.second.position,
                     gameBoard
                 )

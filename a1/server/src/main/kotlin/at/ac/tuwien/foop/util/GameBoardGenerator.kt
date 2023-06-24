@@ -2,8 +2,7 @@ package at.ac.tuwien.foop.util
 
 import at.ac.tuwien.foop.GameConfiguration
 import at.ac.tuwien.foop.domain.*
-import at.ac.tuwien.foop.domain.mouseStrategy.MouseOptimalStrategy
-import at.ac.tuwien.foop.domain.mouseStrategy.MouseRandomStrategy
+import at.ac.tuwien.foop.domain.mouseStrategy.MouseDirectStrategy
 
 class GameBoardGenerator {
     companion object {
@@ -44,7 +43,7 @@ class GameBoardGenerator {
                 val mouse = Mouse(
                     position = subwayExitPair.second.position.copy(),
                     subway = subwayExitPair.first,
-                    strategy = MouseRandomStrategy(),
+                    strategy = MouseDirectStrategy(),
                 )
                 gameBoard.mice.add(mouse)
             }

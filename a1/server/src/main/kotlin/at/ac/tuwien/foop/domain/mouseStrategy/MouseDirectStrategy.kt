@@ -7,19 +7,34 @@ import at.ac.tuwien.foop.domain.Position
 
 class MouseDirectStrategy : MouseStrategy() {
     override fun newPosition(mouse: Mouse, gameBoard: GameBoard): Position {
-        //val exitPositions = gameBoard.getExitPositions()
-        val closestExit = gameBoard.winningSubway!!.exits.minByOrNull { mouse.position.distanceTo(it.position) }
-        //if mouse is already in winning subway -> do nothing
-        if (closestExit!!.position == mouse.position) {
-            mouse.subway = gameBoard.subways.first { it.id == closestExit.subwayId }
-            return mouse.position
+        val closestWinningExit = gameBoard.winningSubway!!.exits.minByOrNull { mouse.position.distanceTo(it.position) }
+        if (mouse.subway != null) {
+            //mouse is in a subway
+            if (mouse.subway == gameBoard.winningSubway) {
+                //mouse is at the winning subway -> stay
+                return mouse.position
+            }
+            val mouseSubwayExit = mouse.subway!!.exits.find { e -> mouse.intersects(e) }
+            if (mouseSubwayExit != null) {
+                //mouse intersects currently with an exit -> leave the subway
+                mouse.subway = null
+                return mouseSubwayExit.position
+            } else {
+                //in subway, but not at an exit location -> move to the closest exit
+                val closestSubwayExit = mouse.subway!!.exits.minByOrNull { e -> e.position.distanceTo(mouse.position) }
+                moveTowardsPosition(mouse, closestSubwayExit!!.position, gameBoard)
+            }
         }
-        //TODO: if mouse is trapped in subway -> move to closest exit of the subway and leave the subway
-        mouse.subway = null
-        return try {
-            moveTowardsPosition(mouse.position, closestExit.position, gameBoard)
+        //mouse is not in a subway -> move directly to the closest winning exit
+        try {
+            if (mouse.intersects(closestWinningExit!!)) {
+                //mouse is at the winning exit -> enter the subway
+                mouse.subway = gameBoard.winningSubway
+                return closestWinningExit.position
+            }
+            return moveTowardsPosition(mouse, closestWinningExit.position, gameBoard)
         } catch (e: NoMovePossibleException) {
-            mouse.position
+            return mouse.position
         }
     }
 }

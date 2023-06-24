@@ -8,8 +8,8 @@ import kotlin.math.abs
  * Object representing the position of something on the map relative to the top left corner (0,0)
  * */
 data class Position(
-    var x: Int,
-    var y: Int,
+    val x: Int,
+    val y: Int,
     val moveSize: Int = 4,
 ) {
     companion object {

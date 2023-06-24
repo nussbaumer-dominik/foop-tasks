@@ -3,10 +3,7 @@ package at.ac.tuwien.foop.domain.mouseStrategy
 import at.ac.tuwien.foop.common.domain.Direction
 import at.ac.tuwien.foop.common.exceptions.IllegalPositionException
 import at.ac.tuwien.foop.common.exceptions.NoMovePossibleException
-import at.ac.tuwien.foop.domain.GameBoard
-import at.ac.tuwien.foop.domain.Mouse
-import at.ac.tuwien.foop.domain.Player
-import at.ac.tuwien.foop.domain.Position
+import at.ac.tuwien.foop.domain.*
 
 abstract class MouseStrategy {
     abstract fun newPosition(mouse: Mouse, gameBoard: GameBoard): Position
@@ -38,11 +35,11 @@ abstract class MouseStrategy {
     }
 
     protected fun moveTowardsPosition(
-        currentPosition: Position,
+        currentEntity: Entity,
         targetPosition: Position,
         gameBoard: GameBoard
     ): Position {
-        val directions = getDirectionsTowardsPosition(currentPosition, targetPosition) ?: return currentPosition
+        val directions = getDirectionsTowardsPosition(currentEntity.position, targetPosition) ?: return currentEntity.position
         //If no optimal move is possible, move random
         //var suboptimalDirections = Direction.values().filter { d -> directions.none { it == d } }
         val otherDirections = Direction.values().toMutableList()
@@ -50,10 +47,11 @@ abstract class MouseStrategy {
         //println("Shuffled directions: $otherDirections")
         directions.addAll(otherDirections)
         for (direction in directions) {
-            val newPosition = currentPosition.getNewPosition(direction)
+            val newPosition = currentEntity.position.getNewPosition(direction)
+            val newEntity = ConcreteEntity(currentEntity)
+            newEntity.copyWith(position = newPosition)
             try {
-                val field = gameBoard.getFieldAtPosition(newPosition)
-                if (field !is Player) {
+                if (!gameBoard.players.any {p -> p.intersects(newEntity)}) {
                     return newPosition
                 }
             } catch (e: IllegalPositionException) {
@@ -63,6 +61,6 @@ abstract class MouseStrategy {
 
         Direction.values().random()
 
-        throw NoMovePossibleException("Position: $currentPosition")
+        throw NoMovePossibleException("Position: $currentEntity")
     }
 }
