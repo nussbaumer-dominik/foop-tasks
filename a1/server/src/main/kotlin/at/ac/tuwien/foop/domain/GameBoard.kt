@@ -120,4 +120,39 @@ class GameBoard(
             playerDtos = players.map { it.toDto() }.toMutableSet(),
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as GameBoard
+
+        if (subways != other.subways) return false
+        if (mice != other.mice) return false
+        if (players != other.players) return false
+        if (width != other.width) return false
+        if (height != other.height) return false
+        if (winningSubway != other.winningSubway) return false
+        if (grid != null) {
+            if (other.grid == null) return false
+            if (!grid.contentDeepEquals(other.grid)) return false
+        } else if (other.grid != null) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = subways.hashCode()
+        result = 31 * result + mice.hashCode()
+        result = 31 * result + players.hashCode()
+        result = 31 * result + width
+        result = 31 * result + height
+        result = 31 * result + (winningSubway?.hashCode() ?: 0)
+        result = 31 * result + (grid?.contentDeepHashCode() ?: 0)
+        return result
+    }
+
+    override fun toString(): String {
+        return "GameBoard(subways=$subways, mice=$mice, players=$players, width=$width, height=$height, winningSubway=$winningSubway, grid=${grid?.contentToString()})"
+    }
 }

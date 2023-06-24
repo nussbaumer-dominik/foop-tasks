@@ -90,7 +90,7 @@ data class Game(
 
             //TODO: add mouse collision
             //TODO: correctly move mouse into the subway
-            //board.moveMice()
+            board.moveMice()
             //board.generateGrid()
 
             state = if (board.isWinningState()) GameState.MICE_WON else GameState.RUNNING
