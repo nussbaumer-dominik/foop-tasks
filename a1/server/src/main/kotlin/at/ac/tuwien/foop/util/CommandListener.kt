@@ -12,19 +12,18 @@ class CommandListener(
     private val game: Game,
     private val player: Player,
 ) {
+    //TODO: maybe implement the Commands using the Command pattern: https://refactoring.guru/design-patterns/command
     suspend fun start() {
         println("inside key listener for player ${player.id}")
         try {
             while (true) {
                 when (val incomingMessage = connection.receiveDeserialized<AoopMessage>()) {
                     is PrivateMessage.MoveCommand -> {
-                        println("MoveCommand: $incomingMessage")
                         game.changePlayerVelocity(
                             playerId = player.id,
                             direction = incomingMessage.direction,
                             type = incomingMessage.type
                         )
-                        //game.addMove(playerId = player.id, direction = incomingMessage.direction)
                     }
 
                     else -> println("Received unknown message: $incomingMessage")

@@ -18,7 +18,6 @@ data class Game(
     var board: GameBoard = GameBoardGenerator.generateGameBoard(configuration),
     var state: GameState = GameState.WAITING,
     val connections: MutableSet<DefaultWebSocketServerSession> = mutableSetOf(),
-    /*val currentMoves: MutableMap<String, MutableList<Direction>> = mutableMapOf(),*/
 ) {
     suspend fun addPlayerSession(session: DefaultWebSocketServerSession, player: Player) {
         connections += session
@@ -89,8 +88,7 @@ data class Game(
                 player.move(width = board.width, height = board.height)
             }
 
-            // TODO: add mouse collision
-            //currentMoves.clear()
+            //TODO: add mouse collision
             //TODO: correctly move mouse into the subway
             //board.moveMice()
             //board.generateGrid()
