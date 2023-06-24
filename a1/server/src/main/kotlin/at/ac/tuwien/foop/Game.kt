@@ -13,7 +13,7 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.delay
 
 data class Game(
-    val fps: Int = 30,
+    val fps: Int = 60,
     val configuration: GameConfiguration,
     var board: GameBoard = GameBoardGenerator.generateGameBoard(configuration),
     var state: GameState = GameState.WAITING,
@@ -40,11 +40,6 @@ data class Game(
             }
         }
     }
-
-    /*fun addMove(playerId: String, direction: Direction) {
-        println("adding move $direction for player $playerId")
-        currentMoves.getOrPut(playerId) { mutableListOf() } += direction
-    }*/
 
     fun changePlayerVelocity(playerId: String, direction: Direction, type: PrivateMessage.MoveCommandType) {
         val player = board.players.find { it.id == playerId }!!
@@ -91,16 +86,8 @@ data class Game(
             val currentTimeMs = System.currentTimeMillis()
 
             for (player in board.players) {
-                player.move()
+                player.move(width = board.width, height = board.height)
             }
-
-            /*for (currentMove in currentMoves) {
-                val player = board.players.find { it.id == currentMove.key }!!
-                for (move in currentMove.value) {
-                    val direction = currentMove.value.lastOrNull() ?: continue
-                    player.move(direction)
-                }
-            }*/
 
             // TODO: add mouse collision
             //currentMoves.clear()

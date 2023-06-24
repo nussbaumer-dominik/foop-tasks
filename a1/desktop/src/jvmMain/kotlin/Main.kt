@@ -114,6 +114,7 @@ private fun handleKeyEvent(
     gameClient: GameClient?,
     playerDto: PlayerDto?
 ) {
+    keyEvent.type
     val type = when (keyEvent.type) {
         KeyEventType.KeyDown -> PrivateMessage.MoveCommandType.MOVE
         KeyEventType.KeyUp -> PrivateMessage.MoveCommandType.STOP
