@@ -13,7 +13,8 @@ class GameBoard(
     val width: Int = 0,
     val height: Int = 0,
     var winningSubway: Subway? = null,
-    private var grid: Array<Array<Entity>>? = null
+    private var grid: Array<Array<Entity>>? = null, //TODO: remove it
+    private var ways: Set<Way> = mutableSetOf()
 ) {
     companion object {
         fun fromDto(gameBoardDto: GameBoardDto): GameBoard {
@@ -154,5 +155,126 @@ class GameBoard(
 
     override fun toString(): String {
         return "GameBoard(subways=$subways, mice=$mice, players=$players, width=$width, height=$height, winningSubway=$winningSubway, grid=${grid?.contentToString()})"
+    }
+
+    /**
+     * Gets the positions that can be reached from the given position plus their distance as int
+     * The resulting list is not ordered in any way
+     */
+    fun getPossibleWays(position: Position): Set<Way> {
+        val field = getFieldAtPosition(position)
+        val possibleWays = mutableSetOf<Way>()
+        if (field is Exit) {
+            // standing on exit -> possibility to enter/exit the subway
+            if (position.subwayId != null) {
+                possibleWays.add(Way(position, position, 0, null, true))
+                val subwayOfTheExit =
+                    subways.first {it.id == position.subwayId}
+                val waysToExits = subwayOfTheExit.exits.map { e ->
+                    Way(
+                        startingPosition = position,
+                        targetPosition = e.position,
+                        distance = e.position.distanceTo(position),
+                        subwayId = position.subwayId
+                    )
+                }
+                possibleWays.addAll(waysToExits)
+            } else {
+                possibleWays.add(Way(position, position, 0, field.subwayId, true))
+            }
+        }
+        if (position.subwayId != null) {
+            // currently in a subway -> only a way to the other exits in this subway
+            val exits = subways.first { it.id == position.subwayId }.exits.map { e ->
+                Way(
+                    startingPosition = position,
+                    targetPosition = e.position,
+                    distance = e.position.distanceTo(position),
+                    subwayId = position.subwayId
+                )
+            }
+            possibleWays.addAll(exits)
+        } else {
+            // currently on land -> there is a way to all the exits on land
+            val onLandExits = subways.flatMap { s ->
+                s.exits.map { e ->
+                    Way(
+                        startingPosition = position,
+                        targetPosition = e.position,
+                        distance = e.position.distanceTo(position),
+                        subwayId = s.id
+                    )
+                }
+            }
+            possibleWays.addAll(onLandExits)
+        }
+        println("Possible ways from $position -> $possibleWays")
+        return possibleWays
+    }
+
+    /**
+     * Get all the ways (edges) from each exit position to all other exit positions.
+     * Ways are bidirectional, so the way x -> y is only contained once (y -> x is not in the result set)
+     * If the parameter 'startingPosition' is set then additionally all the ways are added that start from this position
+     */
+    fun getAllWays(startingPosition: Position? = null): Set<Way> {
+        val allWays = getAllWays().toMutableSet()
+        if (startingPosition != null) {
+            allWays.addAll(getPossibleWays(startingPosition))
+        }
+        return allWays
+    }
+
+    /**
+     * Get all the ways (edges) from each exit position to all other exit positions.
+     * Ways are bidirectional, so the way x -> y is only contained once (y -> x is not in the result set)
+     * The ways are only calculated once and then cached in the local variable 'ways'. Therefore, it must be immutable!
+     */
+    private fun getAllWays(): Set<Way> {
+        if (ways.isNotEmpty()) return ways
+        val ways = mutableSetOf<Way>()
+        //add all the ways via subways
+        for (subway in subways) {
+            for (exit in subway.exits) {
+                for (connectedExit in subway.exits) {
+                    if (exit == connectedExit) continue
+                    ways.add(
+                        Way(
+                            exit.position,
+                            connectedExit.position,
+                            exit.position.distanceTo(connectedExit.position),
+                            subway.id
+                        )
+                    )
+                }
+            }
+        }
+        //add all the ways from surface to subway (enter/exit a subway)
+        for (subway in subways) {
+            for (exit in subway.exits) {
+                ways.add(Way(exit.position, exit.position, 0, subway.id, true))  //enter a subway
+                ways.add(Way(exit.position, exit.position, 0, null, true))  //exit a subway
+            }
+        }
+        //add all the ways that are possible on the surface
+        val subwayExits = getSubwayExitPairs()
+        for ((_, exit) in subwayExits) {
+            val waysStartingAtThatExit = mutableSetOf<Way>()
+            subwayExits.forEach { (_, e) ->
+                if (e.position != exit.position) {
+                    waysStartingAtThatExit.add(
+                        Way(
+                            exit.position.copy(subwayId = null),
+                            e.position,
+                            exit.position.distanceTo(e.position),
+                            null
+                        )
+                    )
+                }
+            }
+            ways.addAll(waysStartingAtThatExit)
+        }
+
+        return ways
     }
 }

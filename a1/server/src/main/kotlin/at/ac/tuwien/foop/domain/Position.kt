@@ -10,6 +10,7 @@ import kotlin.math.abs
 data class Position(
     val x: Int,
     val y: Int,
+    val subwayId: String? = null
 ) {
     companion object {
         fun fromDto(dto: PositionDto): Position {
