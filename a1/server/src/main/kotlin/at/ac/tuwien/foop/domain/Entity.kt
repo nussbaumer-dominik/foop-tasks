@@ -3,7 +3,6 @@ package at.ac.tuwien.foop.domain
 abstract class Entity {
     abstract val position: Position
     abstract val size: Size
-    abstract val moveSize: Int
 
     fun intersects(other: Entity): Boolean {
         return this.position.x < other.position.x + other.size.width &&

@@ -22,7 +22,7 @@ class Player(
      * */
     val color: String,
     var velocity: Velocity = Velocity(),
-) : Entity() {
+) : MovingEntity() {
     companion object {
         fun fromDto(dto: PlayerDto): Player {
             return Player(

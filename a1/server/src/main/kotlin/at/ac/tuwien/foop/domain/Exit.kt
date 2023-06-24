@@ -11,7 +11,6 @@ class Exit(
      * */
     override val position: Position,
     override val size: Size = Size(32, 32),
-    override val moveSize: Int = 0,
     val subwayId: String
 ) : Entity() {
     companion object {

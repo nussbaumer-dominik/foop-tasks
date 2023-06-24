@@ -8,48 +8,49 @@ import at.ac.tuwien.foop.domain.*
 abstract class MouseStrategy {
     abstract fun newPosition(mouse: Mouse, gameBoard: GameBoard): Position
 
-    private fun getDirectionsTowardsPosition(
-        currentPosition: Position,
-        targetPosition: Position
+    private fun getDirectionsTowardsEntity(
+        movingEntity: MovingEntity,
+        targetEntity: Entity
     ): MutableSet<Direction>? {
-        if (currentPosition == targetPosition) {
+        if (movingEntity.intersects(targetEntity)) {
             return null
         }
         val optimalDirections = mutableSetOf<Direction>()
-        if (currentPosition.x < targetPosition.x) {
+        if (movingEntity.position.x + movingEntity.moveSize <= targetEntity.position.x) {
             optimalDirections.add(Direction.RIGHT)
         }
-        if (currentPosition.x > targetPosition.x) {
+        if (movingEntity.position.x - movingEntity.moveSize >= targetEntity.position.x) {
             optimalDirections.add(Direction.LEFT)
         }
-        if (currentPosition.y < targetPosition.y) {
+        if (movingEntity.position.y + movingEntity.moveSize <= targetEntity.position.y) {
             optimalDirections.add(Direction.DOWN)
         }
-        if (currentPosition.y > targetPosition.y) {
+        if (movingEntity.position.y - movingEntity.moveSize >= targetEntity.position.y) {
             optimalDirections.add(Direction.UP)
         }
         if (optimalDirections.isEmpty()) {
-            //throw NoMovePossibleException("Position: $currentPosition")
+            throw NoMovePossibleException("MovingEntity: $movingEntity")
         }
-        return optimalDirections
+
+        return optimalDirections.shuffled().toMutableSet()
     }
 
-    protected fun moveTowardsPosition(
-        currentEntity: Entity,
-        targetPosition: Position,
+    protected fun moveTowardsEntity(
+        movingEntity: MovingEntity,
+        targetEntity: Entity,
         gameBoard: GameBoard
     ): Position {
         val directions =
-            getDirectionsTowardsPosition(currentEntity.position, targetPosition) ?: return currentEntity.position
+            getDirectionsTowardsEntity(movingEntity, targetEntity) ?: return movingEntity.position
+
         //If no optimal move is possible, move random
-        //var suboptimalDirections = Direction.values().filter { d -> directions.none { it == d } }
         val allDirections = Direction.values().toMutableList()
         allDirections.shuffle()
         directions.addAll(allDirections)
 
         for (direction in directions) {
-            val newPosition = currentEntity.position.getNewPosition(direction, currentEntity.moveSize)
-            var newEntity = ConcreteEntity(currentEntity)
+            val newPosition = movingEntity.position.getNewPosition(direction, movingEntity.moveSize)
+            var newEntity = ConcreteMovingEntity(movingEntity)
             newEntity = newEntity.copyWith(position = newPosition)
             try {
                 if (!gameBoard.players.any { p -> p.intersects(newEntity) }) {
@@ -62,6 +63,6 @@ abstract class MouseStrategy {
 
         Direction.values().random()
 
-        throw NoMovePossibleException("Position: $currentEntity")
+        throw NoMovePossibleException("Position: $movingEntity")
     }
 }

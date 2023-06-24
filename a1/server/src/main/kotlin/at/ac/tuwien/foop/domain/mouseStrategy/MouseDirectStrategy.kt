@@ -22,7 +22,7 @@ class MouseDirectStrategy : MouseStrategy() {
             } else {
                 //in subway, but not at an exit location -> move to the closest exit
                 val closestSubwayExit = mouse.subway!!.exits.minByOrNull { e -> e.position.distanceTo(mouse.position) }
-                moveTowardsPosition(mouse, closestSubwayExit!!.position, gameBoard)
+                moveTowardsEntity(mouse, closestSubwayExit!!, gameBoard)
             }
         }
         //mouse is not in a subway -> move directly to the closest winning exit
@@ -32,7 +32,7 @@ class MouseDirectStrategy : MouseStrategy() {
                 mouse.subway = gameBoard.winningSubway
                 return closestWinningExit.position
             }
-            return moveTowardsPosition(mouse, closestWinningExit.position, gameBoard)
+            return moveTowardsEntity(mouse, closestWinningExit, gameBoard)
         } catch (e: NoMovePossibleException) {
             return mouse.position
         }

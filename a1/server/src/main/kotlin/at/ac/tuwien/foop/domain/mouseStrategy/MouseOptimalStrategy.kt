@@ -50,21 +50,21 @@ class MouseOptimalStrategy : MouseStrategy() {
                     }
                     //found an exit that doesn't intersect with the closest cat
                     //set the exit as new target and move to that exit
-                    mouse.targetPosition = subwayExitPair.second.position
-                    moveTowardsPosition(mouse, subwayExitPair.second.position, gameBoard)
+                    mouse.targetEntity = subwayExitPair.second
+                    moveTowardsEntity(mouse, subwayExitPair.second, gameBoard)
                 }
                 return mouseDirectStrategy.newPosition(mouse, gameBoard)
             } else {
-                return if (mouse.targetPosition != null) {
-                    if (mouse.position == mouse.targetPosition) {
-                        mouse.targetPosition = null
+                return if (mouse.targetEntity != null) {
+                    if (mouse.intersects(mouse.targetEntity!!)) {
+                        mouse.targetEntity = null
                         val exit = subwayExits
                             .firstOrNull { (_, e) -> e.position == mouse.position }?.second
                         if (exit != null) {
                             mouse.subway = gameBoard.subways.first { it.id == exit.subwayId }
                         }
                     }
-                    moveTowardsPosition(mouse, mouse.targetPosition!!, gameBoard)
+                    moveTowardsEntity(mouse, mouse.targetEntity!!, gameBoard)
                 } else
                     mouseDirectStrategy.newPosition(mouse, gameBoard)
             }
@@ -92,9 +92,9 @@ class MouseOptimalStrategy : MouseStrategy() {
                 val closestExitToWinningSubway = subwayExits
                     .filter { (s, _) -> s == mouse.subway }
                     .minByOrNull { (_, e) -> e.position.distanceTo(mouse.position) }
-                return moveTowardsPosition(
+                return moveTowardsEntity(
                     mouse,
-                    closestExitToWinningSubway!!.second.position,
+                    closestExitToWinningSubway!!.second,
                     gameBoard
                 )
             }

@@ -19,8 +19,8 @@ class Mouse(
     var subway: Subway?,
     val strategy: MouseStrategy = MouseRandomStrategy(),
     var catsPositions: List<Position> = mutableListOf(),
-    var targetPosition: Position? = null,
-) : Entity() {
+    var targetEntity: Entity? = null,
+) : MovingEntity() {
     companion object {
         fun fromDto(dto: MouseDto): Mouse {
             return Mouse(
@@ -51,10 +51,9 @@ class Mouse(
         )
     }
 
-    fun toEntity(): ConcreteEntity {
-        return ConcreteEntity(
-            position = position.copy(),
-            size = size.copy(),
+    fun toEntity(): ConcreteMovingEntity {
+        return ConcreteMovingEntity(
+            this
         )
     }
 
@@ -70,7 +69,7 @@ class Mouse(
         if (subway != other.subway) return false
         if (strategy != other.strategy) return false
         if (catsPositions != other.catsPositions) return false
-        return targetPosition == other.targetPosition
+        return targetEntity == other.targetEntity
     }
 
     override fun hashCode(): Int {
@@ -80,12 +79,12 @@ class Mouse(
         result = 31 * result + (subway?.hashCode() ?: 0)
         result = 31 * result + strategy.hashCode()
         result = 31 * result + catsPositions.hashCode()
-        result = 31 * result + (targetPosition?.hashCode() ?: 0)
+        result = 31 * result + (targetEntity?.hashCode() ?: 0)
         return result
     }
 
     override fun toString(): String {
-        return "Mouse(id='$id', position=$position, size=$size, subway=$subway, strategy=$strategy, catsPositions=$catsPositions, targetPosition=$targetPosition)"
+        return "Mouse(id='$id', position=$position, size=$size, subway=$subway, strategy=$strategy, catsPositions=$catsPositions, targetPosition=$targetEntity)"
     }
 
 
