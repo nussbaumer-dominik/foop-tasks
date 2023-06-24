@@ -13,12 +13,11 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.delay
 
 data class Game(
-    val fps: Int = 30,
+    val fps: Int = 60,
     val configuration: GameConfiguration,
     var board: GameBoard = GameBoardGenerator.generateGameBoard(configuration),
     var state: GameState = GameState.WAITING,
     val connections: MutableSet<DefaultWebSocketServerSession> = mutableSetOf(),
-    val currentMoves: MutableMap<String, MutableList<Direction>> = mutableMapOf(),
 ) {
     suspend fun addPlayerSession(session: DefaultWebSocketServerSession, player: Player) {
         connections += session
@@ -41,9 +40,41 @@ data class Game(
         }
     }
 
-    fun addMove(playerId: String, direction: Direction) {
-        println("adding move $direction for player $playerId")
-        currentMoves.getOrPut(playerId) { mutableListOf() } += direction
+    fun changePlayerVelocity(playerId: String, direction: Direction, type: PrivateMessage.MoveCommandType) {
+        val player = board.players.find { it.id == playerId }!!
+        when (direction) {
+            Direction.UP -> {
+                if (type == PrivateMessage.MoveCommandType.MOVE) {
+                    player.velocity = player.velocity.copy(yu = -player.position.moveSize)
+                } else {
+                    player.velocity = player.velocity.copy(yu = 0)
+                }
+            }
+
+            Direction.DOWN -> {
+                if (type == PrivateMessage.MoveCommandType.MOVE) {
+                    player.velocity = player.velocity.copy(yd = player.position.moveSize)
+                } else {
+                    player.velocity = player.velocity.copy(yd = 0)
+                }
+            }
+
+            Direction.LEFT -> {
+                if (type == PrivateMessage.MoveCommandType.MOVE) {
+                    player.velocity = player.velocity.copy(xl = -player.position.moveSize)
+                } else {
+                    player.velocity = player.velocity.copy(xl = 0)
+                }
+            }
+
+            Direction.RIGHT -> {
+                if (type == PrivateMessage.MoveCommandType.MOVE) {
+                    player.velocity = player.velocity.copy(xr = player.position.moveSize)
+                } else {
+                    player.velocity = player.velocity.copy(xr = 0)
+                }
+            }
+        }
     }
 
     suspend fun start() {
@@ -53,16 +84,11 @@ data class Game(
         while (true) {
             val currentTimeMs = System.currentTimeMillis()
 
-            for (currentMove in currentMoves) {
-                val player = board.players.find { it.id == currentMove.key }!!
-                for (move in currentMove.value) {
-                    val direction = currentMove.value.lastOrNull() ?: continue
-                    player.move(direction)
-                }
+            for (player in board.players) {
+                player.move(width = board.width, height = board.height)
             }
 
-            // TODO: add mouse collision
-            currentMoves.clear()
+            //TODO: add mouse collision
             //TODO: correctly move mouse into the subway
             //board.moveMice()
             //board.generateGrid()

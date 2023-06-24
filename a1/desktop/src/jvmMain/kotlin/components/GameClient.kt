@@ -55,7 +55,7 @@ class GameClient(
         println("inside sendLoop")
         while (true) {
             val command = commandQueue.take()
-            println("Sending: $command")
+            //println("Sending: $command")
 
             try {
                 connection.sendSerialized(command as AoopMessage)

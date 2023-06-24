@@ -65,5 +65,11 @@ sealed interface PrivateMessage : AoopMessage {
         val playerDto: PlayerDto? = null,
         @SerialName("direction")
         val direction: Direction,
+        @SerialName("move_command_type")
+        val type: MoveCommandType,
     ) : PrivateMessage
+
+    enum class MoveCommandType {
+        MOVE, STOP
+    }
 }
