@@ -53,7 +53,7 @@ Cat >> moveCat: point [
 
 	self bottom > owner bottom ifFalse: [ ^ self ].
 	self position setX: self position x setY: owner bottom - 32.
-	self height: 32
+	self height: 32.
 ]
 
 { #category : #'as yet unclassified' }

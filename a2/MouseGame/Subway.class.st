@@ -20,5 +20,5 @@ self color: Color orange.
 
 { #category : #initialization }
 Subway >> setNumExits: numExits [
-exits := Array new: numExits.
+exits := Set new.
 ]

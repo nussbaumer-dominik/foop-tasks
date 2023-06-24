@@ -186,7 +186,7 @@ MouseGame >> restartGame [
 			positions add: exitBounds.
 			exit position: x @ y + pos.
 			exit color: exitColor.
-			self addMorph: exit.
+			self addMorphBack: exit.
 			exits add: exit.
 			subway addExit: exit.
 			].
