@@ -5,7 +5,7 @@ class ConcreteEntity(
     override val size: Size
 ) : Entity() {
 
-    constructor(entity: Entity) : this(entity.position, entity.size)
+    constructor(entity: Entity) : this(entity.position.copy(), entity.size.copy())
     fun copyWith(position: Position? = null, size: Size? = null): Entity {
         return ConcreteEntity(
             position = position ?: this.position,
