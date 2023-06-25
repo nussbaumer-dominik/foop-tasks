@@ -7,7 +7,10 @@ Class {
 		'mice',
 		'cat',
 		'winningSubway',
-		'score'
+		'score',
+		'restartCountdown',
+		'gameStepTime',
+		'gameMessages'
 	],
 	#category : #MouseGame
 }
@@ -79,28 +82,21 @@ MouseGame >> checkCollisions [
 { #category : #'as yet unclassified' }
 MouseGame >> checkGameEnd [
 	"All mice are either caught or at the winning subway."
-	
-	| gameEnd |
-	
-	gameEnd := mice isEmpty or: self allMiceAtWinningSubway .
 
-	gameEnd ifTrue: [ 
-		"Display message"
-		self gameOver 
-		 ]
+	| gameEnd |
+	gameEnd := mice isEmpty or: [ self allMiceAtWinningSubway ].
+
+
+	"check if a gameEnd state is reached and the restartCounter not already started"
+	(gameEnd and: [ restartCountdown isNil ]) ifTrue: [ self gameOverMessage ]
 ]
 
 { #category : #'as yet unclassified' }
-MouseGame >> gameOver [
+MouseGame >> gameOverMessage [
 	"End the game and display a winning message."
 
-	| message countdownMessage countdown |
-	message := StringMorph contents:
-		           'Game over! Your score: ' , score asString.
-	message color: Color black.
-	message backgroundColor: Color white.
-	message borderWidth: 1.
-	message borderColor: Color black.
+	| message countdownMessage |
+	message := gameMessages gameOverMessage: score.
 
 	"Add a margin around the text."
 	"message bounds: (message bounds inflateBy: 10@10)."
@@ -110,23 +106,12 @@ MouseGame >> gameOver [
 
 	self addMorph: message.
 
-	countdownMessage := StringMorph contents:
-		                    'Game restarts in ' , score asString
-		                    , ' seconds'.
-	countdownMessage color: Color black.
-	countdownMessage backgroundColor: Color white.
-	countdownMessage borderWidth: 1.
-	countdownMessage borderColor: Color black.
-	countdownMessage position: message position + (0 @ (message height + countdownMessage height / 2 + 10)).
+	restartCountdown := 10.
+	countdownMessage := gameMessages countdownMessage: restartCountdown.
 	self addMorph: countdownMessage.
 
-	countdown := 10.
-	[ countdown > 0 ] whileTrue: [
-		(Delay forSeconds: 1) wait.
-		countdown := countdown - 1.
-		countdownMessage contents:
-			'Game restarts in ' , score asString , ' seconds' ].
-	self restartGame
+	"set the stepTime to 1 second for counter display"
+	gameStepTime := 1000
 ]
 
 { #category : #'as yet unclassified' }
@@ -147,37 +132,38 @@ MouseGame >> handleKeystroke: anEvent [
 { #category : #initialization }
 MouseGame >> initialize [
 
-| p |
- "self := Morph new openInWorld."
-super initialize.
+	| p |
+	"self := Morph new openInWorld."
+	super initialize.
 
-"score := 0."
+	"score := 0."
 
-self position: 100@100.
-self extent: 800@800.
-self color: Color black.
-self setNameTo: 'Simple Shooter'.
+	self position: 100 @ 100.
+	self extent: 800 @ 800.
+	self color: Color black.
+	self setNameTo: 'Simple Shooter'.
 
-cat := Cat new.
-self addMorph: cat.
-p := self position.
-cat position: 420@400 + p.
+	cat := Cat new.
+	self addMorph: cat.
+	p := self position.
+	cat position: 420 @ 400 + p.
+	gameMessages := GameMessages new.
 
 
 
 
-"debugtext := DebugText new."
-"self addMorph: debugtext."
-"debugtext textColor: Color green.
+	"debugtext := DebugText new."
+	"self addMorph: debugtext."
+	"debugtext textColor: Color green.
 debugtext position: 100@150.
 debugtext width: 320.
 debugtext height: 150.
 
 debugtext string: score asString fontName: #Atlanta size: 22."
-"debugtext extent: 320 @ 150."
-"debugtext text: Text fromString: 'hello'."
+	"debugtext extent: 320 @ 150."
+	"debugtext text: Text fromString: 'hello'."
 
-self restartGame.
+	self restartGame
 ]
 
 { #category : #'as yet unclassified' }
@@ -223,82 +209,102 @@ MouseGame >> removeMouse: aMouse [
     self removeMorph: aMouse.
 ]
 
+{ #category : #accessing }
+MouseGame >> restartCountdownIteration [
+
+	restartCountdown > 0
+		ifTrue: [
+			gameMessages countdownMessage: restartCountdown.
+			restartCountdown := restartCountdown - 1 ]
+		ifFalse: [
+			gameMessages deleteGameOverMessage.
+			gameMessages deleteCountdownMessage.
+			gameStepTime := 33.
+			self restartGame ]
+]
+
 { #category : #'as yet unclassified' }
 MouseGame >> restartGame [
 
 	| subway pos numSubways numExits exit positions x y exitBounds exitColor |
 	"delete all subways"
 	subways ifNotNil: [
-		1 to: subways size do: [ :i |
-			subway := subways at: i.
-			subway delete ] ].
+		subways do: [ :eachSubway |
+			eachSubway delete ] ].
 	"delete all exits"
 	exits ifNotNil: [
-		1 to: exits size do: [ :i |
-			exit := exits at: i.
-			exit delete ] ].
+		exits do: [ :eachExit |
+			eachExit delete ] ].
 
 	"reset the score"
 	score := 0.
+
+	"reset the counter"
+	restartCountdown := nil.
 
 	pos := self position.
 
 	numSubways := 3.
 	subways := Set new.
 	exits := Set new.
-	
+
 	"Array to store the used positions"
 	positions := Set new.
 
-	1 to: numSubways do: [ :i |
-		"Generate random number of exits for that subway"
+	1 to: numSubways do: [ :i | "Generate random number of exits for that subway"
 		numExits := (2 to: 5) atRandom.
-		
+
 		subway := Subway new.
-		subway setNumExits: numExits .
-		
+		subway setNumExits: numExits.
+
 		"Generate a random color for this subway"
 		exitColor := Color random.
-		
+
 		1 to: numExits do: [ :j |
 			exit := Exit new.
-			
+
 			"Generate random position that hasn't been used before"
-			[ 
-				x := (1 to: self width - exit getWidth) atRandom.
-				y := (1 to: self height - exit getHeight) atRandom.
-				
-				exitBounds := (x @ y extent: exit getWidth @ exit getHeight).
-				
-				"Check if the position has been used, if it has, we continue generating new positions"
-				positions anySatisfy: [ :existingBounds | existingBounds intersects: exitBounds ]
-			] whileTrue.
+			[
+			x := (1 to: self width - exit getWidth) atRandom.
+			y := (1 to: self height - exit getHeight) atRandom.
+
+			exitBounds := x @ y extent: exit getWidth @ exit getHeight.
+
+			"Check if the position has been used, if it has, we continue generating new positions"
+			positions anySatisfy: [ :existingBounds |
+				existingBounds intersects: exitBounds ] ] whileTrue.
 			"Transcript show: 'x: ', x printString; cr."
-			
+
 			"Add the new position to the set of used positions"
 			positions add: exitBounds.
 			exit position: x @ y + pos.
 			exit color: exitColor.
 			self addMorphBack: exit.
 			exits add: exit.
-			subway addExit: exit.
-			].
-		
-		subways add: subway.
-		].
-	
+			subway addExit: exit ].
+
+		subways add: subway ].
+
 	winningSubway := subways atRandom.
-	
-	self placeMice: 5.
+
+	self placeMice: 2
 ]
 
 { #category : #'stepping and presenter' }
 MouseGame >> step [
-	self checkCollisions .
-	self checkGameEnd .
+
+	self checkCollisions.
+	self checkGameEnd.
+	restartCountdown ifNotNil: [ 
+		self restartCountdownIteration
+		 ]
+	
 ]
 
 { #category : #'stepping and presenter' }
-MouseGame >> stepTime [ 
-	^33
+MouseGame >> stepTime [
+	gameStepTime ifNil: [ 
+		^33 ] ifNotNil: [ 
+		^ gameStepTime 
+		 ]
 ]
