@@ -1,6 +1,6 @@
 package at.ac.tuwien.foop.domain
 
-import at.ac.tuwien.foop.common.domain.MouseDto
+import at.ac.tuwien.foop.common.models.dtos.socket.MouseDto
 import at.ac.tuwien.foop.domain.mouseStrategy.MouseRandomStrategy
 import at.ac.tuwien.foop.domain.mouseStrategy.MouseStrategy
 import java.util.*
@@ -26,9 +26,9 @@ class Mouse(
         fun fromDto(dto: MouseDto): Mouse {
             return Mouse(
                 id = dto.id,
-                position = Position.fromDto(dto.positionDto),
-                size = Size.fromDto(dto.sizeDto),
-                subway = dto.subwayDto?.let { Subway.fromDto(it) },
+                position = Position.fromDto(dto.position),
+                size = Size.fromDto(dto.size),
+                subway = dto.subway?.let { Subway.fromDto(it) },
             )
         }
     }
@@ -46,9 +46,9 @@ class Mouse(
     fun toDto(): MouseDto {
         return MouseDto(
             id = id,
-            positionDto = position.toDto(),
-            sizeDto = size.toDto(),
-            subwayDto = subway?.toDto(),
+            position = position.toDto(),
+            subway = subway?.toDto(),
+            size = size.toDto(),
         )
     }
 

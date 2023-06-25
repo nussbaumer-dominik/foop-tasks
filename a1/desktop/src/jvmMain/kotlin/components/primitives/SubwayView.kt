@@ -2,22 +2,22 @@ package components.primitives
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import at.ac.tuwien.foop.common.domain.SubwayDto
+import at.ac.tuwien.foop.common.models.domain.socket.Subway
 import components.DebuggingOptions
-import util.ColorGenerator
+import helper.generateHSL
 
 @Composable
 fun SubwayView(
-    subway: SubwayDto,
+    subway: Subway,
     debuggingOptions: DebuggingOptions
 ) {
     val color = if (debuggingOptions.showColoredSubways) {
-        ColorGenerator.generateHSL(subway.id)
+        subway.id.generateHSL()
     } else {
         Color.Black
     }
 
-    for (exit in subway.exitDtos) {
+    for (exit in subway.exits) {
         ExitView(exit, color)
     }
 }

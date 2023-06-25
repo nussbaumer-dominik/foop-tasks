@@ -1,6 +1,7 @@
 package at.ac.tuwien.foop.domain
 
-import at.ac.tuwien.foop.common.domain.PlayerDto
+import at.ac.tuwien.foop.common.models.dtos.socket.PositionDto
+import at.ac.tuwien.foop.common.models.dtos.socket.PlayerDto
 import java.util.*
 
 /**
@@ -28,8 +29,7 @@ class Player(
         fun fromDto(dto: PlayerDto): Player {
             return Player(
                 id = dto.id,
-                position = Position.fromDto(dto.positionDto),
-                size = Size.fromDto(dto.sizeDto),
+                position = Position.fromDto(dto.position),
                 color = dto.color,
             )
         }
@@ -48,9 +48,9 @@ class Player(
     fun toDto(): PlayerDto {
         return PlayerDto(
             id = id,
-            positionDto = position.toDto(),
-            sizeDto = size.toDto(),
+            username = "",
             color = color,
+            position = PositionDto(0, 0)
         )
     }
 

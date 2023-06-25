@@ -1,7 +1,7 @@
 package at.ac.tuwien.foop.domain
 
-import at.ac.tuwien.foop.common.domain.Direction
-import at.ac.tuwien.foop.common.domain.PositionDto
+import at.ac.tuwien.foop.common.models.dtos.socket.DirectionDto
+import at.ac.tuwien.foop.common.models.dtos.socket.PositionDto
 import kotlin.math.abs
 
 /**
@@ -14,16 +14,16 @@ data class Position(
 ) {
     companion object {
         fun fromDto(dto: PositionDto): Position {
-            return Position(x = dto.x, y = dto.y)
+            return Position(x = dto.x.toInt(), y = dto.y.toInt())
         }
     }
 
-    fun getNewPosition(direction: Direction, moveSize: Int): Position {
+    fun getNewPosition(direction: DirectionDto, moveSize: Int): Position {
         return when (direction) {
-            Direction.UP -> Position(x, y - moveSize)
-            Direction.DOWN -> Position(x, y + moveSize)
-            Direction.LEFT -> Position(x - moveSize, y)
-            Direction.RIGHT -> Position(x + moveSize, y)
+            DirectionDto.UP -> Position(x, y - moveSize)
+            DirectionDto.DOWN -> Position(x, y + moveSize)
+            DirectionDto.LEFT -> Position(x - moveSize, y)
+            DirectionDto.RIGHT -> Position(x + moveSize, y)
         }
     }
 
@@ -32,7 +32,7 @@ data class Position(
     }
 
     fun toDto(): PositionDto {
-        return PositionDto(x = x, y = y)
+        return PositionDto(x = x.toLong(), y = y.toLong())
     }
 }
 

@@ -1,6 +1,7 @@
 package at.ac.tuwien.foop.domain
 
 import at.ac.tuwien.foop.common.domain.GameBoardDto
+import at.ac.tuwien.foop.common.models.exceptions.IllegalPositionException
 
 /**
  * The structure of the current map of the current game

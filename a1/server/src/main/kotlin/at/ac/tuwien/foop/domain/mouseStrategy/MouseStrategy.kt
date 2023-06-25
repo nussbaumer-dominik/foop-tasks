@@ -1,5 +1,12 @@
 package at.ac.tuwien.foop.domain.mouseStrategy
 
+import at.ac.tuwien.foop.common.models.dtos.socket.DirectionDto
+import at.ac.tuwien.foop.common.models.exceptions.IllegalPositionException
+import at.ac.tuwien.foop.common.models.exceptions.NoMovePossibleException
+import at.ac.tuwien.foop.domain.GameBoard
+import at.ac.tuwien.foop.domain.Mouse
+import at.ac.tuwien.foop.domain.Player
+import at.ac.tuwien.foop.domain.Position
 import at.ac.tuwien.foop.common.domain.Direction
 import at.ac.tuwien.foop.common.exceptions.IllegalPositionException
 import at.ac.tuwien.foop.common.exceptions.NoMovePossibleException
@@ -11,22 +18,22 @@ abstract class MouseStrategy {
     private fun getDirectionsTowardsEntity(
         movingEntity: MovingEntity,
         targetEntity: Entity
-    ): MutableSet<Direction>? {
+    ): MutableSet<DirectionDto>? {
         if (movingEntity.intersects(targetEntity)) {
             return null
         }
-        val optimalDirections = mutableSetOf<Direction>()
+        val optimalDirections = mutableSetOf<DirectionDto>()
         if (movingEntity.position.x + movingEntity.moveSize <= targetEntity.position.x) {
-            optimalDirections.add(Direction.RIGHT)
+            optimalDirections.add(DirectionDto.RIGHT)
         }
         if (movingEntity.position.x - movingEntity.moveSize >= targetEntity.position.x) {
-            optimalDirections.add(Direction.LEFT)
+            optimalDirections.add(DirectionDto.LEFT)
         }
         if (movingEntity.position.y + movingEntity.moveSize <= targetEntity.position.y) {
-            optimalDirections.add(Direction.DOWN)
+            optimalDirections.add(DirectionDto.DOWN)
         }
         if (movingEntity.position.y - movingEntity.moveSize >= targetEntity.position.y) {
-            optimalDirections.add(Direction.UP)
+            optimalDirections.add(DirectionDto.UP)
         }
         if (optimalDirections.isEmpty()) {
             throw NoMovePossibleException("MovingEntity: $movingEntity")
@@ -61,7 +68,7 @@ abstract class MouseStrategy {
             return movingEntity.position
         }
 
-        Direction.values().random()
+        DirectionDto.values().random()
 
         throw NoMovePossibleException("Position: $movingEntity")
     }

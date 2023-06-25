@@ -1,6 +1,6 @@
 package at.ac.tuwien.foop.domain
 
-import at.ac.tuwien.foop.common.domain.SizeDto
+import at.ac.tuwien.foop.common.models.dtos.socket.SizeDto
 
 data class Size(
     val width: Int,

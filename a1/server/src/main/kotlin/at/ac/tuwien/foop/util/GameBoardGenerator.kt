@@ -1,6 +1,6 @@
 package at.ac.tuwien.foop.util
 
-import at.ac.tuwien.foop.GameConfiguration
+import at.ac.tuwien.foop.game.GameConfiguration
 import at.ac.tuwien.foop.domain.*
 import at.ac.tuwien.foop.domain.mouseStrategy.MouseDijkstraStrategy
 

@@ -1,15 +1,15 @@
 package at.ac.tuwien.foop.util
 
-import at.ac.tuwien.foop.Game
-import at.ac.tuwien.foop.common.AoopMessage
-import at.ac.tuwien.foop.common.PrivateMessage
+import at.ac.tuwien.foop.game.GameImpl
+import at.ac.tuwien.foop.common.models.dtos.socket.AoopMessageDto
+import at.ac.tuwien.foop.common.models.dtos.socket.PrivateMessageDto
 import at.ac.tuwien.foop.domain.Player
 import io.ktor.server.websocket.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 
 class CommandListener(
     private val connection: DefaultWebSocketServerSession,
-    private val game: Game,
+    private val game: GameImpl,
     private val player: Player,
 ) {
     //TODO: maybe implement the Commands using the Command pattern: https://refactoring.guru/design-patterns/command
@@ -17,12 +17,12 @@ class CommandListener(
         println("inside key listener for player ${player.id}")
         try {
             while (true) {
-                when (val incomingMessage = connection.receiveDeserialized<AoopMessage>()) {
-                    is PrivateMessage.MoveCommand -> {
+                when (val incomingMessage = connection.receiveDeserialized<AoopMessageDto>()) {
+                    is PrivateMessageDto.MoveCommandDto -> {
                         game.changePlayerVelocity(
                             playerId = player.id,
                             direction = incomingMessage.direction,
-                            type = incomingMessage.type
+                            type = incomingMessage.moveType
                         )
                     }
 
