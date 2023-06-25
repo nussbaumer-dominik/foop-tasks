@@ -1,6 +1,6 @@
 import game.impl.getGame
+import helper.A1KeyHandler
 import helper.a1Application
-import helper.handleKeyEvent
 import helper.handleMessage
 import helper.withResources
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +22,9 @@ fun main() {
 
         a1Application(
             onKeyEvent = { event ->
-                launch(Dispatchers.Default) { event.handleKeyEvent(game, socketClient) }
+                launch(Dispatchers.Default) {
+                    A1KeyHandler(game, socketClient).handleKeyEvent(event)
+                }
                 true
             }
         ) {

@@ -8,29 +8,36 @@ import at.ac.tuwien.foop.common.models.domain.socket.MoveCommandType
 import at.ac.tuwien.foop.common.models.domain.socket.PrivateMessage
 import game.A1Game
 
-// TODO: add Map to store currently pressed keys to avoid unnecessary network traffic
-
-suspend fun KeyEvent.handleKeyEvent(
-    game: A1Game,
-    socketClient: A1SocketClient,
+class A1KeyHandler(
+    private val game: A1Game,
+    private val socketClient: A1SocketClient,
+    private val activeKeys: MutableMap<Key, Boolean> = mutableMapOf()
 ) {
-    val type = when (type) {
-        KeyEventType.KeyDown -> MoveCommandType.MOVE
-        KeyEventType.KeyUp -> MoveCommandType.STOP
-        else -> return
-    }
+    suspend fun handleKeyEvent(keyEvent: KeyEvent) {
+        val type = when (keyEvent.type) {
+            KeyEventType.KeyDown -> MoveCommandType.MOVE
+            KeyEventType.KeyUp -> MoveCommandType.STOP
+            else -> return
+        }
 
-    val direction = key.toDirection()
-    if (direction != null) {
-        val currentPlayer = game.getCurrentPlayer()
-        if (currentPlayer != null) {
-            socketClient.move(
-                PrivateMessage.MoveCommand(
-                    id = currentPlayer.id,
-                    direction = direction,
-                    type = type,
+        if (activeKeys[keyEvent.key] == true && type == MoveCommandType.MOVE) {
+            return
+        }
+
+        activeKeys[keyEvent.key] = type == MoveCommandType.MOVE
+
+        val direction = keyEvent.key.toDirection()
+        if (direction != null) {
+            val currentPlayer = game.getCurrentPlayer()
+            if (currentPlayer != null) {
+                socketClient.move(
+                    PrivateMessage.MoveCommand(
+                        id = currentPlayer.id,
+                        direction = direction,
+                        type = type,
+                    )
                 )
-            )
+            }
         }
     }
 }
