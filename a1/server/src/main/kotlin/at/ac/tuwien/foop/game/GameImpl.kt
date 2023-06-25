@@ -163,6 +163,7 @@ data class GameImpl(
         sendGameStateUpdate()
     }
 
+    // TODO: Fix player movement, after socket changes it is way to fast!
     override fun updatePlayerVelocity(playerId: String, direction: DirectionDto, type: MoveCommandTypeDto) {
         val player = board.players.find { it.id == playerId }!!
         when (direction) {

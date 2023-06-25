@@ -8,6 +8,8 @@ import at.ac.tuwien.foop.common.models.domain.socket.MoveCommandType
 import at.ac.tuwien.foop.common.models.domain.socket.PrivateMessage
 import game.A1Game
 
+// TODO: add Map to store currently pressed keys to avoid unnecessary network traffic
+
 suspend fun KeyEvent.handleKeyEvent(
     game: A1Game,
     socketClient: A1SocketClient,
