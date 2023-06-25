@@ -1,5 +1,6 @@
 package at.ac.tuwien.foop.plugins
 
+import at.ac.tuwien.foop.common.serializerConfig
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
 import io.ktor.server.websocket.*
@@ -12,6 +13,10 @@ fun Application.configureSockets() {
         timeout = Duration.ofSeconds(15)
         maxFrameSize = Long.MAX_VALUE
         masking = false
-        contentConverter = KotlinxWebsocketSerializationConverter(Json)
+        contentConverter = KotlinxWebsocketSerializationConverter(
+            Json {
+                serializersModule = serializerConfig
+            }
+        )
     }
 }

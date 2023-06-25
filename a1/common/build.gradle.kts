@@ -6,10 +6,6 @@ plugins {
 group = "at.ac.tuwien.foop"
 version = "1.0.0"
 
-repositories {
-    mavenCentral()
-}
-
 kotlin {
     jvm {
         jvmToolchain(11)
