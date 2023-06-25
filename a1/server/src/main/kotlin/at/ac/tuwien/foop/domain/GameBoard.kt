@@ -102,16 +102,6 @@ class GameBoard(
         return subways.flatMap { s -> s.exits.map { e -> Pair(s, e) } }
     }
 
-    fun getPossiblePositions(position: Position): List<Pair<Position, Int>> {
-        val field = getFieldAtPosition(position)
-        //TODO: implement
-        if (field is Exit) {
-
-        }
-
-        return emptyList()
-    }
-
     fun toDto(): GameBoardDto {
         return GameBoardDto(
             width = width,
@@ -161,36 +151,37 @@ class GameBoard(
      * Gets the positions that can be reached from the given position plus their distance as int
      * The resulting list is not ordered in any way
      */
-    fun getPossibleWays(position: Position): Set<Way> {
-        val field = getFieldAtPosition(position)
+    fun getPossibleWays(entity: Entity): Set<Way> {
         val possibleWays = mutableSetOf<Way>()
-        if (field is Exit) {
-            // standing on exit -> possibility to enter/exit the subway
-            if (position.subwayId != null) {
-                possibleWays.add(Way(position, position, 0, null, true))
-                val subwayOfTheExit =
-                    subways.first {it.id == position.subwayId}
-                val waysToExits = subwayOfTheExit.exits.map { e ->
+        val subwayExitPair = getSubwayExitPairs().find { (s, e) -> entity.intersects(e) }
+        if (subwayExitPair != null) {
+            // intersecting with an exit -> possibility to enter/exit the subway
+            if (entity.position.subwayId != null) {
+                // entity in a subway -> possibility to exit the subway
+                possibleWays.add(Way(entity, ConcreteEntity(entity).copyWith(position = entity.position.copy(subwayId = null)), 0, null, true))
+                val subwayOfTheExit = subwayExitPair.second
+                val waysToExits = subwayExitPair.first.exits.map { e ->
                     Way(
-                        startingPosition = position,
-                        targetPosition = e.position,
-                        distance = e.position.distanceTo(position),
-                        subwayId = position.subwayId
+                        startingEntity = entity,
+                        targetEntity = e,
+                        distance = e.position.distanceTo(entity.position),
+                        subwayId = e.subwayId
                     )
                 }
                 possibleWays.addAll(waysToExits)
             } else {
-                possibleWays.add(Way(position, position, 0, field.subwayId, true))
+                // entity not in a subway -> possibility to enter the subway
+                possibleWays.add(Way(entity, subwayExitPair.second, 0, subwayExitPair.second.subwayId, true))
             }
         }
-        if (position.subwayId != null) {
+        if (entity.position.subwayId != null) {
             // currently in a subway -> only a way to the other exits in this subway
-            val exits = subways.first { it.id == position.subwayId }.exits.map { e ->
+            val exits = subways.first { it.id == entity.position.subwayId }.exits.map { e ->
                 Way(
-                    startingPosition = position,
-                    targetPosition = e.position,
-                    distance = e.position.distanceTo(position),
-                    subwayId = position.subwayId
+                    startingEntity = entity,
+                    targetEntity = e,
+                    distance = e.position.distanceTo(entity.position),
+                    subwayId = entity.position.subwayId
                 )
             }
             possibleWays.addAll(exits)
@@ -199,16 +190,16 @@ class GameBoard(
             val onLandExits = subways.flatMap { s ->
                 s.exits.map { e ->
                     Way(
-                        startingPosition = position,
-                        targetPosition = e.position,
-                        distance = e.position.distanceTo(position),
+                        startingEntity = entity,
+                        targetEntity = ConcreteEntity(e).copyWith(position = e.position.copy(subwayId = null)),
+                        distance = e.position.distanceTo(entity.position),
                         subwayId = s.id
                     )
                 }
             }
             possibleWays.addAll(onLandExits)
         }
-        println("Possible ways from $position -> $possibleWays")
+        println("Possible ways from $entity -> $possibleWays")
         return possibleWays
     }
 
@@ -217,10 +208,10 @@ class GameBoard(
      * Ways are bidirectional, so the way x -> y is only contained once (y -> x is not in the result set)
      * If the parameter 'startingPosition' is set then additionally all the ways are added that start from this position
      */
-    fun getAllWays(startingPosition: Position? = null): Set<Way> {
+    fun getAllWays(entity: Entity? = null): Set<Way> {
         val allWays = getAllWays().toMutableSet()
-        if (startingPosition != null) {
-            allWays.addAll(getPossibleWays(startingPosition))
+        if (entity != null) {
+            allWays.addAll(getPossibleWays(entity))
         }
         return allWays
     }
@@ -230,6 +221,7 @@ class GameBoard(
      * Ways are bidirectional, so the way x -> y is only contained once (y -> x is not in the result set)
      * The ways are only calculated once and then cached in the local variable 'ways'. Therefore, it must be immutable!
      */
+    //TODO: refector this
     private fun getAllWays(): Set<Way> {
         if (ways.isNotEmpty()) return ways
         val ways = mutableSetOf<Way>()
@@ -238,22 +230,22 @@ class GameBoard(
             for (exit in subway.exits) {
                 for (connectedExit in subway.exits) {
                     if (exit == connectedExit) continue
-                    ways.add(
+                    /*ways.add(
                         Way(
                             exit.position,
                             connectedExit.position,
                             exit.position.distanceTo(connectedExit.position),
                             subway.id
                         )
-                    )
+                    )*/
                 }
             }
         }
         //add all the ways from surface to subway (enter/exit a subway)
         for (subway in subways) {
             for (exit in subway.exits) {
-                ways.add(Way(exit.position, exit.position, 0, subway.id, true))  //enter a subway
-                ways.add(Way(exit.position, exit.position, 0, null, true))  //exit a subway
+                //ways.add(Way(exit.position, exit.position, 0, subway.id, true))  //enter a subway
+                //ways.add(Way(exit.position, exit.position, 0, null, true))  //exit a subway
             }
         }
         //add all the ways that are possible on the surface
@@ -262,14 +254,14 @@ class GameBoard(
             val waysStartingAtThatExit = mutableSetOf<Way>()
             subwayExits.forEach { (_, e) ->
                 if (e.position != exit.position) {
-                    waysStartingAtThatExit.add(
+                    /*waysStartingAtThatExit.add(
                         Way(
                             exit.position.copy(subwayId = null),
                             e.position,
                             exit.position.distanceTo(e.position),
                             null
                         )
-                    )
+                    )*/
                 }
             }
             ways.addAll(waysStartingAtThatExit)

@@ -1,13 +1,13 @@
 package at.ac.tuwien.foop.domain
 
 class ShortestPathResult(
-    val prev: MutableMap<Position, Position?>,
-    val prevWay: MutableMap<Position, Way?>,
-    val dist: MutableMap<Position, Int>,
-    val startingPosition: Position,
-    val targetPosition: Position
+    val prev: MutableMap<Entity, Entity?>,
+    val prevWay: MutableMap<Entity, Way?>,
+    val dist: MutableMap<Entity, Int>,
+    val startingEntity: Entity,
+    val targetEntity: Entity
 ) {
-    fun shortestPathWithWay(from: Position = startingPosition, to: Position = targetPosition, list: List<Pair<Position, Way>> = emptyList(), alreadyAddedToList: MutableSet<Pair<Position, Way>> = mutableSetOf()): List<Pair<Position, Way?>> {
+    fun shortestPathWithWay(from: Entity = startingEntity, to: Entity = targetEntity, list: List<Pair<Entity, Way>> = emptyList(), alreadyAddedToList: MutableSet<Pair<Entity, Way>> = mutableSetOf()): List<Pair<Entity, Way?>> {
         if (from == to) {
             return list
         }
@@ -27,8 +27,8 @@ class ShortestPathResult(
 
     }
 
-    fun shortestPath(from: Position = startingPosition, to: Position = targetPosition, list: List<Position> = emptyList()): List<Position> {
-        val last = prev[to] ?: return if (from == to) {
+    fun shortestPath(from: Entity = startingEntity, to: Entity = targetEntity, list: List<Entity> = emptyList()): List<Entity> {
+        val last = prev[to] ?: return if (from.position == to.position) {
             list + to
         } else {
             emptyList()
@@ -37,7 +37,7 @@ class ShortestPathResult(
     }
 
     fun shortestDistance(): Int? {
-        val shortest = dist[targetPosition]
+        val shortest = dist[targetEntity]
         if (shortest == Integer.MAX_VALUE) {
             return null
         }

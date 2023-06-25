@@ -20,7 +20,7 @@ class Mouse(
     val strategy: MouseStrategy = MouseRandomStrategy(),
     var catsPositions: List<Position> = mutableListOf(),
     var targetEntity: Entity? = null,
-    var targetSubwayExitEntity: Entity? = null,
+    var targetSubwayExit: Exit? = null,
 ) : MovingEntity() {
     companion object {
         fun fromDto(dto: MouseDto): Mouse {
