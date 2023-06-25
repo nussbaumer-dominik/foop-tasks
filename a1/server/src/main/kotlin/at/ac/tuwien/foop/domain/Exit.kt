@@ -1,6 +1,6 @@
 package at.ac.tuwien.foop.domain
 
-import at.ac.tuwien.foop.common.domain.ExitDto
+import at.ac.tuwien.foop.common.models.dtos.socket.ExitDto
 
 /**
  * The exit of a subway
@@ -16,8 +16,8 @@ class Exit(
     companion object {
         fun fromDto(dto: ExitDto): Exit {
             return Exit(
-                position = Position.fromDto(dto.positionDto),
-                size = Size.fromDto(dto.sizeDto),
+                position = Position.fromDto(dto.position),
+                size = Size.fromDto(dto.size),
                 subwayId = dto.subwayId,
             )
         }
@@ -36,8 +36,8 @@ class Exit(
 
     fun toDto(): ExitDto {
         return ExitDto(
-            positionDto = position.toDto(),
-            sizeDto = size.toDto(),
+            position = position.toDto(),
+            size = size.toDto(),
             subwayId = subwayId,
         )
     }

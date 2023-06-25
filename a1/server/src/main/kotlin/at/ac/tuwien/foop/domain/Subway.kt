@@ -1,6 +1,6 @@
 package at.ac.tuwien.foop.domain
 
-import at.ac.tuwien.foop.common.domain.SubwayDto
+import at.ac.tuwien.foop.common.models.dtos.socket.SubwayDto
 import java.util.*
 
 class Subway(
@@ -17,7 +17,7 @@ class Subway(
         fun fromDto(dto: SubwayDto): Subway {
             return Subway(
                 id = dto.id,
-                exits = dto.exitDtos.map { Exit.fromDto(it) }.toMutableSet(),
+                exits = dto.exits.map { Exit.fromDto(it) }.toMutableSet(),
             )
         }
     }
@@ -38,7 +38,7 @@ class Subway(
     fun toDto(): SubwayDto {
         return SubwayDto(
             id = id,
-            exitDtos = exits.map { it.toDto() }.toMutableSet(),
+            exits = exits.map { it.toDto() }.toMutableSet(),
         )
     }
 }

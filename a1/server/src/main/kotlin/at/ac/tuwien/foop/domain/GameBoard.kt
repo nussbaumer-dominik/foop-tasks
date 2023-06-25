@@ -1,7 +1,7 @@
 package at.ac.tuwien.foop.domain
 
-import at.ac.tuwien.foop.common.domain.GameBoardDto
-import at.ac.tuwien.foop.common.exceptions.IllegalPositionException
+import at.ac.tuwien.foop.common.models.dtos.socket.GameBoardDto
+import at.ac.tuwien.foop.common.models.exceptions.IllegalPositionException
 
 /**
  * The structure of the current map of the current game
@@ -21,8 +21,8 @@ class GameBoard(
                 width = gameBoardDto.width,
                 height = gameBoardDto.height,
                 mice = gameBoardDto.mice.map { Mouse.fromDto(it) }.toMutableSet(),
-                subways = gameBoardDto.subwayDtos.map { Subway.fromDto(it) }.toMutableSet(),
-                players = gameBoardDto.playerDtos.map { Player.fromDto(it) }.toMutableSet(),
+                subways = gameBoardDto.subways.map { Subway.fromDto(it) }.toMutableSet(),
+                players = gameBoardDto.players.map { Player.fromDto(it) }.toMutableSet(),
             )
         }
     }
@@ -116,8 +116,8 @@ class GameBoard(
             width = width,
             height = height,
             mice = mice.map { it.toDto() }.toMutableSet(),
-            subwayDtos = subways.map { it.toDto() }.toMutableSet(),
-            playerDtos = players.map { it.toDto() }.toMutableSet(),
+            subways = subways.map { it.toDto() }.toMutableSet(),
+            players = players.map { it.toDto() }.toMutableSet(),
         )
     }
 }

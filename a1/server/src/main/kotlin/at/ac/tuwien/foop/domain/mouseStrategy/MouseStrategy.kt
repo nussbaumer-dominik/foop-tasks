@@ -1,8 +1,8 @@
 package at.ac.tuwien.foop.domain.mouseStrategy
 
-import at.ac.tuwien.foop.common.domain.Direction
-import at.ac.tuwien.foop.common.exceptions.IllegalPositionException
-import at.ac.tuwien.foop.common.exceptions.NoMovePossibleException
+import at.ac.tuwien.foop.common.models.dtos.socket.DirectionDto
+import at.ac.tuwien.foop.common.models.exceptions.IllegalPositionException
+import at.ac.tuwien.foop.common.models.exceptions.NoMovePossibleException
 import at.ac.tuwien.foop.domain.GameBoard
 import at.ac.tuwien.foop.domain.Mouse
 import at.ac.tuwien.foop.domain.Player
@@ -14,22 +14,22 @@ abstract class MouseStrategy {
     private fun getDirectionsTowardsPosition(
         currentPosition: Position,
         targetPosition: Position
-    ): MutableSet<Direction>? {
+    ): MutableSet<DirectionDto>? {
         if (currentPosition == targetPosition) {
             return null
         }
-        val optimalDirections = mutableSetOf<Direction>()
+        val optimalDirections = mutableSetOf<DirectionDto>()
         if (currentPosition.x < targetPosition.x) {
-            optimalDirections.add(Direction.RIGHT)
+            optimalDirections.add(DirectionDto.RIGHT)
         }
         if (currentPosition.x > targetPosition.x) {
-            optimalDirections.add(Direction.LEFT)
+            optimalDirections.add(DirectionDto.LEFT)
         }
         if (currentPosition.y < targetPosition.y) {
-            optimalDirections.add(Direction.DOWN)
+            optimalDirections.add(DirectionDto.DOWN)
         }
         if (currentPosition.y > targetPosition.y) {
-            optimalDirections.add(Direction.UP)
+            optimalDirections.add(DirectionDto.UP)
         }
         if (optimalDirections.isEmpty()) {
             //throw NoMovePossibleException("Position: $currentPosition")
@@ -45,7 +45,7 @@ abstract class MouseStrategy {
         val directions = getDirectionsTowardsPosition(currentPosition, targetPosition) ?: return currentPosition
         //If no optimal move is possible, move random
         //var suboptimalDirections = Direction.values().filter { d -> directions.none { it == d } }
-        val otherDirections = Direction.values().toMutableList()
+        val otherDirections = DirectionDto.values().toMutableList()
         otherDirections.shuffle()
         //println("Shuffled directions: $otherDirections")
         directions.addAll(otherDirections)
@@ -61,7 +61,7 @@ abstract class MouseStrategy {
             }
         }
 
-        Direction.values().random()
+        DirectionDto.values().random()
 
         throw NoMovePossibleException("Position: $currentPosition")
     }

@@ -1,7 +1,7 @@
 package at.ac.tuwien.foop.domain.mouseStrategy
 
-import at.ac.tuwien.foop.common.domain.Direction
-import at.ac.tuwien.foop.common.exceptions.IllegalPositionException
+import at.ac.tuwien.foop.common.models.dtos.socket.DirectionDto
+import at.ac.tuwien.foop.common.models.exceptions.IllegalPositionException
 import at.ac.tuwien.foop.domain.Exit
 import at.ac.tuwien.foop.domain.GameBoard
 import at.ac.tuwien.foop.domain.Mouse
@@ -23,8 +23,8 @@ class MouseRandomStrategy : MouseStrategy() {
         }
     }
 
-    private fun getRandomDirection(): Direction {
-        val directions = listOf(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT)
+    private fun getRandomDirection(): DirectionDto {
+        val directions = listOf(DirectionDto.UP, DirectionDto.DOWN, DirectionDto.LEFT, DirectionDto.RIGHT)
         return directions.random()
     }
 }
