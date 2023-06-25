@@ -50,21 +50,21 @@ class MouseOptimalStrategy : MouseStrategy() {
                     }
                     //found an exit that doesn't intersect with the closest cat
                     //set the exit as new target and move to that exit
-                    mouse.targetPosition = subwayExitPair.second.position
-                    moveTowardsPosition(mouse.position, subwayExitPair.second.position, gameBoard)
+                    mouse.targetEntity = subwayExitPair.second
+                    moveTowardsEntity(mouse, subwayExitPair.second, gameBoard)
                 }
                 return mouseDirectStrategy.newPosition(mouse, gameBoard)
             } else {
-                return if (mouse.targetPosition != null) {
-                    if (mouse.position == mouse.targetPosition) {
-                        mouse.targetPosition = null
+                return if (mouse.targetEntity != null) {
+                    if (mouse.intersects(mouse.targetEntity!!)) {
+                        mouse.targetEntity = null
                         val exit = subwayExits
                             .firstOrNull { (_, e) -> e.position == mouse.position }?.second
                         if (exit != null) {
                             mouse.subway = gameBoard.subways.first { it.id == exit.subwayId }
                         }
                     }
-                    moveTowardsPosition(mouse.position, mouse.targetPosition!!, gameBoard)
+                    moveTowardsEntity(mouse, mouse.targetEntity!!, gameBoard)
                 } else
                     mouseDirectStrategy.newPosition(mouse, gameBoard)
             }
@@ -86,15 +86,21 @@ class MouseOptimalStrategy : MouseStrategy() {
                         //TODO: update location of cats
                         mouse.position
                     }
+
+                    MouseActions.ENTER_SUBWAY -> {
+                        //TODO: fix this
+                        mouse.position
+                    }
+
                 }
             } else {
                 //mouse is in subway but not at exit
                 val closestExitToWinningSubway = subwayExits
                     .filter { (s, _) -> s == mouse.subway }
                     .minByOrNull { (_, e) -> e.position.distanceTo(mouse.position) }
-                return moveTowardsPosition(
-                    mouse.position,
-                    closestExitToWinningSubway!!.second.position,
+                return moveTowardsEntity(
+                    mouse,
+                    closestExitToWinningSubway!!.second,
                     gameBoard
                 )
             }

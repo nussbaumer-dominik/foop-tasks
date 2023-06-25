@@ -41,4 +41,27 @@ class Exit(
             subwayId = subwayId,
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Exit
+
+        if (position != other.position) return false
+        if (size != other.size) return false
+        return subwayId == other.subwayId
+    }
+
+    override fun hashCode(): Int {
+        var result = position.hashCode()
+        result = 31 * result + size.hashCode()
+        result = 31 * result + subwayId.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "Exit(position=$position, size=$size, subwayId='$subwayId')"
+    }
+
 }

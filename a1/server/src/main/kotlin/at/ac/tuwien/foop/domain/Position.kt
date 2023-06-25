@@ -7,10 +7,10 @@ import kotlin.math.abs
 /**
  * Object representing the position of something on the map relative to the top left corner (0,0)
  * */
-class Position(
-    var x: Int,
-    var y: Int,
-    val moveSize: Int = 4,
+data class Position(
+    val x: Int,
+    val y: Int,
+    val subwayId: String? = null
 ) {
     companion object {
         fun fromDto(dto: PositionDto): Position {
@@ -18,7 +18,7 @@ class Position(
         }
     }
 
-    fun getNewPosition(direction: Direction): Position {
+    fun getNewPosition(direction: Direction, moveSize: Int): Position {
         return when (direction) {
             Direction.UP -> Position(x, y - moveSize)
             Direction.DOWN -> Position(x, y + moveSize)
@@ -33,17 +33,6 @@ class Position(
 
     fun toDto(): PositionDto {
         return PositionDto(x = x, y = y)
-    }
-
-    fun copy(): Position {
-        return Position(x, y)
-    }
-
-    fun copyWith(x: Int?, y: Int?): Position {
-        return Position(
-            x = x ?: this.x,
-            y = y ?: this.y
-        )
     }
 }
 

@@ -45,7 +45,7 @@ data class Game(
         when (direction) {
             Direction.UP -> {
                 if (type == PrivateMessage.MoveCommandType.MOVE) {
-                    player.velocity = player.velocity.copy(yu = -player.position.moveSize)
+                    player.velocity = player.velocity.copy(yu = -player.moveSize)
                 } else {
                     player.velocity = player.velocity.copy(yu = 0)
                 }
@@ -53,7 +53,7 @@ data class Game(
 
             Direction.DOWN -> {
                 if (type == PrivateMessage.MoveCommandType.MOVE) {
-                    player.velocity = player.velocity.copy(yd = player.position.moveSize)
+                    player.velocity = player.velocity.copy(yd = player.moveSize)
                 } else {
                     player.velocity = player.velocity.copy(yd = 0)
                 }
@@ -61,7 +61,7 @@ data class Game(
 
             Direction.LEFT -> {
                 if (type == PrivateMessage.MoveCommandType.MOVE) {
-                    player.velocity = player.velocity.copy(xl = -player.position.moveSize)
+                    player.velocity = player.velocity.copy(xl = -player.moveSize)
                 } else {
                     player.velocity = player.velocity.copy(xl = 0)
                 }
@@ -69,11 +69,21 @@ data class Game(
 
             Direction.RIGHT -> {
                 if (type == PrivateMessage.MoveCommandType.MOVE) {
-                    player.velocity = player.velocity.copy(xr = player.position.moveSize)
+                    player.velocity = player.velocity.copy(xr = player.moveSize)
                 } else {
                     player.velocity = player.velocity.copy(xr = 0)
                 }
             }
+        }
+    }
+
+    private fun checkGameState() {
+        if (board.mice.isEmpty()) {
+            state = GameState.CATS_WON
+        } else if (board.mice.all { m ->
+                board.winningSubway!!.exits.any { e -> e.position == m.position }
+            }) {
+            state = GameState.MICE_WON
         }
     }
 
@@ -84,16 +94,12 @@ data class Game(
         while (true) {
             val currentTimeMs = System.currentTimeMillis()
 
-            for (player in board.players) {
-                player.move(width = board.width, height = board.height)
-            }
+            board.movePlayers()
+            board.checkCollisions()
+            board.moveMice()
 
-            //TODO: add mouse collision
-            //TODO: correctly move mouse into the subway
-            //board.moveMice()
-            //board.generateGrid()
-
-            state = if (board.isWinningState()) GameState.MICE_WON else GameState.RUNNING
+            // Check if the game is over
+            checkGameState()
             val timeElapsedMs = System.currentTimeMillis() - currentTimeMs
 
             delay(tickRate - timeElapsedMs)

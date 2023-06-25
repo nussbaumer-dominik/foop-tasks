@@ -2,7 +2,7 @@ package at.ac.tuwien.foop.util
 
 import at.ac.tuwien.foop.GameConfiguration
 import at.ac.tuwien.foop.domain.*
-import at.ac.tuwien.foop.domain.mouseStrategy.MouseOptimalStrategy
+import at.ac.tuwien.foop.domain.mouseStrategy.MouseDijkstraStrategy
 
 class GameBoardGenerator {
     companion object {
@@ -19,6 +19,7 @@ class GameBoardGenerator {
                             position = Position(
                                 x = (0 until gameBoard.width - gameConfiguration.fieldSize + 1).random(),
                                 y = (0 until gameBoard.height - gameConfiguration.fieldSize + 1).random(),
+                                subwayId = subway.id
                             ),
                             subwayId = subway.id
                         )
@@ -37,13 +38,15 @@ class GameBoardGenerator {
         }
 
         private fun placeMiceOnGameBoard(gameBoard: GameBoard, numberOfMice: Int) {
-            val subwayExitPairs = gameBoard.getSubwayExitPairs()
+            val subwayExitPairs = gameBoard.getSubwayExitPairs().toMutableSet()
+            //remove the winning subway so no mice is directly at the winning subway
+            subwayExitPairs.removeIf { it.first == gameBoard.winningSubway }
             for (i in 0 until numberOfMice) {
                 val subwayExitPair = subwayExitPairs.random()
                 val mouse = Mouse(
                     position = subwayExitPair.second.position.copy(),
                     subway = subwayExitPair.first,
-                    strategy = MouseOptimalStrategy(),
+                    strategy = MouseDijkstraStrategy(),
                 )
                 gameBoard.mice.add(mouse)
             }

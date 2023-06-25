@@ -2,7 +2,7 @@ package at.ac.tuwien.foop.domain
 
 import at.ac.tuwien.foop.common.domain.SizeDto
 
-class Size(
+data class Size(
     val width: Int,
     val height: Int
 ) {

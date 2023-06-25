@@ -10,4 +10,14 @@ abstract class Entity {
                 this.position.y < other.position.y + other.size.height &&
                 this.position.y + this.size.height > other.position.y
     }
+
+    private fun center() = Size(size.width / 2, size.height / 2)
+
+    fun centerIntersects(other: Entity): Boolean {
+        val center = center()
+        return this.position.x + center.width < other.position.x + other.size.width &&
+                this.position.x + center.width > other.position.x &&
+                this.position.y + center.height < other.position.y + other.size.height &&
+                this.position.y + center.height > other.position.y
+    }
 }
