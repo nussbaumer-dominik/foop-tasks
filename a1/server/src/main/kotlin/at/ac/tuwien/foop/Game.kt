@@ -77,6 +77,16 @@ data class Game(
         }
     }
 
+    private fun checkGameState() {
+        if (board.mice.isEmpty()) {
+            state = GameState.CATS_WON
+        } else if (board.mice.all { m ->
+                board.winningSubway!!.exits.any { e -> e.position == m.position }
+            }) {
+            state = GameState.MICE_WON
+        }
+    }
+
     suspend fun start() {
         println("starting game")
         val tickRate = 1000 / fps
@@ -84,16 +94,12 @@ data class Game(
         while (true) {
             val currentTimeMs = System.currentTimeMillis()
 
-            for (player in board.players) {
-                player.move(width = board.width, height = board.height)
-            }
-
-            //TODO: add mouse collision
-            //TODO: correctly move mouse into the subway
+            board.movePlayers()
+            board.checkCollisions()
             board.moveMice()
-            //board.generateGrid()
 
-            state = if (board.isWinningState()) GameState.MICE_WON else GameState.RUNNING
+            // Check if the game is over
+            checkGameState()
             val timeElapsedMs = System.currentTimeMillis() - currentTimeMs
 
             delay(tickRate - timeElapsedMs)

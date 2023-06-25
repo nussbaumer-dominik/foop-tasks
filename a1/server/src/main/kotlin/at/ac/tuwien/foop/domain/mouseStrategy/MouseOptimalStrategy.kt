@@ -86,6 +86,10 @@ class MouseOptimalStrategy : MouseStrategy() {
                         //TODO: update location of cats
                         mouse.position
                     }
+
+                    else -> {
+                        mouse.position
+                    }
                 }
             } else {
                 //mouse is in subway but not at exit

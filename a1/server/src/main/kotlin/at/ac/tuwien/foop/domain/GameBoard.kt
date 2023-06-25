@@ -79,6 +79,12 @@ class GameBoard(
         }
     }
 
+    fun movePlayers() {
+        for (player in players) {
+            player.move(width = width, height = height)
+        }
+    }
+
     fun getFieldAtPosition(position: Position): Entity {
         if (position.x < 0 || position.x >= width || position.y < 0 || position.y >= height)
             throw IllegalPositionException("Position is out of bounds")
@@ -91,70 +97,8 @@ class GameBoard(
         winningSubway = subways.elementAt(random)
     }
 
-    // TODO: Return MICE_WON or CATS_WON instead of boolean if mice have won
-    fun isWinningState(): Boolean {
-        return mice.all { m ->
-            winningSubway!!.exits.any { e -> e.position == m.position }
-        }
-    }
-
     fun getSubwayExitPairs(): List<Pair<Subway, Exit>> {
         return subways.flatMap { s -> s.exits.map { e -> Pair(s, e) } }
-    }
-
-    fun getPossiblePositions(position: Position): List<Pair<Position, Int>> {
-        val field = getFieldAtPosition(position)
-        //TODO: implement
-        if (field is Exit) {
-
-        }
-
-        return emptyList()
-    }
-
-    fun toDto(): GameBoardDto {
-        return GameBoardDto(
-            width = width,
-            height = height,
-            mice = mice.map { it.toDto() }.toMutableSet(),
-            subwayDtos = subways.map { it.toDto() }.toMutableSet(),
-            playerDtos = players.map { it.toDto() }.toMutableSet(),
-        )
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as GameBoard
-
-        if (subways != other.subways) return false
-        if (mice != other.mice) return false
-        if (players != other.players) return false
-        if (width != other.width) return false
-        if (height != other.height) return false
-        if (winningSubway != other.winningSubway) return false
-        if (grid != null) {
-            if (other.grid == null) return false
-            if (!grid.contentDeepEquals(other.grid)) return false
-        } else if (other.grid != null) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = subways.hashCode()
-        result = 31 * result + mice.hashCode()
-        result = 31 * result + players.hashCode()
-        result = 31 * result + width
-        result = 31 * result + height
-        result = 31 * result + (winningSubway?.hashCode() ?: 0)
-        result = 31 * result + (grid?.contentDeepHashCode() ?: 0)
-        return result
-    }
-
-    override fun toString(): String {
-        return "GameBoard(subways=$subways, mice=$mice, players=$players, width=$width, height=$height, winningSubway=$winningSubway, grid=${grid?.contentToString()})"
     }
 
     /**
@@ -169,7 +113,7 @@ class GameBoard(
             if (position.subwayId != null) {
                 possibleWays.add(Way(position, position, 0, null, true))
                 val subwayOfTheExit =
-                    subways.first {it.id == position.subwayId}
+                    subways.first { it.id == position.subwayId }
                 val waysToExits = subwayOfTheExit.exits.map { e ->
                     Way(
                         startingPosition = position,
@@ -276,5 +220,62 @@ class GameBoard(
         }
 
         return ways
+    }
+
+    fun checkCollisions() {
+        for (player in players) {
+            for (mouse in mice) {
+                if (player.intersects(mouse)) {
+                    player.score += 1
+                    mice.removeIf { it.id == mouse.id }
+                    break
+                }
+            }
+        }
+    }
+
+    fun toDto(): GameBoardDto {
+        return GameBoardDto(
+            width = width,
+            height = height,
+            mice = mice.map { it.toDto() }.toMutableSet(),
+            subwayDtos = subways.map { it.toDto() }.toMutableSet(),
+            playerDtos = players.map { it.toDto() }.toMutableSet(),
+        )
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as GameBoard
+
+        if (subways != other.subways) return false
+        if (mice != other.mice) return false
+        if (players != other.players) return false
+        if (width != other.width) return false
+        if (height != other.height) return false
+        if (winningSubway != other.winningSubway) return false
+        if (grid != null) {
+            if (other.grid == null) return false
+            if (!grid.contentDeepEquals(other.grid)) return false
+        } else if (other.grid != null) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = subways.hashCode()
+        result = 31 * result + mice.hashCode()
+        result = 31 * result + players.hashCode()
+        result = 31 * result + width
+        result = 31 * result + height
+        result = 31 * result + (winningSubway?.hashCode() ?: 0)
+        result = 31 * result + (grid?.contentDeepHashCode() ?: 0)
+        return result
+    }
+
+    override fun toString(): String {
+        return "GameBoard(subways=$subways, mice=$mice, players=$players, width=$width, height=$height, winningSubway=$winningSubway, grid=${grid?.contentToString()})"
     }
 }

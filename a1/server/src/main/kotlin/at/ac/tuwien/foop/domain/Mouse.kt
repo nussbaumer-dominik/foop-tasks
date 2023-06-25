@@ -67,10 +67,7 @@ class Mouse(
         if (id != other.id) return false
         if (position != other.position) return false
         if (size != other.size) return false
-        if (subway != other.subway) return false
-        if (strategy != other.strategy) return false
-        if (catsPositions != other.catsPositions) return false
-        return targetEntity == other.targetEntity
+        return subway != other.subway
     }
 
     override fun hashCode(): Int {
@@ -78,9 +75,6 @@ class Mouse(
         result = 31 * result + position.hashCode()
         result = 31 * result + size.hashCode()
         result = 31 * result + (subway?.hashCode() ?: 0)
-        result = 31 * result + strategy.hashCode()
-        result = 31 * result + catsPositions.hashCode()
-        result = 31 * result + (targetEntity?.hashCode() ?: 0)
         return result
     }
 
