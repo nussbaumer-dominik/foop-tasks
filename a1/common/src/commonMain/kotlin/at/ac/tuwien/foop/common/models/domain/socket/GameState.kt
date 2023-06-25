@@ -1,6 +1,6 @@
 package at.ac.tuwien.foop.common.models.domain.socket
 
-enum class GameStatus {
+enum class GameState {
     WAITING,
     RUNNING,
     MICE_WON,

@@ -35,7 +35,7 @@ class Player(
         }
     }
 
-    // TODO: implement this in another way
+    // TODO: maybe implement this in another way
     fun move(width: Int, height: Int) {
         val newX = position.x + velocity.xr + velocity.xl
         val newY = position.y + velocity.yu + velocity.yd

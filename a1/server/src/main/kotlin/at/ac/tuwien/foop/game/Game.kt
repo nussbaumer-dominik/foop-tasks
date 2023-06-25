@@ -10,7 +10,7 @@ interface Game {
     suspend fun registerUser(registerRequest: RegisterRequest): Result<RegisterResponse>
     suspend fun removeConnection(connection: DefaultWebSocketServerSession)
     suspend fun addPlayerSession(id: String, session: DefaultWebSocketServerSession): Result<Unit>
-    fun changePlayerVelocity(playerId: String, direction: DirectionDto, type: MoveCommandTypeDto)
+    fun updatePlayerVelocity(playerId: String, direction: DirectionDto, type: MoveCommandTypeDto)
     suspend fun startGame()
     suspend fun startLoop()
 }

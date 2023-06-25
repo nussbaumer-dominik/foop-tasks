@@ -6,7 +6,8 @@ import screens.navigator.A1Navigator
 import screens.navigator.NavigationDestination
 
 class A1NavigatorImpl : A1Navigator {
-    private val currentDestination: MutableStateFlow<NavigationDestination> = MutableStateFlow(NavigationDestination.START)
+    private val currentDestination: MutableStateFlow<NavigationDestination> =
+        MutableStateFlow(NavigationDestination.START)
 
     override fun navigate(destination: NavigationDestination) {
         currentDestination.value = destination
@@ -16,5 +17,4 @@ class A1NavigatorImpl : A1Navigator {
         currentDestination
 }
 
-fun getNavigator(): A1Navigator =
-    A1NavigatorImpl()
+fun getNavigator(): A1Navigator = A1NavigatorImpl()

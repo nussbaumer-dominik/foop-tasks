@@ -70,6 +70,7 @@ class StartScreen(
                         modifier = Modifier
                             .height(20.dp),
                     )
+                    // TODO: Fix TextField - it is invisible and not clear to the user that it is a textfield!
                     BasicTextField(
                         value = username,
                         onValueChange = { value ->
@@ -77,7 +78,10 @@ class StartScreen(
                             updateState { it.copy(username = value) }
                         },
                         singleLine = true,
-                        textStyle = MaterialTheme.typography.body1.copy(textAlign = TextAlign.Center, fontSize = 24.sp),
+                        textStyle = MaterialTheme.typography.body1.copy(
+                            textAlign = TextAlign.Center,
+                            fontSize = 24.sp
+                        ),
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(4.dp))

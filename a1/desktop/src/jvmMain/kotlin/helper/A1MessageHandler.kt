@@ -9,7 +9,7 @@ fun handleMessage(game: A1Game, message: AoopMessage) = when (message) {
     is GlobalMessage.StateUpdate -> game.updateGameState(
         GameState(
             gameBoard = message.map,
-            gameStatus = message.status,
+            gameState = message.status,
         )
     )
 

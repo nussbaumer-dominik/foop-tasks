@@ -5,7 +5,7 @@ sealed interface AoopMessage
 sealed interface GlobalMessage : AoopMessage {
     data class StateUpdate(
         val map: GameBoard,
-        val status: GameStatus,
+        val status: GameState,
     ) : GlobalMessage
 }
 

@@ -11,19 +11,19 @@ import at.ac.tuwien.foop.common.models.mapper.mapToDto
 import at.ac.tuwien.foop.domain.GameBoard
 import at.ac.tuwien.foop.util.GameBoardGenerator
 import io.ktor.server.websocket.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import java.util.*
 
 data class GameImpl(
     val fps: Int = 60,
     val configuration: GameConfiguration,
 ) : Game {
-    private val players: MutableMap<String, Player> =
-        Collections.synchronizedMap(mutableMapOf())
+    private val players: MutableMap<String, Player> = Collections.synchronizedMap(mutableMapOf())
     private val connections: MutableMap<String, DefaultWebSocketServerSession> =
         Collections.synchronizedMap(mutableMapOf())
 
-    private var status: GameStatus = GameStatus.WAITING
+    private var state: GameState = GameState.WAITING
     private var board: GameBoard = GameBoardGenerator.generateGameBoard(configuration)
 
     override suspend fun registerUser(registerRequest: RegisterRequest): Result<RegisterResponse> {
@@ -43,7 +43,7 @@ data class GameImpl(
         return Result.success(RegisterResponse(id = newPlayer.id, username = newPlayer.username))
     }
 
-    private suspend fun sentGameStateUpdate() {
+    private suspend fun sendGameStateUpdate() {
         sendSocketMessage(
             GlobalMessage.StateUpdate(
                 map = GameBoard(
@@ -53,7 +53,7 @@ data class GameImpl(
                     width = board.width,
                     height = board.height,
                 ),
-                status = status,
+                status = state,
             )
         )
     }
@@ -117,7 +117,7 @@ data class GameImpl(
         }
 
         if (connectionsToRemove.isNotEmpty()) {
-            sentGameStateUpdate()
+            sendGameStateUpdate()
         }
     }
 
@@ -127,7 +127,7 @@ data class GameImpl(
             deletePlayerConnection(connectionToRemove.key)
         }
 
-        sentGameStateUpdate()
+        sendGameStateUpdate()
     }
 
     private fun deletePlayerConnection(id: String) {
@@ -153,22 +153,22 @@ data class GameImpl(
             )
         }
 
-        sentGameStateUpdate()
+        sendGameStateUpdate()
 
         return Result.success(Unit)
     }
 
     override suspend fun startGame() {
-        status = GameStatus.RUNNING
-        sentGameStateUpdate()
+        state = GameState.RUNNING
+        sendGameStateUpdate()
     }
 
-    override fun changePlayerVelocity(playerId: String, direction: DirectionDto, type: MoveCommandTypeDto) {
+    override fun updatePlayerVelocity(playerId: String, direction: DirectionDto, type: MoveCommandTypeDto) {
         val player = board.players.find { it.id == playerId }!!
         when (direction) {
             DirectionDto.UP -> {
                 if (type == MoveCommandTypeDto.MOVE) {
-                    player.velocity = player.velocity.copy(yu = -player.position.moveSize)
+                    player.velocity = player.velocity.copy(yu = -player.moveSize)
                 } else {
                     player.velocity = player.velocity.copy(yu = 0)
                 }
@@ -176,7 +176,7 @@ data class GameImpl(
 
             DirectionDto.DOWN -> {
                 if (type == MoveCommandTypeDto.MOVE) {
-                    player.velocity = player.velocity.copy(yd = player.position.moveSize)
+                    player.velocity = player.velocity.copy(yd = player.moveSize)
                 } else {
                     player.velocity = player.velocity.copy(yd = 0)
                 }
@@ -184,7 +184,7 @@ data class GameImpl(
 
             DirectionDto.LEFT -> {
                 if (type == MoveCommandTypeDto.MOVE) {
-                    player.velocity = player.velocity.copy(xl = -player.position.moveSize)
+                    player.velocity = player.velocity.copy(xl = -player.moveSize)
                 } else {
                     player.velocity = player.velocity.copy(xl = 0)
                 }
@@ -192,7 +192,7 @@ data class GameImpl(
 
             DirectionDto.RIGHT -> {
                 if (type == MoveCommandTypeDto.MOVE) {
-                    player.velocity = player.velocity.copy(xr = player.position.moveSize)
+                    player.velocity = player.velocity.copy(xr = player.moveSize)
                 } else {
                     player.velocity = player.velocity.copy(xr = 0)
                 }
@@ -208,19 +208,19 @@ data class GameImpl(
         while (true) {
             val currentTimeMs = System.currentTimeMillis()
 
-            if (status == GameStatus.RUNNING) {
+            if (state == GameState.RUNNING) {
                 board.players.forEach { player ->
                     player.move(width = board.width, height = board.height)
                 }
 
-                //TODO: add mouse collision
-                //TODO: correctly move mouse into the subway
-//                board.moveMice()
-                //board.generateGrid()
+                board.movePlayers()
+                board.checkCollisions()
+                board.moveMice()
 
-                status = if (board.isWinningState()) GameStatus.MICE_WON else GameStatus.RUNNING
+                // Check if the game is over
+                checkGameState()
 
-                sentGameStateUpdate()
+                sendGameStateUpdate()
             }
 
             val timeElapsedMs = System.currentTimeMillis() - currentTimeMs
@@ -228,6 +228,17 @@ data class GameImpl(
         }
     }
 
+    private fun checkGameState() {
+        if (board.mice.isEmpty()) {
+            state = GameState.CATS_WON
+        } else if (board.mice.all { m ->
+                board.winningSubway!!.exits.any { e -> e.position == m.position }
+            }) {
+            state = GameState.MICE_WON
+        }
+    }
+
+    // TODO: use the already existent ColorGenerator for this
     private fun getPlayerColor(): String {
         val random = Random()
         val nextInt = random.nextInt(0xffffff + 1)

@@ -1,8 +1,8 @@
 package at.ac.tuwien.foop.util
 
-import at.ac.tuwien.foop.game.GameConfiguration
 import at.ac.tuwien.foop.domain.*
-import at.ac.tuwien.foop.domain.mouseStrategy.MouseDijkstraStrategy
+import at.ac.tuwien.foop.domain.mouseStrategy.MouseDirectStrategy
+import at.ac.tuwien.foop.game.GameConfiguration
 
 class GameBoardGenerator {
     companion object {
@@ -32,8 +32,6 @@ class GameBoardGenerator {
 
             gameBoard.selectWinningSubway()
             placeMiceOnGameBoard(gameBoard, gameConfiguration.numberOfMice)
-            //placeCatsRandomlyOnGameBoard(gameBoard, 4)
-            //gameBoard.generateGrid()
             return gameBoard
         }
 
@@ -46,29 +44,9 @@ class GameBoardGenerator {
                 val mouse = Mouse(
                     position = subwayExitPair.second.position.copy(),
                     subway = subwayExitPair.first,
-                    strategy = MouseDijkstraStrategy(),
+                    strategy = MouseDirectStrategy(),
                 )
                 gameBoard.mice.add(mouse)
-            }
-            //gameBoard.generateGrid()
-        }
-
-        private fun placeCatsRandomlyOnGameBoard(gameBoard: GameBoard, numberOfCats: Int) {
-            for (i in 0 until numberOfCats) {
-                while (true) {
-                    val cat = Player(
-                        position = Position(
-                            x = (0 until gameBoard.width).random(),
-                            y = (0 until gameBoard.height).random(),
-                        ),
-                        color = "#"
-                    )
-
-                    if (gameBoard.isFieldEmpty(cat)) {
-                        gameBoard.players.add(cat)
-                        break
-                    }
-                }
             }
         }
     }

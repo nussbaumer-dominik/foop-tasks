@@ -1,13 +1,7 @@
 package at.ac.tuwien.foop.domain.mouseStrategy
 
-import at.ac.tuwien.foop.common.exceptions.NoMovePossibleException
+import at.ac.tuwien.foop.common.models.exceptions.NoMovePossibleException
 import at.ac.tuwien.foop.domain.*
-import at.ac.tuwien.foop.common.models.dtos.socket.DirectionDto
-import at.ac.tuwien.foop.common.models.exceptions.IllegalPositionException
-import at.ac.tuwien.foop.domain.Exit
-import at.ac.tuwien.foop.domain.GameBoard
-import at.ac.tuwien.foop.domain.Mouse
-import at.ac.tuwien.foop.domain.Position
 
 class MouseRandomStrategy : MouseStrategy() {
     private var chosenSubway: Subway? = null

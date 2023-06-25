@@ -34,13 +34,7 @@ class Mouse(
     }
 
     fun move(gameBoard: GameBoard) {
-        val newPosition = strategy.newPosition(this, gameBoard)
-        /*val field = gameBoard.getFieldAtPosition(newPosition)
-        if (field is Exit) {
-            subway = gameBoard.subways.first { it.id == field.subwayId }
-        }*/
-
-        position = newPosition
+        position = strategy.newPosition(this, gameBoard)
     }
 
     fun toDto(): MouseDto {
@@ -81,6 +75,4 @@ class Mouse(
     override fun toString(): String {
         return "Mouse(id='$id', position=$position, size=$size, subway=$subway, strategy=$strategy, catsPositions=$catsPositions, targetPosition=$targetEntity)"
     }
-
-
 }

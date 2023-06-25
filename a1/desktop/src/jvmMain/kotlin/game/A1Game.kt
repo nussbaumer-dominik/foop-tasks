@@ -10,7 +10,6 @@ interface A1Game {
     fun getCurrentPlayerId(): String?
     fun observeCurrentPlayer(): Flow<Player?>
     fun updateCurrentPlayerId(id: String)
-
     fun observeGameState(): StateFlow<GameState?>
     fun updateGameState(gameState: GameState)
 }

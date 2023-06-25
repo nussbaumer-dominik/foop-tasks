@@ -18,7 +18,7 @@ fun Application.socketEndpoint(game: Game) {
                 while (true) {
                     when (val incomingMessage = receiveDeserialized<AoopMessageDto>()) {
                         is PrivateMessageDto.MoveCommandDto -> {
-                            game.changePlayerVelocity(
+                            game.updatePlayerVelocity(
                                 playerId = incomingMessage.id,
                                 direction = incomingMessage.direction,
                                 type = incomingMessage.moveType

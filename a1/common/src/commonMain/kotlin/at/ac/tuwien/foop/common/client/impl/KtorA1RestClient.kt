@@ -52,5 +52,4 @@ internal class KtorA1RestClient(baseUrl: String) : A1RestClient, Closeable {
     }
 }
 
-fun getA1RestClient(baseUrl: String): A1RestClient =
-    KtorA1RestClient(baseUrl)
+fun getA1RestClient(baseUrl: String): A1RestClient = KtorA1RestClient(baseUrl)

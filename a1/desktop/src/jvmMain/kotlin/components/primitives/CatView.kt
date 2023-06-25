@@ -28,6 +28,6 @@ fun CatView(
         contentDescription = "Cat",
         modifier = Modifier
             .offset(x = cat.position.x.toInt().dp, y = cat.position.y.toInt().dp)
-            .size(width = 30.dp, height = 30.dp)
+            .size(width = 32.dp, height = 32.dp)
     )
 }
