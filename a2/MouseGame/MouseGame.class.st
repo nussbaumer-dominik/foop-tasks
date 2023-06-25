@@ -117,7 +117,7 @@ MouseGame >> placeMice: numMice [
 	
 	exits ifNil: [ ^ self ].  "Return if exits is nil."
 	
-	mice := Array new: numMice.
+	mice := Set new: numMice.
 		1 to: numMice do: [ :i |
 			mouse := Mouse new.
 			
@@ -125,7 +125,7 @@ MouseGame >> placeMice: numMice [
 			exit := exits atRandom.
 			mouse position: exit position.
 			self addMorph: mouse.
-			mice at: i put: mouse.
+			mice add: mouse.
 		].
 ]
 
@@ -195,4 +195,14 @@ MouseGame >> restartGame [
 		].
 	
 	self placeMice: 5.
+]
+
+{ #category : #'stepping and presenter' }
+MouseGame >> step [
+	self checkCollisions 
+]
+
+{ #category : #'stepping and presenter' }
+MouseGame >> stepTime [ 
+	^33
 ]
