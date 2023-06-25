@@ -12,6 +12,11 @@ Subway >> addExit: exit [
 exits add: exit 
 ]
 
+{ #category : #accessing }
+Subway >> exits [
+	^exits .
+]
+
 { #category : #initialization }
 Subway >> initialize [
 super initialize.
