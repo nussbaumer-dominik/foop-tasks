@@ -41,7 +41,7 @@ class StartScreen(
 
         MaterialTheme(
             colors = MaterialTheme.colors.copy(
-                background = Color(0xFFF9F9FB),
+                background = Color(0xFFF4F3F4),
             )
         ) {
             Box(
