@@ -23,7 +23,7 @@ data class GameImpl(
     private val connections: MutableMap<String, DefaultWebSocketServerSession> =
         Collections.synchronizedMap(mutableMapOf())
 
-    private var state: GameState = GameState.WAITING
+    private var state: GameStatus = GameStatus.WAITING
     private var board: GameBoard = GameBoardGenerator.generateGameBoard(configuration)
 
     override suspend fun registerUser(registerRequest: RegisterRequest): Result<RegisterResponse> {
@@ -159,7 +159,7 @@ data class GameImpl(
     }
 
     override suspend fun startGame() {
-        state = GameState.RUNNING
+        state = GameStatus.RUNNING
         sendGameStateUpdate()
     }
 
@@ -209,7 +209,7 @@ data class GameImpl(
         while (true) {
             val currentTimeMs = System.currentTimeMillis()
 
-            if (state == GameState.RUNNING) {
+            if (state == GameStatus.RUNNING) {
                 board.players.forEach { player ->
                     player.move(width = board.width, height = board.height)
                 }
@@ -231,11 +231,11 @@ data class GameImpl(
 
     private fun checkGameState() {
         if (board.mice.isEmpty()) {
-            state = GameState.CATS_WON
+            state = GameStatus.CATS_WON
         } else if (board.mice.all { m ->
                 board.winningSubway!!.exits.any { e -> e.position == m.position }
             }) {
-            state = GameState.MICE_WON
+            state = GameStatus.MICE_WON
         }
     }
 

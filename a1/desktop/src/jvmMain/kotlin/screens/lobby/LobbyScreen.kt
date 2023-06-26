@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import at.ac.tuwien.foop.common.client.A1RestClient
 import at.ac.tuwien.foop.common.client.A1SocketClient
 import at.ac.tuwien.foop.common.client.impl.SocketState
-import at.ac.tuwien.foop.common.models.domain.socket.GameState
+import at.ac.tuwien.foop.common.models.domain.socket.GameStatus
 import at.ac.tuwien.foop.common.models.domain.socket.Player
 import at.ac.tuwien.foop.common.models.domain.socket.PrivateMessage
 import game.A1Game
@@ -143,7 +143,7 @@ class LobbyScreen(
             .filterNotNull()
             .collectLatest { gameState ->
                 updateState { state -> state.copy(players = gameState.gameBoard.players) }
-                if (gameState.gameState == GameState.RUNNING) {
+                if (gameState.gameStatus == GameStatus.RUNNING) {
                     navigator.navigate(NavigationDestination.GAME)
                 }
             }

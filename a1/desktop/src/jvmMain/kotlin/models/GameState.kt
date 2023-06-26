@@ -1,9 +1,9 @@
 package models
 
 import at.ac.tuwien.foop.common.models.domain.socket.GameBoard
-import at.ac.tuwien.foop.common.models.domain.socket.GameState
+import at.ac.tuwien.foop.common.models.domain.socket.GameStatus
 
 data class GameState(
     val gameBoard: GameBoard,
-    val gameState: GameState,
+    val gameStatus: GameStatus,
 )
