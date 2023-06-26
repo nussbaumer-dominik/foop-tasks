@@ -21,7 +21,7 @@ import at.ac.tuwien.foop.common.models.domain.socket.GameStatus
 import at.ac.tuwien.foop.common.models.domain.socket.Player
 import at.ac.tuwien.foop.common.models.domain.socket.PrivateMessage
 import game.A1Game
-import helper.toColor
+import helper.generateHSL
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -87,7 +87,7 @@ class LobbyScreen(
                             items = viewState.players.toList(),
                             key = { it.id }
                         ) { player ->
-                            val playerColor = player.color.toColor()
+                            val playerColor = player.username.generateHSL()
                             Card(
                                 backgroundColor = playerColor,
                                 elevation = 0.dp,

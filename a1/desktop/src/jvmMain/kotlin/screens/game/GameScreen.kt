@@ -66,7 +66,6 @@ class GameScreen(
                                     .size(50.dp),
                             )
                         }
-
                     }
                 }
             }

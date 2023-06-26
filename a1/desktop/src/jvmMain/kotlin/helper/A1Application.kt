@@ -1,14 +1,11 @@
 package helper
 
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.awt.ComposeWindow
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import java.awt.Color
 
 fun a1Application(
     onKeyEvent: (event: KeyEvent) -> Boolean,
@@ -27,12 +24,12 @@ fun A1Window(
     content: @Composable FrameWindowScope.() -> Unit,
 ) {
     Window(
-        // TODO: add dynamic resizing back in to get the correct size for the game board
+        // TODO: add dynamic resizing back in to get the correct size for the game board once the first map is received
         create = {
             ComposeWindow().apply {
                 title = "Cat and Mouse"
                 isResizable = true
-                setSize(800, 900)
+                setContentSize(800, 850)
             }
         },
         onKeyEvent = onKeyEvent,
