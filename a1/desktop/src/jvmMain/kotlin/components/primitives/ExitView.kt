@@ -20,7 +20,7 @@ fun ExitView(exit: Exit, color: Color = Color.Black) {
     Canvas(
         modifier = Modifier
             .size(width = exit.size.width.dp, height = exit.size.height.dp)
-            .offset(x = exit.position.x.toInt().dp, y = exit.position.y.toInt().dp)
+            .offset(x = exit.position.x.dp, y = exit.position.y.dp)
     ) {
         drawCircle(
             color = color,

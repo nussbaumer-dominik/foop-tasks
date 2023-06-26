@@ -36,7 +36,7 @@ fun MouseView(
         contentDescription = "Mouse",
         colorFilter = colorFilter,
         modifier = Modifier
-            .offset(x = mouse.position.x.toInt().dp, y = mouse.position.y.toInt().dp)
+            .offset(x = mouse.position.x.dp, y = mouse.position.y.dp)
             .size(width = mouse.size.width.dp, height = mouse.size.height.dp)
     )
 }

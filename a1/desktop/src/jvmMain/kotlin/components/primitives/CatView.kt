@@ -27,7 +27,7 @@ fun CatView(
         bitmap = image,
         contentDescription = "Cat",
         modifier = Modifier
-            .offset(x = cat.position.x.toInt().dp, y = cat.position.y.toInt().dp)
+            .offset(x = cat.position.x.dp, y = cat.position.y.dp)
             .size(width = 32.dp, height = 32.dp)
     )
 }

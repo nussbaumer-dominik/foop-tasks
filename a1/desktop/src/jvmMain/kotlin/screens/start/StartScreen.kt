@@ -39,10 +39,15 @@ class StartScreen(
 
         var username by remember { mutableStateOf("") }
 
-        MaterialTheme {
+        MaterialTheme(
+            colors = MaterialTheme.colors.copy(
+                background = Color(0xFFF9F9FB),
+            )
+        ) {
             Box(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.background),
                 contentAlignment = Alignment.Center,
             ) {
                 Column(
@@ -85,7 +90,7 @@ class StartScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(4.dp))
-                            .background(Color(0xFFFFFFFF))
+                            .background(Color.White)
                             .padding(16.dp),
                     )
                     Spacer(

@@ -84,8 +84,8 @@ data class GameImpl(
     )
 
     private fun at.ac.tuwien.foop.domain.Position.map(): Position = Position(
-        x = x.toLong(),
-        y = y.toLong(),
+        x = x,
+        y = y,
     )
 
     private fun at.ac.tuwien.foop.domain.Size.map(): Size = Size(

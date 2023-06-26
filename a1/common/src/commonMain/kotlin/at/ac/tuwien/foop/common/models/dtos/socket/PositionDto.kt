@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PositionDto(
     @SerialName("x")
-    var x: Long,
+    var x: Int,
     @SerialName("y")
-    var y: Long,
+    var y: Int,
 )

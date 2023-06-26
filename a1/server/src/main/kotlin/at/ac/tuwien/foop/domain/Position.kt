@@ -14,7 +14,7 @@ data class Position(
 ) {
     companion object {
         fun fromDto(dto: PositionDto): Position {
-            return Position(x = dto.x.toInt(), y = dto.y.toInt())
+            return Position(x = dto.x, y = dto.y)
         }
     }
 
@@ -32,7 +32,7 @@ data class Position(
     }
 
     fun toDto(): PositionDto {
-        return PositionDto(x = x.toLong(), y = y.toLong())
+        return PositionDto(x = x, y = y)
     }
 }
 

@@ -1,5 +1,6 @@
 package screens.game
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,7 +35,8 @@ class GameScreen(
         MaterialTheme {
             Box(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.background),
             ) {
                 Column(
                     modifier = Modifier
