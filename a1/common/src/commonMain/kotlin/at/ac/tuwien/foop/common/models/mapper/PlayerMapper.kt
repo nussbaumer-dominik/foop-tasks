@@ -8,6 +8,7 @@ fun Player.mapToDto(): PlayerDto = PlayerDto(
     username = username,
     position = position.mapToDto(),
     score = score,
+    color = color.mapToDto(),
 )
 
 fun PlayerDto.map(): Player = Player(
@@ -15,4 +16,5 @@ fun PlayerDto.map(): Player = Player(
     username = username,
     position = position.map(),
     score = score,
+    color = color.map(),
 )

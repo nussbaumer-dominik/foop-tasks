@@ -8,6 +8,7 @@ import at.ac.tuwien.foop.common.models.dtos.socket.MoveCommandTypeDto
 import at.ac.tuwien.foop.common.models.exceptions.DuplicatedUsernameException
 import at.ac.tuwien.foop.common.models.exceptions.PlayerNotRegisteredException
 import at.ac.tuwien.foop.common.models.mapper.mapToDto
+import at.ac.tuwien.foop.common.models.util.generateHSL
 import at.ac.tuwien.foop.domain.GameBoard
 import at.ac.tuwien.foop.util.GameBoardGenerator
 import io.ktor.server.websocket.*
@@ -37,6 +38,7 @@ data class GameImpl(
             username = registerRequest.username,
             position = Position(0, 0),
             score = 0,
+            color = registerRequest.username.generateHSL(),
         )
         players[newPlayer.id] = newPlayer
 
@@ -58,11 +60,24 @@ data class GameImpl(
         )
     }
 
+    private fun at.ac.tuwien.foop.domain.HSLColor.map(): HSLColor = HSLColor(
+        hue = hue,
+        saturation = saturation,
+        lightness = lightness
+    )
+
+    private fun HSLColor.map(): at.ac.tuwien.foop.domain.HSLColor = at.ac.tuwien.foop.domain.HSLColor(
+        hue = hue,
+        saturation = saturation,
+        lightness = lightness
+    )
+
     private fun at.ac.tuwien.foop.domain.Player.map(): Player = Player(
         id = id,
         username = players[id]?.username ?: "Unknown",
         position = position.map(),
         score = score,
+        color = color.map(),
     )
 
     private fun at.ac.tuwien.foop.domain.Mouse.map(): Mouse = Mouse(
@@ -149,6 +164,7 @@ data class GameImpl(
                 at.ac.tuwien.foop.domain.Player(
                     id = player.id,
                     position = at.ac.tuwien.foop.domain.Position(player.position.x, player.position.y),
+                    color = player.color.map(),
                 )
             )
         }

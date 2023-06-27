@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import at.ac.tuwien.foop.common.client.A1RestClient
 import components.ScoreCard
 import game.A1Game
-import helper.generateHSL
+import helper.toColor
 import kotlinx.coroutines.launch
 import models.GameState
 import screens.A1Screen
@@ -83,7 +83,7 @@ class EndScreen(
                                 ?: emptyList(),
                             key = { it.id }
                         ) { player ->
-                            val playerColor = player.username.generateHSL()
+                            val playerColor = player.color.toColor()
 
                             Card(
                                 backgroundColor = playerColor,

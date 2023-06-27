@@ -20,6 +20,7 @@ class Player(
     override val moveSize: Int = 4,
     var velocity: Velocity = Velocity(),
     var score: Int = 0,
+    val color: HSLColor,
 ) : MovingEntity() {
     companion object {
         fun fromDto(dto: PlayerDto): Player {
@@ -27,6 +28,7 @@ class Player(
                 id = dto.id,
                 position = Position.fromDto(dto.position),
                 score = dto.score,
+                color = HSLColor.fromDto(dto.color),
             )
         }
     }
@@ -47,6 +49,7 @@ class Player(
             username = "",
             position = PositionDto(0, 0),
             score = score,
+            color = color.toDto(),
         )
     }
 

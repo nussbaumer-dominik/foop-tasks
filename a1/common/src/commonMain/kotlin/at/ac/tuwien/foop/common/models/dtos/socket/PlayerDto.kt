@@ -28,4 +28,9 @@ data class PlayerDto(
      * */
     @SerialName("score")
     val score: Int,
+    /**
+     * The color of the player
+     * */
+    @SerialName("color")
+    val color: HSLColorDto,
 )

@@ -5,4 +5,5 @@ data class Player(
     val username: String,
     val position: Position,
     val score: Int,
+    val color: HSLColor,
 )

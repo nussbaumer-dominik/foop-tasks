@@ -3,8 +3,9 @@ package components.primitives
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import at.ac.tuwien.foop.common.models.domain.socket.Subway
+import at.ac.tuwien.foop.common.models.util.generateHSL
 import components.DebuggingOptions
-import helper.generateHSL
+import helper.toColor
 
 @Composable
 fun SubwayView(
@@ -12,7 +13,7 @@ fun SubwayView(
     debuggingOptions: DebuggingOptions
 ) {
     val color = if (debuggingOptions.showColoredSubways) {
-        subway.id.generateHSL()
+        subway.id.generateHSL().toColor()
     } else {
         Color.Black
     }

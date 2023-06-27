@@ -20,7 +20,7 @@ import at.ac.tuwien.foop.common.models.domain.socket.Player
 import components.primitives.CatView
 import components.primitives.MouseView
 import components.primitives.SubwayView
-import helper.generateHSL
+import helper.toColor
 
 @Composable
 fun BoardView(
@@ -38,7 +38,8 @@ fun BoardView(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            val playerColor: Color = currentPlayer?.username?.generateHSL() ?: Color.Black
+            val playerColor: Color = currentPlayer?.color?.toColor() ?: Color.Black
+
             Card(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
