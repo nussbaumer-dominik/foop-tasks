@@ -1,7 +1,7 @@
 package at.ac.tuwien.foop.domain
 
-import at.ac.tuwien.foop.common.models.dtos.socket.PositionDto
 import at.ac.tuwien.foop.common.models.dtos.socket.PlayerDto
+import at.ac.tuwien.foop.common.models.dtos.socket.PositionDto
 import java.util.*
 
 /**
@@ -31,6 +31,7 @@ class Player(
                 id = dto.id,
                 position = Position.fromDto(dto.position),
                 color = dto.color,
+                score = dto.score,
             )
         }
     }
@@ -50,7 +51,8 @@ class Player(
             id = id,
             username = "",
             color = color,
-            position = PositionDto(0, 0)
+            position = PositionDto(0, 0),
+            score = score,
         )
     }
 

@@ -29,6 +29,10 @@ class A1GameImpl : A1Game {
     override fun observeGameState(): StateFlow<GameState?> =
         gameState
 
+    override fun getCurrentGameState(): GameState? {
+        return gameState.value
+    }
+
     override fun updateGameState(gameState: GameState) {
         this.gameState.value = gameState
     }

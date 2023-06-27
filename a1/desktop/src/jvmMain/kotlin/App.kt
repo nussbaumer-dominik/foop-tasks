@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import at.ac.tuwien.foop.common.client.A1RestClient
 import at.ac.tuwien.foop.common.client.A1SocketClient
 import game.A1Game
+import screens.end.EndScreen
 import screens.game.GameScreen
 import screens.lobby.LobbyScreen
 import screens.navigator.A1Navigator
@@ -27,6 +28,9 @@ fun App(
             LobbyScreen(game, restClient, socketClient, navigator).render()
 
         NavigationDestination.GAME ->
-            GameScreen(game).render()
+            GameScreen(game, navigator).render()
+
+        NavigationDestination.END ->
+            EndScreen(game, restClient).render()
     }
 }

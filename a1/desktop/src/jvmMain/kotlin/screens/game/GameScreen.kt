@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import at.ac.tuwien.foop.common.models.domain.socket.GameStatus
 import components.BoardView
 import components.DebuggingOptions
 import components.DebuggingOptionsView
@@ -22,9 +23,12 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import models.GameState
 import screens.A1Screen
+import screens.navigator.A1Navigator
+import screens.navigator.NavigationDestination
 
 class GameScreen(
     private val game: A1Game,
+    private val navigator: A1Navigator,
 ) : A1Screen<GameScreen.ViewState>(ViewState()) {
     @Composable
     override fun render() {
@@ -81,6 +85,10 @@ class GameScreen(
             .filterNotNull()
             .collectLatest { gameState ->
                 updateState { state -> state.copy(gameState = gameState) }
+                if (gameState.gameStatus != GameStatus.RUNNING && gameState.gameStatus != GameStatus.WAITING) {
+                    // TODO: This should probably be handled on the server or at least the server has to handle it
+                    navigator.navigate(NavigationDestination.END)
+                }
             }
     }
 
