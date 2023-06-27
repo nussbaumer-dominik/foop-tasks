@@ -11,13 +11,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun OptionTile(checked: Boolean, text: String, onCheckedChange: (Boolean) -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+fun OptionTile(
+    checked: Boolean,
+    text: String,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Checkbox(
             checked = checked,
             onCheckedChange = onCheckedChange
         )
-        Spacer(Modifier.width(2.dp))
-        Text(modifier = Modifier.align(Alignment.CenterVertically), text = text)
+        Spacer(
+            modifier = Modifier
+                .width(2.dp),
+        )
+        Text(
+            modifier = Modifier
+                .align(Alignment.CenterVertically),
+            text = text,
+        )
     }
 }

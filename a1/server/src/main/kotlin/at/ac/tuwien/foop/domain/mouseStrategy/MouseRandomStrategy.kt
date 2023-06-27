@@ -1,6 +1,6 @@
 package at.ac.tuwien.foop.domain.mouseStrategy
 
-import at.ac.tuwien.foop.common.exceptions.NoMovePossibleException
+import at.ac.tuwien.foop.common.models.exceptions.NoMovePossibleException
 import at.ac.tuwien.foop.domain.*
 
 class MouseRandomStrategy : MouseStrategy() {

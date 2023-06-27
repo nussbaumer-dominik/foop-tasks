@@ -1,39 +1,39 @@
 package at.ac.tuwien.foop
 
-import at.ac.tuwien.foop.plugins.configureSockets
+import at.ac.tuwien.foop.game.Game
+import at.ac.tuwien.foop.game.GameConfiguration
+import at.ac.tuwien.foop.game.GameImpl
+import at.ac.tuwien.foop.plugins.configureRest
+import at.ac.tuwien.foop.plugins.configureSocket
+import at.ac.tuwien.foop.routes.restEndpoint
 import at.ac.tuwien.foop.routes.socketEndpoint
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 fun main() {
-    //generates a game board and prints it
-    /*val gameBoard = GameBoardGenerator.generateGameBoard(10, 40, 4, 2, 10)
+    val applicationScope = CoroutineScope(Dispatchers.Default + Job())
+    val game: Game = GameImpl(configuration = GameConfiguration())
 
-    gameBoard.generateGrid()
-    println(gameBoard)
-    println("Winning Subway: " + gameBoard.winningSubway)
-    gameBoard.printGrid()
-    println("---------------------------------------------------------")
-    while (!gameBoard.isWinningState()) {
-        gameBoard.moveMice()
-        gameBoard.printGrid()
-        println("---------------------------------------------------------")
-        Thread.sleep(1000)
+    applicationScope.launch {
+        game.startLoop()
     }
-    println("Mice won!")*/
-    //generates a game board and prints it
 
     embeddedServer(
         factory = Netty,
         port = 8080,
         host = "0.0.0.0",
-        module = Application::module,
+        module = { module(game) },
     ).start(wait = true)
 }
 
-fun Application.module() {
-    val game = Game(configuration = GameConfiguration())
-    configureSockets()
+fun Application.module(game: Game) {
+    configureSocket()
+    configureRest()
     socketEndpoint(game = game)
+    restEndpoint(game = game)
 }

@@ -9,11 +9,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.useResource
 import androidx.compose.ui.unit.dp
-import at.ac.tuwien.foop.common.domain.PlayerDto
+import at.ac.tuwien.foop.common.models.domain.socket.Player
 
 //TODO: emphasize the current players cat (shadow or glow or smth)
 @Composable
-fun CatView(cat: PlayerDto) {
+fun CatView(
+    cat: Player,
+) {
     val density = LocalDensity.current.density
     val image = if (density <= 1) {
         useResource("images/cat-head@32.png") { loadImageBitmap(it) }
@@ -25,17 +27,7 @@ fun CatView(cat: PlayerDto) {
         bitmap = image,
         contentDescription = "Cat",
         modifier = Modifier
-            .offset(x = cat.positionDto.x.dp, y = cat.positionDto.y.dp)
-            .size(width = cat.sizeDto.width.dp, height = cat.sizeDto.height.dp)
+            .offset(x = cat.position.x.dp, y = cat.position.y.dp)
+            .size(width = 32.dp, height = 32.dp)
     )
-    /*
-    Canvas(modifier = Modifier.size(32.dp).align(Alignment.Center)) {
-            drawCircle(
-                color = Color.Red,
-                radius = 16f,
-                center = Offset(16f, 16f),
-                style = Fill
-            )
-        }
-     */
 }
