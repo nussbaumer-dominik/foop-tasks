@@ -17,9 +17,9 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import at.ac.tuwien.foop.common.client.A1RestClient
-import at.ac.tuwien.foop.common.models.domain.socket.GameStatus
+import components.ScoreCard
 import game.A1Game
-import helper.generateHSL
+import helper.toColor
 import kotlinx.coroutines.launch
 import models.GameState
 import screens.A1Screen
@@ -51,14 +51,24 @@ class EndScreen(
                     Text(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        text = gameStatusMessage(viewState.gameState?.gameStatus),
+                        text = "Scoreboard",
                         color = Color.Black,
                         style = MaterialTheme.typography.h3,
                         textAlign = TextAlign.Center,
                     )
                     Spacer(
                         modifier = Modifier
-                            .height(20.dp),
+                            .height(8.dp),
+                    )
+                    ScoreCard(
+                        catScore = viewState.gameState?.gameBoard?.players?.sumOf { it.score }
+                            ?: 0,
+                        mouseScore = viewState.gameState?.gameBoard?.mice?.count { !it.isDead }
+                            ?: 0,
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .height(30.dp),
                     )
                     LazyVerticalGrid(
                         modifier = Modifier
@@ -73,7 +83,7 @@ class EndScreen(
                                 ?: emptyList(),
                             key = { it.id }
                         ) { player ->
-                            val playerColor = player.username.generateHSL()
+                            val playerColor = player.color.toColor()
 
                             Card(
                                 backgroundColor = playerColor,
@@ -142,12 +152,6 @@ class EndScreen(
     private suspend fun leaveLobby() {
         // -> should remove my current connection and go back to the start screen
         TODO("Not yet implemented")
-    }
-
-    private fun gameStatusMessage(gameStatus: GameStatus?) = when (gameStatus) {
-        GameStatus.CATS_WON -> "You won!"
-        GameStatus.MICE_WON -> "You lost!"
-        else -> "Unknown game status"
     }
 
     data class ViewState(

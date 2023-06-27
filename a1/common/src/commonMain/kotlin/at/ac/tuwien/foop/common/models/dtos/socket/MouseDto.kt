@@ -19,6 +19,11 @@ data class MouseDto(
     @SerialName("position")
     val position: PositionDto,
     /**
+     * This flag indicates whether the mouse is dead or not
+     * */
+    @SerialName("isDead")
+    val isDead: Boolean,
+    /**
      * The subway the mouse is currently in
      * */
     @SerialName("subway")

@@ -18,20 +18,17 @@ class Player(
      * */
     override var position: Position,
     override val moveSize: Int = 4,
-    /**
-     * The unique color assigned to this player to distinguish it form others
-     * */
-    val color: String,
     var velocity: Velocity = Velocity(),
     var score: Int = 0,
+    val color: HSLColor,
 ) : MovingEntity() {
     companion object {
         fun fromDto(dto: PlayerDto): Player {
             return Player(
                 id = dto.id,
                 position = Position.fromDto(dto.position),
-                color = dto.color,
                 score = dto.score,
+                color = HSLColor.fromDto(dto.color),
             )
         }
     }
@@ -50,9 +47,9 @@ class Player(
         return PlayerDto(
             id = id,
             username = "",
-            color = color,
             position = PositionDto(0, 0),
             score = score,
+            color = color.toDto(),
         )
     }
 
@@ -65,7 +62,6 @@ class Player(
         if (id != other.id) return false
         if (size != other.size) return false
         if (position != other.position) return false
-        if (color != other.color) return false
         return velocity == other.velocity
     }
 
@@ -73,13 +69,12 @@ class Player(
         var result = id.hashCode()
         result = 31 * result + size.hashCode()
         result = 31 * result + position.hashCode()
-        result = 31 * result + color.hashCode()
         result = 31 * result + velocity.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "Player(id='$id', size=$size, position=$position, color='$color', velocity=$velocity)"
+        return "Player(id='$id', size=$size, position=$position, velocity=$velocity)"
     }
 
 }
