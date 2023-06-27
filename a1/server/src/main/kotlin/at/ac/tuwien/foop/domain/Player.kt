@@ -35,8 +35,16 @@ class Player(
 
     // TODO: maybe implement this in another way
     fun move(width: Int, height: Int) {
-        val newX = position.x + velocity.xr + velocity.xl
-        val newY = position.y + velocity.yu + velocity.yd
+        var totalXVelocity = velocity.xr + velocity.xl
+        var totalYVelocity = velocity.yu + velocity.yd
+
+        if (totalXVelocity != 0 && totalYVelocity != 0) {
+            totalXVelocity /= 2
+            totalYVelocity /= 2
+        }
+
+        val newX = position.x + totalXVelocity
+        val newY = position.y + totalYVelocity
         position = position.copy(
             x = if (newX < 0) 0 else if (newX > width - size.width) width - size.width else newX,
             y = if (newY < 0) 0 else if (newY > height - size.height) height - size.height else newY,

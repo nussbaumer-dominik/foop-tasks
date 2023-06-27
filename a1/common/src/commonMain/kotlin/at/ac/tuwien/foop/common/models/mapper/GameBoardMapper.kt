@@ -15,6 +15,7 @@ fun GameBoard.mapToDto(): GameBoardDto = GameBoardDto(
     players = players.map(Player::mapToDto).toSet(),
     width = width,
     height = height,
+    winningSubway = winningSubway.mapToDto(),
 )
 
 fun GameBoardDto.map(): GameBoard = GameBoard(
@@ -23,5 +24,6 @@ fun GameBoardDto.map(): GameBoard = GameBoard(
     players = players.map(PlayerDto::map).toSet(),
     width = width,
     height = height,
+    winningSubway = winningSubway.map(),
 )
  

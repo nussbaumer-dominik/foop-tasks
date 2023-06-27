@@ -40,8 +40,8 @@ abstract class MouseStrategy {
         targetEntity: Entity,
         gameBoard: GameBoard
     ): Position {
-        val optimalDirections =
-            getDirectionsTowardsEntity(movingEntity, targetEntity) ?: return movingEntity.position
+        val optimalDirections = getDirectionsTowardsEntity(movingEntity, targetEntity)
+            ?: return movingEntity.position
 
         val newPosition = if (optimalDirections.size == 2) {
             //if there are two optimal directions -> move diagonal
@@ -51,10 +51,11 @@ abstract class MouseStrategy {
         } else {
             movingEntity.position.getNewPosition(optimalDirections.first(), movingEntity.moveSize)
         }
+
         var newEntity = ConcreteMovingEntity(movingEntity)
         newEntity = newEntity.copyWith(position = newPosition)
         try {
-            if (!gameBoard.players.any { p -> p.intersects(newEntity) }) {
+            if (gameBoard.players.none { p -> p.intersects(newEntity) } || movingEntity.position.subwayId != null) {
                 return newPosition
             }
         } catch (e: IllegalPositionException) {

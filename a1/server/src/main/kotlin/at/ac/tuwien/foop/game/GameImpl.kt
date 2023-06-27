@@ -54,6 +54,7 @@ data class GameImpl(
                     players = board.players.map { player -> player.map() }.toSet(),
                     width = board.width,
                     height = board.height,
+                    winningSubway = board.winningSubway!!.map(),
                 ),
                 status = state,
             )
@@ -226,10 +227,6 @@ data class GameImpl(
             val currentTimeMs = System.currentTimeMillis()
 
             if (state == GameStatus.RUNNING) {
-                board.players.forEach { player ->
-                    player.move(width = board.width, height = board.height)
-                }
-
                 // TODO: scale movement based on delta time
                 board.movePlayers()
                 board.checkCollisions()

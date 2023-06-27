@@ -65,7 +65,11 @@ fun BoardView(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(8.dp),
-                text = "${gameBoard.mice.size} mice left",
+                text = "${
+                    gameBoard.mice.filter {
+                        !it.isDead && it.subway != gameBoard.winningSubway
+                    }.size
+                } mice left",
                 style = MaterialTheme.typography.body1.copy(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
@@ -73,7 +77,6 @@ fun BoardView(
                 color = Color.Black,
                 textAlign = TextAlign.Center,
             )
-            Spacer(modifier = Modifier.weight(1.1f))
         }
         Divider(
             color = Color.Black,

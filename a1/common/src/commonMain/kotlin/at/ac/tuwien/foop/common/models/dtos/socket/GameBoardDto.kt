@@ -33,4 +33,9 @@ data class GameBoardDto(
      * */
     @SerialName("height")
     val height: Int,
+    /**
+     * The subway where all the mice want to meet
+     * */
+    @SerialName("winningSubway")
+    val winningSubway: SubwayDto,
 )

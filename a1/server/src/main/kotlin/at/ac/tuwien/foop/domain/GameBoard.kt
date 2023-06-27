@@ -225,7 +225,7 @@ class GameBoard(
 
     fun checkCollisions() {
         for (player in players) {
-            for (mouse in mice.filter { !it.isDead }) {
+            for (mouse in mice.filter { !it.isDead && it.subway == null }) {
                 if (player.intersects(mouse)) {
                     player.score += 1
                     mouse.isDead = true
@@ -242,6 +242,7 @@ class GameBoard(
             mice = mice.map { it.toDto() }.toMutableSet(),
             subways = subways.map { it.toDto() }.toMutableSet(),
             players = players.map { it.toDto() }.toMutableSet(),
+            winningSubway = winningSubway!!.toDto()
         )
     }
 

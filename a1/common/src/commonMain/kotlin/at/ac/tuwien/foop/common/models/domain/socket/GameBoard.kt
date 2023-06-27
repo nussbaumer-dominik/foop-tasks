@@ -6,4 +6,5 @@ data class GameBoard(
     val players: Set<Player>,
     val width: Int,
     val height: Int,
+    val winningSubway: Subway,
 )

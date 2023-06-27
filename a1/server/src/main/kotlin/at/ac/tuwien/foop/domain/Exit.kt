@@ -42,6 +42,14 @@ class Exit(
         )
     }
 
+    fun copy(): Exit {
+        return Exit(
+            position = position.copy(),
+            size = size.copy(),
+            subwayId = subwayId,
+        )
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
