@@ -24,11 +24,6 @@ data class PlayerDto(
     @SerialName("position")
     var position: PositionDto,
     /**
-     * The unique color assigned to this player to distinguish it form others
-     * */
-    @SerialName("color")
-    val color: String,
-    /**
      * The score of the player
      * */
     @SerialName("score")

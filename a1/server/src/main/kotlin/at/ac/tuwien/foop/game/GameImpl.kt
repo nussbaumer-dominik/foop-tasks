@@ -36,7 +36,6 @@ data class GameImpl(
             id = UUID.randomUUID().toString(),
             username = registerRequest.username,
             position = Position(0, 0),
-            color = getPlayerColor(),
             score = 0,
         )
         players[newPlayer.id] = newPlayer
@@ -63,13 +62,13 @@ data class GameImpl(
         id = id,
         username = players[id]?.username ?: "Unknown",
         position = position.map(),
-        color = color,
         score = score,
     )
 
     private fun at.ac.tuwien.foop.domain.Mouse.map(): Mouse = Mouse(
         id = id,
         position = position.map(),
+        isDead = isDead,
         subway = subway?.map(),
         size = size.map(),
     )
@@ -150,7 +149,6 @@ data class GameImpl(
                 at.ac.tuwien.foop.domain.Player(
                     id = player.id,
                     position = at.ac.tuwien.foop.domain.Position(player.position.x, player.position.y),
-                    color = player.color,
                 )
             )
         }
@@ -216,6 +214,7 @@ data class GameImpl(
                     player.move(width = board.width, height = board.height)
                 }
 
+                // TODO: scale movement based on delta time
                 board.movePlayers()
                 board.checkCollisions()
                 board.moveMice()
@@ -232,19 +231,10 @@ data class GameImpl(
     }
 
     private fun checkGameState() {
-        if (board.mice.isEmpty()) {
-            state = GameStatus.CATS_WON
-        } else if (board.mice.all { m ->
+        if (board.mice.all { m -> m.isDead } || board.mice.filter { m -> !m.isDead }.all { m ->
                 board.winningSubway!!.exits.any { e -> e.position == m.position }
             }) {
-            state = GameStatus.MICE_WON
+            state = GameStatus.GAME_OVER
         }
-    }
-
-    // TODO: use the already existent ColorGenerator for this
-    private fun getPlayerColor(): String {
-        val random = Random()
-        val nextInt = random.nextInt(0xffffff + 1)
-        return String.format("#%06x", nextInt)
     }
 }

@@ -63,7 +63,11 @@ class GameScreen(
                     ) {
                         val gameState = viewState.gameState
                         if (gameState != null) {
-                            BoardView(gameState.gameBoard, debuggingOptions)
+                            BoardView(
+                                gameState.gameBoard,
+                                game.getCurrentPlayer(),
+                                debuggingOptions
+                            )
                         } else {
                             CircularProgressIndicator(
                                 modifier = Modifier

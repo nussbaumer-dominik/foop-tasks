@@ -72,7 +72,7 @@ class GameBoard(
     }
 
     fun moveMice() {
-        for (mouse in mice) {
+        for (mouse in mice.filter { !it.isDead }) {
             mouse.move(this)
         }
     }
@@ -225,10 +225,10 @@ class GameBoard(
 
     fun checkCollisions() {
         for (player in players) {
-            for (mouse in mice) {
+            for (mouse in mice.filter { !it.isDead }) {
                 if (player.intersects(mouse)) {
                     player.score += 1
-                    mice.removeIf { it.id == mouse.id }
+                    mouse.isDead = true
                     break
                 }
             }
@@ -256,9 +256,7 @@ class GameBoard(
         if (players != other.players) return false
         if (width != other.width) return false
         if (height != other.height) return false
-        if (winningSubway != other.winningSubway) return false
-
-        return true
+        return winningSubway == other.winningSubway
     }
 
     override fun hashCode(): Int {

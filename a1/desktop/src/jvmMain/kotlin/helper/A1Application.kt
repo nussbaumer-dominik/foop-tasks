@@ -29,7 +29,7 @@ fun A1Window(
             ComposeWindow().apply {
                 title = "Cat and Mouse"
                 isResizable = true
-                setContentSize(800, 850)
+                setContentSize(800, 900)
             }
         },
         onKeyEvent = onKeyEvent,

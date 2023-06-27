@@ -14,9 +14,6 @@ enum class GameStatusDto {
     @SerialName("RUNNING")
     RUNNING,
 
-    @SerialName("MICE_WON")
-    MICE_WON,
-
-    @SerialName("CATS_WON")
-    CATS_WON,
+    @SerialName("GAME_OVER")
+    GAME_OVER
 }

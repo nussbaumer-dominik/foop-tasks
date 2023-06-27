@@ -16,6 +16,7 @@ class Mouse(
     override var position: Position,
     override val size: Size = Size(32, 32),
     override val moveSize: Int = 2,
+    var isDead: Boolean = false,
     var subway: Subway?,
     val strategy: MouseStrategy = MouseRandomStrategy(),
     var catsPositions: List<Position> = mutableListOf(),
@@ -27,6 +28,7 @@ class Mouse(
             return Mouse(
                 id = dto.id,
                 position = Position.fromDto(dto.position),
+                isDead = dto.isDead,
                 size = Size.fromDto(dto.size),
                 subway = dto.subway?.let { Subway.fromDto(it) },
             )
@@ -41,6 +43,7 @@ class Mouse(
         return MouseDto(
             id = id,
             position = position.toDto(),
+            isDead = isDead,
             subway = subway?.toDto(),
             size = size.toDto(),
         )
