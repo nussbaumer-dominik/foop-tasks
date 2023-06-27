@@ -20,10 +20,10 @@ data class Position(
 
     fun getNewPosition(direction: DirectionDto, moveSize: Int): Position {
         return when (direction) {
-            DirectionDto.UP -> Position(x, y - moveSize)
-            DirectionDto.DOWN -> Position(x, y + moveSize)
-            DirectionDto.LEFT -> Position(x - moveSize, y)
-            DirectionDto.RIGHT -> Position(x + moveSize, y)
+            DirectionDto.UP -> Position(x, y - moveSize, subwayId)
+            DirectionDto.DOWN -> Position(x, y + moveSize, subwayId)
+            DirectionDto.LEFT -> Position(x - moveSize, y, subwayId)
+            DirectionDto.RIGHT -> Position(x + moveSize, y, subwayId)
         }
     }
 

@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import at.ac.tuwien.foop.common.models.domain.socket.Exit
 
+
 @Composable
 fun ExitView(exit: Exit, color: Color = Color.Black) {
     val density = LocalDensity.current.density
