@@ -9,7 +9,6 @@ interface A1SocketClient : Closeable {
     suspend fun connect()
     suspend fun join(message: PrivateMessage.JoinRequest)
     suspend fun move(message: PrivateMessage.MoveCommand)
-
     suspend fun observeState(): StateFlow<SocketState>
     suspend fun getState(): SocketState
 }

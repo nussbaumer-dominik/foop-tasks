@@ -37,6 +37,7 @@ data class GameImpl(
             username = registerRequest.username,
             position = Position(0, 0),
             color = getPlayerColor(),
+            score = 0,
         )
         players[newPlayer.id] = newPlayer
 
@@ -63,6 +64,7 @@ data class GameImpl(
         username = players[id]?.username ?: "Unknown",
         position = position.map(),
         color = color,
+        score = score,
     )
 
     private fun at.ac.tuwien.foop.domain.Mouse.map(): Mouse = Mouse(
@@ -147,7 +149,7 @@ data class GameImpl(
             board.players.add(
                 at.ac.tuwien.foop.domain.Player(
                     id = player.id,
-                    position = at.ac.tuwien.foop.domain.Position(player.position.x.toInt(), player.position.y.toInt()),
+                    position = at.ac.tuwien.foop.domain.Position(player.position.x, player.position.y),
                     color = player.color,
                 )
             )

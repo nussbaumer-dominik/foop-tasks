@@ -4,4 +4,5 @@ enum class NavigationDestination {
     START,
     LOBBY,
     GAME,
+    END,
 }

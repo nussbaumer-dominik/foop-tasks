@@ -28,4 +28,9 @@ data class PlayerDto(
      * */
     @SerialName("color")
     val color: String,
+    /**
+     * The score of the player
+     * */
+    @SerialName("score")
+    val score: Int,
 )
