@@ -86,6 +86,7 @@ class GameScreen(
             .collectLatest { gameState ->
                 updateState { state -> state.copy(gameState = gameState) }
                 if (gameState.gameStatus != GameStatus.RUNNING && gameState.gameStatus != GameStatus.WAITING) {
+                    // TODO: This should probably be handled on the server or at least the server has to handle it
                     navigator.navigate(NavigationDestination.END)
                 }
             }

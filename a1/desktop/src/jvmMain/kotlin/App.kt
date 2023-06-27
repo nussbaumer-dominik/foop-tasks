@@ -31,6 +31,6 @@ fun App(
             GameScreen(game, navigator).render()
 
         NavigationDestination.END ->
-            EndScreen(game, restClient, navigator).render()
+            EndScreen(game, restClient).render()
     }
 }

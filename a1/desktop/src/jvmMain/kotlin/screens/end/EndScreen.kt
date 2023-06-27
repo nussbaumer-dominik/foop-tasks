@@ -23,14 +23,11 @@ import helper.generateHSL
 import kotlinx.coroutines.launch
 import models.GameState
 import screens.A1Screen
-import screens.navigator.A1Navigator
-import screens.navigator.NavigationDestination
 import kotlin.system.exitProcess
 
 class EndScreen(
     private val game: A1Game,
     private val restClient: A1RestClient,
-    private val navigator: A1Navigator,
 ) : A1Screen<EndScreen.ViewState>(ViewState()) {
     @Composable
     override fun render() {
@@ -111,36 +108,18 @@ class EndScreen(
                         modifier = Modifier
                             .height(30.dp),
                     )
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color.Black,
-                            contentColor = Color.White,
-                        ),
-                        onClick = { screenScope.launch { restartGame() } },
-                    ) {
-                        Text(
-                            text = "Play again",
-                            style = MaterialTheme.typography.button,
+                    Column {
+                        EndScreenButton(
+                            text = "Restart game",
+                            onClick = { screenScope.launch { restartGame() } }
                         )
-                    }
-                    Spacer(
-                        modifier = Modifier
-                            .height(5.dp),
-                    )
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color.Gray,
-                            contentColor = Color.White,
-                        ),
-                        onClick = { exitProcess(0) },
-                    ) {
-                        Text(
+                        EndScreenButton(
+                            text = "Leave lobby",
+                            onClick = { screenScope.launch { leaveLobby() } }
+                        )
+                        EndScreenButton(
                             text = "Exit application",
-                            style = MaterialTheme.typography.button,
+                            onClick = { exitProcess(0) }
                         )
                     }
                 }
@@ -154,11 +133,15 @@ class EndScreen(
         }
     }
 
+    // TODO: fix this method -> should restart the game for the current lobby
     private suspend fun restartGame() {
-        val playerId = game.getCurrentPlayerId()
-        println("Play again pressed for player $playerId")
-        navigator.navigate(NavigationDestination.LOBBY)
-        TODO("not implemented yet")
+        restClient.start()
+    }
+
+    // TODO: implement this method
+    private suspend fun leaveLobby() {
+        // -> should remove my current connection and go back to the start screen
+        TODO("Not yet implemented")
     }
 
     private fun gameStatusMessage(gameStatus: GameStatus?) = when (gameStatus) {
@@ -170,4 +153,25 @@ class EndScreen(
     data class ViewState(
         val gameState: GameState? = null,
     )
+}
+
+@Composable
+fun EndScreenButton(
+    text: String,
+    onClick: () -> Unit,
+) {
+    Button(
+        modifier = Modifier
+            .fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Color.Gray,
+            contentColor = Color.White,
+        ),
+        onClick = onClick,
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.button,
+        )
+    }
 }
