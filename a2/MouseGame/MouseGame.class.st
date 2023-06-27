@@ -68,15 +68,15 @@ MouseGame >> allMiceAtWinningSubway [
 
 { #category : #'as yet unclassified' }
 MouseGame >> checkCollisions [
-    "Check each mouse for collision with the cat."
-    mice do: [ :mouse |
-        "Check if the cat and the mouse are overlapping."
-        (cat bounds intersects: mouse bounds) ifTrue: [
-            "Collision detected, remove the mouse from the game."
-				score := score + 1.
-				self removeMouse: mouse.
-        ]
-    ].
+	"Check each mouse for collision with the cat."
+
+	mice do: [ :mouse | "Check if the cat and the mouse are overlapping."
+		mouse subway ifNil: [ 
+			(cat bounds intersects: mouse bounds) ifTrue: [ "Collision detected, remove the mouse from the game."
+			score := score + 1.
+			self removeMouse: mouse ] ]
+			 ]
+		
 ]
 
 { #category : #'as yet unclassified' }
@@ -141,13 +141,14 @@ MouseGame >> initialize [
 	self position: 100 @ 100.
 	self extent: 800 @ 800.
 	self color: Color black.
-	self setNameTo: 'Simple Shooter'.
+	self setNameTo: 'Mouse Game'.
 
 	cat := Cat new.
 	self addMorph: cat.
 	p := self position.
 	cat position: 420 @ 400 + p.
 	gameMessages := GameMessages new.
+	gameStepTime := 50.
 
 
 
@@ -167,27 +168,62 @@ debugtext string: score asString fontName: #Atlanta size: 22."
 ]
 
 { #category : #'as yet unclassified' }
+MouseGame >> moveMice [
+
+	mice ifNotNil: [
+		subways ifNotEmpty: [
+			winningSubway ifNotNil: [ 
+				mice do: [ :eachMouse |
+				eachMouse move: subways winningSubway: winningSubway ] ] ]
+				 ]
+			
+]
+
+{ #category : #'as yet unclassified' }
 MouseGame >> placeMice: numMice [
 
 	| mouse exit nonWinningExits |
-	
-	exits ifNil: [ ^ self ].  "Return if exits is nil."
-	
+	exits ifNil: [ ^ self ]. "Return if exits is nil."
+
 	"Create a collection of non-winning exits."
-    nonWinningExits := exits reject: [:eachExit | 
-        winningSubway exits includes: eachExit
-    ].
-	
+	nonWinningExits := exits reject: [ :eachExit |
+		                   winningSubway exits includes: eachExit ].
+
 	mice := Set new: numMice.
-		1 to: numMice do: [ :i |
-			mouse := Mouse new.
-			
-			"Get a random exit"
-			exit := nonWinningExits atRandom.
-			self placeMouse: mouse atExit: exit .
-			self addMorph: mouse.
-			mice add: mouse.
-		].
+	1 to: numMice do: [ :i |
+		mouse := Mouse new.
+		mouse moveStrategy: MouseStrategyRandom new.
+
+		"Get a random exit"
+		exit := nonWinningExits atRandom.
+		self placeMouse: mouse atExit: exit.
+		self addMorph: mouse.
+		mice add: mouse ]
+]
+
+{ #category : #'as yet unclassified' }
+MouseGame >> placeMice: numMice allSubways: allSubways [
+
+	| mouse exit subway nonWinningSubways |
+	exits ifNil: [ ^ self ]. "Return if exits is nil."
+	subways ifNil: [ ^ self ]. "Return if subways is nil."
+
+	"Create a collection of non-winning subways."
+	nonWinningSubways := subways reject: [ :eachSubway |
+		                   eachSubway = winningSubway ].
+
+	mice := Set new: numMice.
+	1 to: numMice do: [ :i |
+		mouse := Mouse new.
+		mouse moveStrategy: MouseStrategyRandom new.
+
+		"Get a random exit"
+		subway := nonWinningSubways atRandom.
+		exit := subway exits atRandom .
+		mouse subway: subway .
+		self placeMouse: mouse atExit: exit.
+		self addMorph: mouse.
+		mice add: mouse ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -219,7 +255,7 @@ MouseGame >> restartCountdownIteration [
 		ifFalse: [
 			gameMessages deleteGameOverMessage.
 			gameMessages deleteCountdownMessage.
-			gameStepTime := 33.
+			"gameStepTime := 33."
 			self restartGame ]
 ]
 
@@ -228,13 +264,11 @@ MouseGame >> restartGame [
 
 	| subway pos numSubways numExits exit positions x y exitBounds exitColor |
 	"delete all subways"
-	subways ifNotNil: [
-		subways do: [ :eachSubway |
-			eachSubway delete ] ].
+	subways ifNotNil: [ subways do: [ :eachSubway | eachSubway delete ] ].
 	"delete all exits"
-	exits ifNotNil: [
-		exits do: [ :eachExit |
-			eachExit delete ] ].
+	exits ifNotNil: [ exits do: [ :eachExit | eachExit delete ] ].
+	"delete all mice"
+	mice ifNotNil: [ mice do: [ :eachMouse | eachMouse delete ] ].
 
 	"reset the score"
 	score := 0.
@@ -287,18 +321,22 @@ MouseGame >> restartGame [
 
 	winningSubway := subways atRandom.
 
-	self placeMice: 2
+	Transcript
+		show: 'Winning subway: ';
+		show: winningSubway exits atRandom color asString;
+		cr.
+
+	self placeMice: 1
 ]
 
 { #category : #'stepping and presenter' }
 MouseGame >> step [
 
 	self checkCollisions.
-	self checkGameEnd.
-	restartCountdown ifNotNil: [ 
-		self restartCountdownIteration
-		 ]
-	
+	"self checkGameEnd."
+	restartCountdown
+		ifNotNil: [ self restartCountdownIteration ]
+		ifNil: [ self moveMice ]
 ]
 
 { #category : #'stepping and presenter' }

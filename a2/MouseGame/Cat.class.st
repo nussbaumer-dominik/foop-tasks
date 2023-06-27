@@ -72,6 +72,7 @@ Cat >> step [
 ]
 
 { #category : #'stepping and presenter' }
-Cat >> stepTime [ 
-	^33
+Cat >> stepTime [
+
+	^ 33
 ]
