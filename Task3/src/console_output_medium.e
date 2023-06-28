@@ -24,13 +24,13 @@ feature
             from
                 i := 0
             until
-                i > game_settings.rows
+                i > game_settings.rows -1
             loop
                 io.put_string (" | ")
                 from
                     j := 0
                 until
-                    j > game_settings.cols
+                    j > game_settings.cols -1
                 loop
                     create point.make(j, i, game_settings)
                     c := game_state.has_exit_at_point(point)

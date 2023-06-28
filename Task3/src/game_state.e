@@ -7,31 +7,46 @@ feature
 
     subway_systems: LIST[SUBWAY_SYSTEM]
     player: POINT
+    mouses: LIST[POINT]
     game_settings: GAME_SETTINGS
 
-    make (gs: GAME_SETTINGS)
+    make (a_game_settings: GAME_SETTINGS)
     local
         random: RANDOM
+    do
+        game_settings := a_game_settings
+        create random.set_seed (123) -- actually random https://www.eiffel.org/article/random_numbers
+        random.forth
+
+        init_player(random)
+        init_subway_systems(random)
+
+    end
+
+feature -- Initialize Playing Field
+
+init_player(random: RANDOM)
+    do
+        create player.make((game_settings.cols / 2).ceiling, (game_settings.rows / 2).ceiling, game_settings)
+    end
+
+init_subway_systems(random: RANDOM)
+    local
         point_count: INTEGER
         i, j: INTEGER
         ss: SUBWAY_SYSTEM
         point: POINT
         random_col, random_row: INTEGER
+        uniqueness_criteria: FUNCTION [POINT, BOOLEAN]
     do
-        game_settings := gs
-        create player.make((gs.cols / 2).ceiling, (gs.rows / 2).ceiling, gs)
-
-        create random.set_seed (123) -- actually random https://www.eiffel.org/article/random_numbers
-        random.forth
         create {LINKED_LIST [SUBWAY_SYSTEM]} subway_systems.make
-
         from
             i := 1
         until
-            i > gs.subway_systems
+            i > game_settings.subway_systems
         loop
-            create ss.make(gs.pipe_colors[subway_systems.count+1])
-            point_count := random.item \\ (gs.max_subway_exits - 1) + 2
+            create ss.make(game_settings.pipe_colors[subway_systems.count+1])
+            point_count := random.item \\ (game_settings.max_subway_exits - 1) + 2
             random.forth
 
             from
@@ -39,7 +54,9 @@ feature
             until
                 j > point_count
             loop
-                point:= new_unique_point(random, gs)
+                point:= new_unique_point(random, game_settings, (agent (pt: POINT): BOOLEAN do
+                    Result := equal(has_exit_at_point(pt), ' ') and not equal(pt, player)
+                end))
                 ss.exits.extend(point)
                 j := j + 1
             end
@@ -47,6 +64,13 @@ feature
             i := i + 1
         end
     end
+
+init_mouses(random: RANDOM)
+  local
+    point: POINT
+  do
+
+  end
 
 feature -- Player
 
@@ -65,7 +89,7 @@ feature -- Player
 
 feature -- Check for Exit at Point
 
-    new_unique_point(random: RANDOM; gs: GAME_SETTINGS): POINT
+    new_unique_point(random: RANDOM; gs: GAME_SETTINGS; uniqueness_criteria: FUNCTION [POINT, BOOLEAN]): POINT
        local
             point: POINT
             random_col, random_row: INTEGER
@@ -78,7 +102,7 @@ feature -- Check for Exit at Point
 
            from
            until
-                equal(has_exit_at_point(point), ' ') and not equal(point, player)
+                uniqueness_criteria.item(point)
            loop
                random_col := random.item \\ gs.cols
                random.forth
