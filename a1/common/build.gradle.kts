@@ -16,6 +16,10 @@ kotlin {
         getByName("commonMain") {
             dependencies {
                 implementation(KotlinX.serialization.json)
+                implementation(Ktor.client.core)
+                implementation(Ktor.client.cio)
+                implementation(Ktor.plugins.serialization.kotlinx.json)
+                implementation(Ktor.client.contentNegotiation)
             }
         }
     }

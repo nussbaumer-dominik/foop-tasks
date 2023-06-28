@@ -1,77 +1,52 @@
 package at.ac.tuwien.foop.util
 
-import at.ac.tuwien.foop.common.domain.*
-
+import at.ac.tuwien.foop.domain.*
+import at.ac.tuwien.foop.domain.mouseStrategy.MouseRandomStrategy
+import at.ac.tuwien.foop.game.GameConfiguration
 
 class GameBoardGenerator {
     companion object {
-        fun generateGameBoard(
-            rows: Int,
-            columns: Int,
-            numberOfSubways: Int,
-            maxNumberOfExits: Int = 5,
-            numberOfMice: Int
-        ): GameBoard {
-            val gameBoard = GameBoard(rows = rows, columns = columns)
-            for (i in 0 until numberOfSubways) {
-                val numberOfExits = (2..maxNumberOfExits).random()
+        fun generateGameBoard(gameConfiguration: GameConfiguration): GameBoard {
+            val gameBoard = GameBoard(width = gameConfiguration.width, height = gameConfiguration.height)
+            for (i in 0 until gameConfiguration.numberOfSubways) {
+                val numberOfExits = (2..gameConfiguration.maxNumberOfExits).random()
                 val subway = Subway()
+                gameBoard.addSubway(subway)
                 for (j in 0 until numberOfExits) {
                     // generate exits as long as they are not on the same position
                     while (true) {
                         val exit = Exit(
                             position = Position(
-                                x = (0 until rows).random(),
-                                y = (0 until columns).random(),
+                                x = (0 until gameBoard.width - gameConfiguration.fieldSize + 1).random(),
+                                y = (0 until gameBoard.height - gameConfiguration.fieldSize + 1).random(),
+                                subwayId = subway.id
                             ),
                             subwayId = subway.id
                         )
-                        if (gameBoard.isFieldEmpty(exit.position)) {
-                            if (subway.addExit(exit)) {
-                                break
-                            }
-                        }
+
+                        if (gameBoard.isFieldEmpty(exit) && subway.addExit(exit))
+                            break
                     }
                 }
-                gameBoard.addSubway(subway)
             }
+
             gameBoard.selectWinningSubway()
-            placeMiceOnGameBoard(gameBoard, numberOfMice)
-            placeCatsRandomlyOnGameBoard(gameBoard, 4)
-            gameBoard.generateGrid()
+            placeMiceOnGameBoard(gameBoard, gameConfiguration.numberOfMice)
             return gameBoard
         }
 
         private fun placeMiceOnGameBoard(gameBoard: GameBoard, numberOfMice: Int) {
-            val subwayExitPairs = gameBoard.getSubwayExitPairs()
+            val subwayExitPairs = gameBoard.getSubwayExitPairs().toMutableSet()
+            //remove the winning subway so no mice is directly at the winning subway
+            subwayExitPairs.removeIf { it.first == gameBoard.winningSubway }
             for (i in 0 until numberOfMice) {
                 val subwayExitPair = subwayExitPairs.random()
-                val position = subwayExitPair.second.position.copy()
-                position.subwayId = subwayExitPair.first.id
                 val mouse = Mouse(
-                    position = position,
-                    moveAlgorithm = MouseAlgorithms::moveLikeJagger
+                    position = subwayExitPair.second.position.copy(),
+                    subway = subwayExitPair.first,
+                    strategy = MouseRandomStrategy(),
                 )
                 gameBoard.mice.add(mouse)
-            }
-            gameBoard.generateGrid()
-        }
-
-        private fun placeCatsRandomlyOnGameBoard(gameBoard: GameBoard, numberOfCats: Int) {
-            for (i in 0 until numberOfCats) {
-                while (true) {
-                    val cat = Player(
-                        position = Position(
-                            x = (0 until gameBoard.rows).random(),
-                            y = (0 until gameBoard.columns).random(),
-                        ),
-                        color = "#"
-                    )
-                    if (gameBoard.isFieldEmpty(cat.position)) {
-                        gameBoard.cats.add(cat)
-                        break
-                    }
-                }
             }
         }
     }
