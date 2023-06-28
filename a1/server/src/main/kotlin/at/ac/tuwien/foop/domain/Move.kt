@@ -1,10 +1,9 @@
 package at.ac.tuwien.foop.domain
 
-import at.ac.tuwien.foop.common.domain.Direction
+import at.ac.tuwien.foop.common.models.dtos.socket.DirectionDto
 
 data class Move(
-    val direction: Direction?,
+    val direction: DirectionDto?,
     val actions: MouseActions?,
     val newPosition: Position
-) {
-}
+)

@@ -1,6 +1,7 @@
 package at.ac.tuwien.foop.domain
 
-import at.ac.tuwien.foop.common.domain.PlayerDto
+import at.ac.tuwien.foop.common.models.dtos.socket.PlayerDto
+import at.ac.tuwien.foop.common.models.dtos.socket.PositionDto
 import java.util.*
 
 /**
@@ -17,28 +18,33 @@ class Player(
      * */
     override var position: Position,
     override val moveSize: Int = 4,
-    /**
-     * The unique color assigned to this player to distinguish it form others
-     * */
-    val color: String,
     var velocity: Velocity = Velocity(),
     var score: Int = 0,
+    val color: HSLColor,
 ) : MovingEntity() {
     companion object {
         fun fromDto(dto: PlayerDto): Player {
             return Player(
                 id = dto.id,
-                position = Position.fromDto(dto.positionDto),
-                size = Size.fromDto(dto.sizeDto),
-                color = dto.color,
+                position = Position.fromDto(dto.position),
+                score = dto.score,
+                color = HSLColor.fromDto(dto.color),
             )
         }
     }
 
-    // TODO: implement this in another way
+    // TODO: maybe implement this in another way
     fun move(width: Int, height: Int) {
-        val newX = position.x + velocity.xr + velocity.xl
-        val newY = position.y + velocity.yu + velocity.yd
+        var totalXVelocity = velocity.xr + velocity.xl
+        var totalYVelocity = velocity.yu + velocity.yd
+
+        if (totalXVelocity != 0 && totalYVelocity != 0) {
+            totalXVelocity /= 2
+            totalYVelocity /= 2
+        }
+
+        val newX = position.x + totalXVelocity
+        val newY = position.y + totalYVelocity
         position = position.copy(
             x = if (newX < 0) 0 else if (newX > width - size.width) width - size.width else newX,
             y = if (newY < 0) 0 else if (newY > height - size.height) height - size.height else newY,
@@ -48,9 +54,10 @@ class Player(
     fun toDto(): PlayerDto {
         return PlayerDto(
             id = id,
-            positionDto = position.toDto(),
-            sizeDto = size.toDto(),
-            color = color,
+            username = "",
+            position = PositionDto(0, 0),
+            score = score,
+            color = color.toDto(),
         )
     }
 
@@ -63,7 +70,6 @@ class Player(
         if (id != other.id) return false
         if (size != other.size) return false
         if (position != other.position) return false
-        if (color != other.color) return false
         return velocity == other.velocity
     }
 
@@ -71,13 +77,12 @@ class Player(
         var result = id.hashCode()
         result = 31 * result + size.hashCode()
         result = 31 * result + position.hashCode()
-        result = 31 * result + color.hashCode()
         result = 31 * result + velocity.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "Player(id='$id', size=$size, position=$position, color='$color', velocity=$velocity)"
+        return "Player(id='$id', size=$size, position=$position, velocity=$velocity)"
     }
 
 }
