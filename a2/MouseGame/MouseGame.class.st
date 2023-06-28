@@ -126,17 +126,22 @@ MouseGame >> getSubways [
 
 { #category : #'event handling' }
 MouseGame >> handleKeystroke: anEvent [
-    cat handleKeystroke: anEvent.
+
+| key |
+    key := anEvent keyString asLowercase.
+    key = 'c' ifTrue: [ self toggleColorOfAllExits ].  "change the color of all exits"
+
+	cat handleKeystroke: anEvent
 ]
 
 { #category : #initialization }
 MouseGame >> initialize [
 
-	| p |
+	| p form |
 	"self := Morph new openInWorld."
 	super initialize.
 
-	"score := 0."
+	score := 0.
 
 	self position: 100 @ 100.
 	self extent: 800 @ 800.
@@ -144,27 +149,29 @@ MouseGame >> initialize [
 	self setNameTo: 'Mouse Game'.
 
 	cat := Cat new.
+	form := self loadResource: 'images/cat-head.png'.
+	cat form: form.
 	self addMorph: cat.
 	p := self position.
 	cat position: 420 @ 400 + p.
 	gameMessages := GameMessages new.
-	gameStepTime := 50.
-
-
-
-
-	"debugtext := DebugText new."
-	"self addMorph: debugtext."
-	"debugtext textColor: Color green.
-debugtext position: 100@150.
-debugtext width: 320.
-debugtext height: 150.
-
-debugtext string: score asString fontName: #Atlanta size: 22."
-	"debugtext extent: 320 @ 150."
-	"debugtext text: Text fromString: 'hello'."
+	gameStepTime := 33.
 
 	self restartGame
+]
+
+{ #category : #'as yet unclassified' }
+MouseGame >> loadResource: aString [
+	"loads image from resources directory of foop-tasks repository"
+
+	| repository path form |
+	repository := IceRepository registry detect: [ :repo |
+		              repo name = 'foop-tasks' ].
+
+	path := repository location / 'a2/resources' / aString.
+	"Transcript show: path asString."
+	form := ImageReadWriter formFromFileNamed: path.
+	^ form
 ]
 
 { #category : #'as yet unclassified' }
@@ -182,7 +189,7 @@ MouseGame >> moveMice [
 { #category : #'as yet unclassified' }
 MouseGame >> placeMice: numMice [
 
-	| mouse exit nonWinningExits |
+	| mouse exit nonWinningExits form |
 	exits ifNil: [ ^ self ]. "Return if exits is nil."
 
 	"Create a collection of non-winning exits."
@@ -190,9 +197,11 @@ MouseGame >> placeMice: numMice [
 		                   winningSubway exits includes: eachExit ].
 
 	mice := Set new: numMice.
+	form := self loadResource: 'images/mouse-white.png'.
 	1 to: numMice do: [ :i |
 		mouse := Mouse new.
 		mouse moveStrategy: MouseStrategyRandom new.
+		mouse form: form.
 
 		"Get a random exit"
 		exit := nonWinningExits atRandom.
@@ -238,49 +247,16 @@ MouseGame >> placeMouse: aMouse atExit: anExit [
     aMouse position: newPosition.
 ]
 
-{ #category : #removing }
-MouseGame >> removeMouse: aMouse [
-    "Remove the mouse from the game."
-    mice remove: aMouse ifAbsent: [].
-    self removeMorph: aMouse.
-]
-
-{ #category : #accessing }
-MouseGame >> restartCountdownIteration [
-
-	restartCountdown > 0
-		ifTrue: [
-			gameMessages countdownMessage: restartCountdown.
-			restartCountdown := restartCountdown - 1 ]
-		ifFalse: [
-			gameMessages deleteGameOverMessage.
-			gameMessages deleteCountdownMessage.
-			"gameStepTime := 33."
-			self restartGame ]
-]
-
 { #category : #'as yet unclassified' }
-MouseGame >> restartGame [
+MouseGame >> placeSubways: numSubways [
 
-	| subway pos numSubways numExits exit positions x y exitBounds exitColor |
-	"delete all subways"
-	subways ifNotNil: [ subways do: [ :eachSubway | eachSubway delete ] ].
-	"delete all exits"
-	exits ifNotNil: [ exits do: [ :eachExit | eachExit delete ] ].
-	"delete all mice"
-	mice ifNotNil: [ mice do: [ :eachMouse | eachMouse delete ] ].
-
-	"reset the score"
-	score := 0.
-
-	"reset the counter"
-	restartCountdown := nil.
-
+	| pos positions numExits subway exitColor exit x y exitBounds |
+	
+	subways ifNil: [ subways := Set new. ].
+	exits ifNil: [ exits := Set new. ].
+	
+	"the own position"
 	pos := self position.
-
-	numSubways := 3.
-	subways := Set new.
-	exits := Set new.
 
 	"Array to store the used positions"
 	positions := Set new.
@@ -312,12 +288,58 @@ MouseGame >> restartGame [
 			"Add the new position to the set of used positions"
 			positions add: exitBounds.
 			exit position: x @ y + pos.
-			exit color: exitColor.
+			exit myColor: exitColor.
 			self addMorphBack: exit.
 			exits add: exit.
 			subway addExit: exit ].
 
-		subways add: subway ].
+		subways add: subway ]
+]
+
+{ #category : #removing }
+MouseGame >> removeMouse: aMouse [
+    "Remove the mouse from the game."
+    mice remove: aMouse ifAbsent: [].
+    self removeMorph: aMouse.
+]
+
+{ #category : #accessing }
+MouseGame >> restartCountdownIteration [
+
+	restartCountdown > 0
+		ifTrue: [
+			gameMessages countdownMessage: restartCountdown.
+			restartCountdown := restartCountdown - 1 ]
+		ifFalse: [
+			gameMessages deleteGameOverMessage.
+			gameMessages deleteCountdownMessage.
+			"gameStepTime := 33."
+			self restartGame ]
+]
+
+{ #category : #'as yet unclassified' }
+MouseGame >> restartGame [
+
+	| pos numSubways |
+	"delete all subways"
+	subways ifNotNil: [ subways do: [ :eachSubway | eachSubway delete ] ].
+	"delete all exits"
+	exits ifNotNil: [ exits do: [ :eachExit | eachExit delete ] ].
+	"delete all mice"
+	mice ifNotNil: [ mice do: [ :eachMouse | eachMouse delete ] ].
+
+	"reset the score"
+	score := 0.
+
+	"reset the counter"
+	restartCountdown := nil.
+
+	pos := self position.
+
+	numSubways := 3.
+
+	self placeSubways: numSubways.
+
 
 	winningSubway := subways atRandom.
 
@@ -333,7 +355,7 @@ MouseGame >> restartGame [
 MouseGame >> step [
 
 	self checkCollisions.
-	"self checkGameEnd."
+	self checkGameEnd.
 	restartCountdown
 		ifNotNil: [ self restartCountdownIteration ]
 		ifNil: [ self moveMice ]
@@ -345,4 +367,10 @@ MouseGame >> stepTime [
 		^33 ] ifNotNil: [ 
 		^ gameStepTime 
 		 ]
+]
+
+{ #category : #'as yet unclassified' }
+MouseGame >> toggleColorOfAllExits [
+
+	exits do: [ :eachExit | eachExit toggleColor ]
 ]

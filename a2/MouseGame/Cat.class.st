@@ -1,6 +1,6 @@
 Class {
 	#name : #Cat,
-	#superclass : #CircleMorph,
+	#superclass : #MovingMorph,
 	#instVars : [
 		'movement'
 	],

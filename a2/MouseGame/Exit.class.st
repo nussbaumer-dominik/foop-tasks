@@ -6,6 +6,10 @@ Exit signalFaillure: 'something went wrong'
 Class {
 	#name : #Exit,
 	#superclass : #CircleMorph,
+	#instVars : [
+		'myColor',
+		'myBorderColor'
+	],
 	#category : #MouseGame
 }
 
@@ -58,6 +62,31 @@ Exit >> getWidth [
 
 { #category : #initialization }
 Exit >> initialize [
-super initialize.
-self color: Color orange.
+
+	super initialize.
+	self color: Color white.
+	myBorderColor := Color purple.
+	self borderColor: myBorderColor.
+	self borderWidth: 2
+]
+
+{ #category : #'as yet unclassified' }
+Exit >> myColor: aColor [ 
+myColor:= aColor
+
+	
+]
+
+{ #category : #'as yet unclassified' }
+Exit >> myColor: aColor 
+
+	myColor: aColor [
+]
+
+{ #category : #'as yet unclassified' }
+Exit >> toggleColor [
+
+	self color = myColor
+		ifTrue: [ self color: Color white. self borderColor: myBorderColor. self borderWidth: 2 ]
+		ifFalse: [ self color: myColor. self borderWidth: 0 ]
 ]

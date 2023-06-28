@@ -37,13 +37,12 @@ MouseStrategyRandom >> newPosition: mouse subways: subways winningSubway: winnin
 
 
 			(mouse subway exits anySatisfy: [ :e |
-				                         mouse bounds intersects: e bounds ]) ifTrue: [ 
+				 mouse bounds intersects: e bounds ]) ifTrue: [
 				mouseIntersectingExit := mouse subway exits detect: [ :e |
-				                         mouse bounds intersects: e bounds ].
-				 ].
-			
+					                         mouse bounds intersects: e bounds ] ].
+
 			mouseIntersectingExit
-				ifNotNil: [ "mouse intersects currently with an exit"
+				ifNotNil: ["mouse intersects currently with an exit"
 					mouseIntersectingExit position = chosenSubwayExit position
 						ifTrue: [ "mouse is at the chosen exit -> leave"
 							chosenSubway := nil.

@@ -1,6 +1,6 @@
 Class {
 	#name : #Mouse,
-	#superclass : #CircleMorph,
+	#superclass : #MovingMorph,
 	#instVars : [
 		'subway',
 		'moveStrategy',
@@ -54,7 +54,7 @@ Mouse >> initialize [
 	self color: Color white.
 	self height: 20.
 	moveStrategy := MouseStrategyRandom new.
-	moveSize := 10.
+	moveSize := 3.
 	movement := 0 @ 0
 ]
 
@@ -128,13 +128,6 @@ Mouse >> setMovementTowardsPosition: targetPoint [
 					ifTrue: [ "Point is down" optimalDirections add: 'down' ]
 					ifFalse: [ "Point is vertically aligned" ] ] ].
 
-
-	"Transcript show: ' optimalDirections: '.
-	optimalDirections do: [ :d |
-		Transcript
-			show: d asString;
-			show: ',' ]."
-
 	optimalDirections
 		ifEmpty: [
 			optimalDirections
@@ -142,41 +135,21 @@ Mouse >> setMovementTowardsPosition: targetPoint [
 				add: 'down';
 				add: 'left';
 				add: 'right'.
-			selectedDirection := optimalDirections atRandom.
-			selectedDirection := 'stay' ]
+			selectedDirection := optimalDirections atRandom
+			"selectedDirection := 'stay'" ]
 		ifNotEmpty: [ selectedDirection := optimalDirections atRandom ].
 
-	selectedDirection = 'up' ifTrue: [
-		movement := 0 @ (moveSize * -1)
-		"Transcript
-			show: 'up: ';
-			show: (0 @ (moveSize * -1)) asString;
-			cr" ].
-	selectedDirection = 'down' ifTrue: [
-		movement := 0 @ moveSize
-		"Transcript
-			show: 'down: ';
-			show: (0 @ moveSize) asString;
-			cr" ].
-	selectedDirection = 'left' ifTrue: [
-		movement := moveSize * -1 @ 0
-		"Transcript
-			show: 'left: ';
-			show: (moveSize * -1 @ 0) asString;
-			cr" ].
-	selectedDirection = 'right' ifTrue: [
-		movement := moveSize @ 0
-		"Transcript
-			show: 'right: ';
-			show: (moveSize @ 0) asString;
-			cr" ]
+	selectedDirection = 'up' ifTrue: [ movement := 0 @ (moveSize * -1) ].
+	selectedDirection = 'down' ifTrue: [ movement := 0 @ moveSize ].
+	selectedDirection = 'left' ifTrue: [ movement := moveSize * -1 @ 0 ].
+	selectedDirection = 'right' ifTrue: [ movement := moveSize @ 0 ]
 ]
 
 { #category : #'stepping and presenter' }
 Mouse >> step [
 
 	self moveMouse: movement.
-	self updateColor.
+	self updateVisibility.
 	movement := 0 @ 0
 ]
 
@@ -198,9 +171,7 @@ Mouse >> subway: aSubway [
 ]
 
 { #category : #'private - layout' }
-Mouse >> updateColor [
+Mouse >> updateVisibility [
 
-	subway
-		ifNil: [ self color: Color white ]
-		ifNotNil: [ self color: Color red ]
+	subway ifNil: [ self show ] ifNotNil: [ self hide ]
 ]
