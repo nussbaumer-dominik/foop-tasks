@@ -21,6 +21,10 @@ feature
 
     exit
     do
-        current_subway := Void
+        if attached current_subway as attached_subway then
+            attached_subway.leave(Current)
+            current_subway := Void
+        end
+
     end
 end
