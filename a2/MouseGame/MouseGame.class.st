@@ -211,31 +211,6 @@ MouseGame >> placeMice: numMice [
 ]
 
 { #category : #'as yet unclassified' }
-MouseGame >> placeMice: numMice allSubways: allSubways [
-
-	| mouse exit subway nonWinningSubways |
-	exits ifNil: [ ^ self ]. "Return if exits is nil."
-	subways ifNil: [ ^ self ]. "Return if subways is nil."
-
-	"Create a collection of non-winning subways."
-	nonWinningSubways := subways reject: [ :eachSubway |
-		                   eachSubway = winningSubway ].
-
-	mice := Set new: numMice.
-	1 to: numMice do: [ :i |
-		mouse := Mouse new.
-		mouse moveStrategy: MouseStrategyRandom new.
-
-		"Get a random exit"
-		subway := nonWinningSubways atRandom.
-		exit := subway exits atRandom .
-		mouse subway: subway .
-		self placeMouse: mouse atExit: exit.
-		self addMorph: mouse.
-		mice add: mouse ]
-]
-
-{ #category : #'as yet unclassified' }
 MouseGame >> placeMouse: aMouse atExit: anExit [
     "Place aMouse at the center of anExit."
 
@@ -313,7 +288,7 @@ MouseGame >> restartCountdownIteration [
 		ifFalse: [
 			gameMessages deleteGameOverMessage.
 			gameMessages deleteCountdownMessage.
-			"gameStepTime := 33."
+			gameStepTime := 33.
 			self restartGame ]
 ]
 
@@ -322,11 +297,16 @@ MouseGame >> restartGame [
 
 	| pos numSubways |
 	"delete all subways"
-	subways ifNotNil: [ subways do: [ :eachSubway | eachSubway delete ] ].
+	subways ifNotNil: [ subways do: [ :eachSubway | eachSubway delete ].
+		subways := Set new.
+		 ].
 	"delete all exits"
-	exits ifNotNil: [ exits do: [ :eachExit | eachExit delete ] ].
+	exits ifNotNil: [ exits do: [ :eachExit | eachExit delete ].
+		exits := Set new. ].
 	"delete all mice"
-	mice ifNotNil: [ mice do: [ :eachMouse | eachMouse delete ] ].
+	mice ifNotNil: [
+		mice do: [ :eachMouse | eachMouse delete ].
+		mice := Set new ].
 
 	"reset the score"
 	score := 0.
@@ -343,12 +323,7 @@ MouseGame >> restartGame [
 
 	winningSubway := subways atRandom.
 
-	Transcript
-		show: 'Winning subway: ';
-		show: winningSubway exits atRandom color asString;
-		cr.
-
-	self placeMice: 1
+	self placeMice: 10
 ]
 
 { #category : #'stepping and presenter' }

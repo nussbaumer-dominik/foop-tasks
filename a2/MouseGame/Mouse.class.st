@@ -156,7 +156,7 @@ Mouse >> step [
 { #category : #'stepping and presenter' }
 Mouse >> stepTime [
 
-	^ 50
+	^ 33
 ]
 
 { #category : #accessing }
