@@ -14,6 +14,7 @@ feature
     local
         random: RANDOM
     do
+    	create {LINKED_LIST [MOUSE]} mouses.make
         game_settings := a_game_settings
         create random.set_seed (123) -- actually random https://www.eiffel.org/article/random_numbers
         random.forth
@@ -72,7 +73,6 @@ init_mouses(random: RANDOM)
     m: MOUSE
     uniqueness_criteria: FUNCTION [POINT, BOOLEAN]
   do
-    create {LINKED_LIST [MOUSE]} mouses.make
     from
             i := 1
         until

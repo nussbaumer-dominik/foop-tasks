@@ -16,10 +16,11 @@ feature
             io.put_string ("%N")
 
             create {LINKED_LIST [POINT]} exits.make
+            create {LINKED_LIST [MOUSE]} current_mouses.make
         end
 
-feature {MOUSE}
-    private enter(mouse: MOUSE)
+feature
+    enter(mouse: MOUSE)
         do
             current_mouses.extend(mouse)
         end
