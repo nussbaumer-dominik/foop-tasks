@@ -37,12 +37,12 @@ feature
                     if not game_settings.show_pipes_color and not equal(c, ' ') then
                         c := 'o'
                     end
+                    if equal(game_state.has_mouse_at_overworld_point(point), 'm') then
+                        c := 'm'
+                    end
                     if equal(game_state.player, point) then
                         c := 'c'
                     end
-                                                       if equal(game_state.has_mouse_at_point(point), 'm') then
-                                                                                                           c := 'm'
-                                                                                                           end
                     io.put_character(' ')
                     io.put_character(c)
                     io.put_character(' ')
@@ -54,7 +54,7 @@ feature
                 i := i + 1
             end
             draw_line("---")
-        end
+           end
 
     draw_line(segment: STRING)
         local

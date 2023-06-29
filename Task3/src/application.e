@@ -41,7 +41,10 @@ feature {NONE}
                     game_state.move_player(1, 0)
                 end
                 output.draw(game_state)
-                io.put_string ("You pressed: ")
+                game_state.catch
+                io.put_string ("Current score: ")
+                io.put_integer (game_state.score)
+                io.put_string ("; You pressed: ")
                 io.put_string (io.last_string)
                 io.put_new_line
                 io.read_line

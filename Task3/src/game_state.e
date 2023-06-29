@@ -9,11 +9,13 @@ feature
     player: POINT
     mouses: LIST[MOUSE]
     game_settings: GAME_SETTINGS
+    score: INTEGER
 
     make (a_game_settings: GAME_SETTINGS)
     local
         random: RANDOM
     do
+        score := 0
     	create {LINKED_LIST [MOUSE]} mouses.make
         game_settings := a_game_settings
         create random.set_seed (123) -- actually random https://www.eiffel.org/article/random_numbers
@@ -151,4 +153,34 @@ feature -- Check for Exit at Point
                 end
             end
         end
+
+    has_mouse_at_overworld_point(point: POINT): CHARACTER
+        do
+            Result := ' '
+            across mouses as m loop
+                if equal(m.item.point, point) and m.item.is_above_ground then
+                    Result := 'm'
+                end
+            end
+        end
+
+    catch
+     do
+        across mouses as m loop
+            if equal(m.item.point, player) and m.item.is_above_ground then
+                m.item.exit
+                score := score +1
+                from
+                    mouses.start  -- Set cursor to the first item.
+                until
+                    mouses.after  -- Stop when we've checked all items.
+                loop
+                    if mouses.item = m.item then  -- If the current item is what we're looking for...
+                        mouses.remove  -- Remove it.
+                    end
+                    mouses.forth  -- Move to the next item.
+                end      
+            end
+        end
+    end
 end

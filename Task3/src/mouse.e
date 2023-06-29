@@ -13,6 +13,15 @@ feature
             point := a_point
         end
 
+    is_above_ground: BOOLEAN
+    do
+        if attached current_subway as attached_subway then
+            Result := False
+        else
+            Result := True
+        end
+    end
+
     enter (subway: SUBWAY_SYSTEM)
     do
         subway.enter(Current)
