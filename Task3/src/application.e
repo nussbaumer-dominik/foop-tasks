@@ -41,6 +41,7 @@ feature {NONE}
                     game_state.move_player(1, 0)
                 end
                 output.draw(game_state)
+                game_state.move_mouses
                 game_state.catch
                 io.put_string ("Current score: ")
                 io.put_integer (game_state.score)

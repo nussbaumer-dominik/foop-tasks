@@ -18,4 +18,10 @@ feature
             y := a_y
         end
 
+    move (delta_x, delta_y: INTEGER)
+    do
+        x:= x + delta_x
+        y:= y + delta_y
+    end
+
 end

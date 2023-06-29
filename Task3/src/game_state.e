@@ -14,12 +14,13 @@ feature
     make (a_game_settings: GAME_SETTINGS)
     local
         random: RANDOM
+        true_random: TRUE_RANDOM
     do
         score := 0
     	create {LINKED_LIST [MOUSE]} mouses.make
         game_settings := a_game_settings
-        create random.set_seed (123) -- actually random https://www.eiffel.org/article/random_numbers
-        random.forth
+        create true_random.make
+        random := true_random.random
 
         init_player(random)
         init_subway_systems(random)
@@ -71,10 +72,13 @@ init_subway_systems(random: RANDOM)
 init_mouses(random: RANDOM)
   local
     point: POINT
+    target: POINT
     i: INTEGER
     m: MOUSE
     uniqueness_criteria: FUNCTION [POINT, BOOLEAN]
   do
+    --TODO!
+    create target.make(5, 5, game_settings)
     from
             i := 1
         until
@@ -83,7 +87,7 @@ init_mouses(random: RANDOM)
             point:= new_unique_point(random, game_settings, (agent (pt: POINT): BOOLEAN do
                 Result := equal(has_mouse_at_point(pt), ' ') and not equal(pt, player)
             end))
-            create m.make(point)
+            create m.make(point, target)
             mouses.extend(m)
 
             i := i + 1
@@ -181,6 +185,13 @@ feature -- Check for Exit at Point
                     mouses.forth  -- Move to the next item.
                 end      
             end
+        end
+    end
+
+    move_mouses
+    do
+        across mouses as m loop
+            m.item.move_to_target
         end
     end
 end
