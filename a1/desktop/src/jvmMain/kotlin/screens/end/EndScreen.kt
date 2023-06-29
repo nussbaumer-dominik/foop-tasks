@@ -20,7 +20,6 @@ import at.ac.tuwien.foop.common.client.A1RestClient
 import components.ScoreCard
 import game.A1Game
 import helper.toColor
-import kotlinx.coroutines.launch
 import models.GameState
 import screens.A1Screen
 import kotlin.system.exitProcess
@@ -119,14 +118,14 @@ class EndScreen(
                             .height(30.dp),
                     )
                     Column {
-                        EndScreenButton(
+                        /*EndScreenButton(
                             text = "Restart game",
                             onClick = { screenScope.launch { restartGame() } }
                         )
                         EndScreenButton(
                             text = "Leave lobby",
                             onClick = { screenScope.launch { leaveLobby() } }
-                        )
+                        )*/
                         EndScreenButton(
                             text = "Exit application",
                             onClick = { exitProcess(0) }
