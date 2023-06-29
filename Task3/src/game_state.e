@@ -5,6 +5,7 @@ create
     make
 feature
 
+    goal_system: SUBWAY_SYSTEM
     subway_systems: LIST[SUBWAY_SYSTEM]
     player: POINT
     mouses: LIST[MOUSE]
@@ -38,12 +39,15 @@ init_player(random: RANDOM)
 init_subway_systems(random: RANDOM)
     local
         point_count: INTEGER
+        goal_system_index: INTEGER;
         i, j: INTEGER
         ss: SUBWAY_SYSTEM
         point: POINT
         uniqueness_criteria: FUNCTION [POINT, BOOLEAN]
     do
         create {LINKED_LIST [SUBWAY_SYSTEM]} subway_systems.make
+        goal_system_index := random.item \\ game_settings.subway_systems
+        random.forth
         from
             i := 1
         until
@@ -64,6 +68,9 @@ init_subway_systems(random: RANDOM)
                 ss.exits.extend(point)
                 j := j + 1
             end
+            if goal_system_index = i then
+               goal_system := ss
+            end
             subway_systems.extend(ss)
             i := i + 1
         end
@@ -76,9 +83,12 @@ init_mouses(random: RANDOM)
     i: INTEGER
     m: MOUSE
     uniqueness_criteria: FUNCTION [POINT, BOOLEAN]
+    choosen_exit_index: INTEGER
   do
-    --TODO!
-    create target.make(5, 5, game_settings)
+    choosen_exit_index := random.item // goal_system.exits.count
+    random.forth
+
+    target := goal_system.exits.i_th(choosen_exit_index)
     from
             i := 1
         until
