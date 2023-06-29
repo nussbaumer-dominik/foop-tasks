@@ -83,6 +83,11 @@ init_mouses(random: RANDOM)
             end))
             create m.make(point)
             mouses.extend(m)
+
+               io.put_string ("%Ncol: ")
+               io.put_integer (point.x)
+               io.put_string ("%Nrow: ")
+                io.put_integer (point.y)
             i := i + 1
         end
   end
@@ -145,7 +150,7 @@ feature -- Check for Exit at Point
         do
             Result := ' '
             across mouses as m loop
-                if equal(m.item, point) then
+                if equal(m.item.point, point) then
                     Result := 'm'
                 end
             end
