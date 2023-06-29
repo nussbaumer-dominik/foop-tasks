@@ -40,6 +40,9 @@ feature
                     if equal(game_state.player, point) then
                         c := 'c'
                     end
+                                                       if equal(game_state.has_mouse_at_point(point), 'm') then
+                                                                                                           c := 'm'
+                                                                                                           end
                     io.put_character(' ')
                     io.put_character(c)
                     io.put_character(' ')

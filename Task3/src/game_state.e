@@ -7,7 +7,7 @@ feature
 
     subway_systems: LIST[SUBWAY_SYSTEM]
     player: POINT
-    mouses: LIST[POINT]
+    mouses: LIST[MOUSE]
     game_settings: GAME_SETTINGS
 
     make (a_game_settings: GAME_SETTINGS)
@@ -20,6 +20,7 @@ feature
 
         init_player(random)
         init_subway_systems(random)
+        init_mouses(random)
 
     end
 
@@ -36,7 +37,6 @@ init_subway_systems(random: RANDOM)
         i, j: INTEGER
         ss: SUBWAY_SYSTEM
         point: POINT
-        random_col, random_row: INTEGER
         uniqueness_criteria: FUNCTION [POINT, BOOLEAN]
     do
         create {LINKED_LIST [SUBWAY_SYSTEM]} subway_systems.make
@@ -68,8 +68,23 @@ init_subway_systems(random: RANDOM)
 init_mouses(random: RANDOM)
   local
     point: POINT
+    i: INTEGER
+    m: MOUSE
+    uniqueness_criteria: FUNCTION [POINT, BOOLEAN]
   do
-
+    create {LINKED_LIST [MOUSE]} mouses.make
+    from
+            i := 1
+        until
+            i > game_settings.mouses
+        loop
+            point:= new_unique_point(random, game_settings, (agent (pt: POINT): BOOLEAN do
+                Result := equal(has_mouse_at_point(pt), ' ') and not equal(pt, player)
+            end))
+            create m.make(point)
+            mouses.extend(m)
+            i := i + 1
+        end
   end
 
 feature -- Player
@@ -122,6 +137,16 @@ feature -- Check for Exit at Point
                     if equal(exit.item, point) then
                         Result := ss.item.color
                     end
+                end
+            end
+        end
+
+    has_mouse_at_point(point: POINT): CHARACTER
+        do
+            Result := ' '
+            across mouses as m loop
+                if equal(m.item, point) then
+                    Result := 'm'
                 end
             end
         end
