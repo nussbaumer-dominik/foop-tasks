@@ -10,10 +10,11 @@ import screens.navigator.impl.getNavigator
 fun main() {
     val game = getGame()
     val navigator = getNavigator()
+    val host = System.getenv("HOST") ?: "localhost"
 
     withResources(
-        restUrl = "http://localhost:8080",
-        socketUrl = "ws://localhost:8080/ws",
+        restUrl = "http://${host}:8080",
+        socketUrl = "ws://${host}:8080/ws",
         onSocketMessage = { message -> handleMessage(game, message) },
     ) { restClient, socketClient ->
         launch(Dispatchers.IO) {
