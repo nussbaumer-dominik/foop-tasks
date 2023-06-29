@@ -84,10 +84,6 @@ init_mouses(random: RANDOM)
             create m.make(point)
             mouses.extend(m)
 
-               io.put_string ("%Ncol: ")
-               io.put_integer (point.x)
-               io.put_string ("%Nrow: ")
-                io.put_integer (point.y)
             i := i + 1
         end
   end
